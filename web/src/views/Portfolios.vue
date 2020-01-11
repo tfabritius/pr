@@ -17,7 +17,7 @@
         ]"
         hide-default-footer
       >
-        <template v-slot:[`item.actions`]="{ item }">
+        <template #item.actions="{ item }">
           <v-btn color="primary" icon text @click="editPortfolio(item)">
             <v-icon>{{ mdiPencil }}</v-icon>
           </v-btn>
