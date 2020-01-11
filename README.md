@@ -17,7 +17,7 @@ $ yarn api dev
 $ yarn web dev
 ```
 
-The backend provies a SwaggerUI for the REST API on `/doc`.
+The backend provides a SwaggerUI for the REST API on `/doc`.
 
 ## Executing tests
 
@@ -87,7 +87,7 @@ Backend Configuration is *not* relevant during build phase, only when actually r
 ```ini
 # api/.env
 
-# Postgres database
+# PostgreSQL database
 DATABASE_URL = "postgresql://user:password@host:5432/database"
 
 # Serve static files from this path under / and move api endpoints to /api
@@ -104,4 +104,21 @@ SESSION_TIMEOUT = 86400
 
 # URL to API
 VUE_APP_API_URL = http://localhost:3000/
+```
+
+## Recommended VSCode settings
+
+To be placed in `.vscode/settings.json`.
+
+```json
+{
+  "editor.codeActionsOnSave": {
+    // Fix eslint issues on save
+    "source.fixAll.eslint": true
+  },
+
+  // Disable vue template validation by vetur, validated by eslint.
+  // Vetur uses eslint-plugin-vue but doesn't pick up .eslintrc.js.
+  "vetur.validation.template": false
+}
 ```
