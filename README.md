@@ -1,5 +1,14 @@
 ## Getting started for development
 
+### Preparation
+- Install [NodeJs](https://nodejs.org/)
+- Get access to a [PostgreSQL](https://www.postgresql.org/) database
+  - [Install it locally](https://www.postgresql.org/download/)
+  - Run [docker image](https://hub.docker.com/_/postgres)
+  - Use a [cloud service](https://www.postgresql.org/support/professional_hosting/)
+- Clone the repo
+
+### Install and run
 ```bash
 # Install dependencies
 $ yarn install --frozen-lockfile
