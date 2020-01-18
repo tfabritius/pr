@@ -59,7 +59,7 @@ $ SERVE_STATIC_PATH=../web/dist/ yarn api start
 
 ## Build for separate deployment
 
-Backend and frontend are service from different domains.
+Backend and frontend are served from different domains.
 
 ```bash
 # Build backend
@@ -119,7 +119,7 @@ VUE_APP_API_URL = http://localhost:3000/
 
 To be placed in `.vscode/settings.json`.
 
-```json
+```jsonc
 {
   "editor.codeActionsOnSave": {
     // Fix eslint issues on save
