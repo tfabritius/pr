@@ -1,14 +1,30 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import { Portfolio } from './portfolio.entity'
 import { PortfoliosService } from './portfolios.service'
+import { SecuritiesService } from './securities/securities.service'
 
 @Resolver(() => Portfolio)
 export class PortfoliosResolver {
-  constructor(private portfoliosService: PortfoliosService) {}
+  constructor(
+    private portfoliosService: PortfoliosService,
+    private securitiesService: SecuritiesService,
+  ) {}
 
   @Query(() => Portfolio)
   async portfolio(@Args('id', { type: () => Int }) id: number) {
     return this.portfoliosService.getOne({ portfolioId: id })
+  }
+
+  @ResolveField()
+  async securities(@Parent() portfolio: Portfolio) {
+    return this.securitiesService.getAll({ portfolioId: portfolio.id })
   }
 }

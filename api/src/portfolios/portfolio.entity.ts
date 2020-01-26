@@ -69,6 +69,7 @@ export class Portfolio {
 
   @OneToMany(() => Security, (s) => s.portfolio)
   @Exclude()
+  @Field(() => [Security])
   @ApiHideProperty()
   securities: Security[]
 

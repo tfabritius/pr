@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { Security } from './security.entity'
 import { SecurityPrice } from './prices/price.entity'
+import { SecuritiesResolver } from './securities.resolvers'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { SecuritiesController } from './securities.controller'
@@ -17,7 +18,7 @@ import { CurrenciesModule } from '../../currencies/currencies.module'
     SecuritiesPricesModule,
     CurrenciesModule,
   ],
-  providers: [SecuritiesService, SecuritiesKpisService],
+  providers: [SecuritiesResolver, SecuritiesService, SecuritiesKpisService],
   controllers: [SecuritiesController],
   exports: [SecuritiesService],
 })
