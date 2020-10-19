@@ -1,5 +1,5 @@
-import { ValidationPipe } from '@nestjs/common'
-import { NestFactory } from '@nestjs/core'
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common'
+import { NestFactory, Reflector } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 
@@ -12,6 +12,9 @@ async function bootstrap() {
       whitelist: true,
     }),
   )
+
+  /* Use class-transformer on output objects */
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
 
   /* Add OpenAPI */
   const options = new DocumentBuilder()
