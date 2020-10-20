@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { User } from '../users/user.entity'
+import { Exclude } from 'class-transformer'
 
 @Entity('sessions')
 export class Session {
@@ -24,5 +25,6 @@ export class Session {
   lastActivityAt: Date
 
   @ManyToOne(() => User, (user) => user.sessions, { nullable: false })
+  @Exclude()
   user: User
 }
