@@ -24,7 +24,10 @@ export class Session {
   @ApiProperty()
   lastActivityAt: Date
 
-  @ManyToOne(() => User, (user) => user.sessions, { nullable: false })
+  @ManyToOne(() => User, (user) => user.sessions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @Exclude()
   user: User
 }
