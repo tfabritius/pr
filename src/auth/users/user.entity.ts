@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
+
+import { Session } from '../sessions/session.entity'
 
 @Entity('users')
 export class User {
@@ -29,4 +31,7 @@ export class User {
   })
   @ApiProperty()
   lastSeenAt: string
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[]
 }
