@@ -5,9 +5,10 @@ import { AuthController } from './auth.controller'
 import { UsersModule } from './users/users.module'
 import { SessionsModule } from './sessions/sessions.module'
 import { LocalStrategy } from './local.strategy'
+import { BearerSessionStrategy } from './bearer-session.strategy'
 
 @Module({
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, BearerSessionStrategy],
   controllers: [AuthController],
   imports: [UsersModule, SessionsModule],
 })

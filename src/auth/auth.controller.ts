@@ -1,14 +1,25 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import { Request } from 'express'
 
 import { LoginUserDto, RegisterUserDto } from './auth.dto'
+import { DefaultAuthGuard } from './default-auth.guard'
 import { Session } from './sessions/session.entity'
 import { SessionsService } from './sessions/sessions.service'
 import { UsersService } from './users/users.service'
@@ -57,5 +68,21 @@ export class AuthController {
     this.sessionsService.cleanupExpired()
 
     return session
+  }
+
+  @Post('logout')
+  @HttpCode(204)
+  @UseGuards(DefaultAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiNoContentResponse({
+    description: 'The session has been successfully deleted.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  async delete(@Req() req: Request) {
+    // Extract session id from Authorization header
+    const token = (req.headers['authorization'] as string).split(' ', 2)[1]
+
+    await this.sessionsService.delete(token)
   }
 }

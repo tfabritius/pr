@@ -20,6 +20,7 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('Portfolio Report API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, options)
   SwaggerModule.setup('doc', app, document)
