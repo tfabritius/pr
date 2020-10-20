@@ -1,11 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { RegisterUserDto } from './auth.dto'
+
+import { LoginUserDto, RegisterUserDto } from './auth.dto'
 import { Session } from './sessions/session.entity'
 import { SessionsService } from './sessions/sessions.service'
 import { UsersService } from './users/users.service'
@@ -30,6 +33,29 @@ export class AuthController {
     const user = await this.usersService.create(registerUserDto.username)
     await this.usersService.updatePassword(user, registerUserDto.password)
     const session = await this.sessionsService.create(user)
+    return session
+  }
+
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  @ApiOperation({
+    summary: 'Login user',
+  })
+  @ApiCreatedResponse({
+    description: 'The user has been successfully logged in.',
+    type: Session,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  async login(
+    @Req() req,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Body() loginUserDto: LoginUserDto,
+  ): Promise<Session> {
+    const session = await this.sessionsService.create(req.user)
+
+    // Start cleanup in background
+    this.sessionsService.cleanupExpired()
+
     return session
   }
 }

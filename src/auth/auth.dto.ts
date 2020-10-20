@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { MinLength, MaxLength, Matches } from 'class-validator'
+import { MinLength, MaxLength, Matches, IsNotEmpty } from 'class-validator'
 
 export class RegisterUserDto {
   @ApiProperty()
@@ -21,5 +21,15 @@ export class RegisterUserDto {
   @MaxLength(255, {
     message: 'Password is too long ($constraint1 characters required)',
   })
+  readonly password: string
+}
+
+export class LoginUserDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  readonly username: string
+
+  @ApiProperty()
+  @IsNotEmpty()
   readonly password: string
 }
