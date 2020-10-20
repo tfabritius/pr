@@ -1,4 +1,78 @@
-import { Controller } from '@nestjs/common'
+import {
+  Get,
+  Body,
+  Delete,
+  Controller,
+  UseGuards,
+  HttpCode,
+  Post,
+  ForbiddenException,
+} from '@nestjs/common'
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+  ApiTags,
+  ApiOkResponse,
+} from '@nestjs/swagger'
+
+import { DefaultAuthGuard } from '../default-auth.guard'
+import { AuthUser } from '../auth.decorator'
+import { UsersService } from './users.service'
+import { UpdatePasswordDto } from './users.dto'
+import { User } from './user.entity'
 
 @Controller('users')
-export class UsersController {}
+@UseGuards(DefaultAuthGuard)
+@ApiTags('user')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
+@ApiBadRequestResponse({ description: 'Bad request' })
+export class UsersController {
+  constructor(private readonly userService: UsersService) {}
+
+  @Get('me')
+  @ApiOperation({ summary: 'Get current user' })
+  @ApiOkResponse({ description: 'The user is returned.', type: User })
+  async getMe(@AuthUser() user: User): Promise<User> {
+    return user
+  }
+
+  @Post('me/password')
+  @ApiOperation({ summary: 'Change password of current user' })
+  @ApiCreatedResponse({
+    description: 'Password of current user has been successfully changed.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Password has not been changed. Existing password was wrong.',
+  })
+  async updateMyPassword(
+    @AuthUser() user: User,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    if (
+      !(await this.userService.verifyPassword(
+        user,
+        updatePasswordDto.oldPassword,
+      ))
+    ) {
+      throw new ForbiddenException('Password is wrong.')
+    }
+
+    await this.userService.updatePassword(user, updatePasswordDto.newPassword)
+  }
+
+  @Delete('me')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Delete current user' })
+  @ApiNoContentResponse({
+    description: 'The current user has been successfully deleted.',
+  })
+  async deleteMe(@AuthUser() user: User) {
+    return await this.userService.delete(user.id)
+  }
+}
