@@ -4,6 +4,17 @@
 $ npm install
 ```
 
+## Configuration
+
+Postgresql connection
+```bash
+DB_HOST = localhost
+DB_PORT = 5432
+DB_USER = username
+DB_PASS = password
+DB_NAME = database
+```
+
 ## Running the app
 
 ```bash

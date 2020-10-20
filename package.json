@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "typeorm": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli --config src/ormconfig.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "nest start",
@@ -26,12 +27,15 @@
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/swagger": "^4.6.1",
+    "@nestjs/typeorm": "^7.1.4",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
+    "pg": "^8.4.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "typeorm": "^0.2.28"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
