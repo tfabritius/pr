@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
 import { Session } from '../sessions/session.entity'
+import { Portfolio } from '../../portfolios/portfolio.entity'
 
 @Entity('users')
 export class User {
@@ -34,4 +35,7 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[]
+
+  @OneToMany(() => Portfolio, (portfolio) => portfolio.user)
+  portfolios: Portfolio[]
 }

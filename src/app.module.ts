@@ -6,12 +6,14 @@ import { AppService } from './app.service'
 import * as ormconfig from './ormconfig'
 
 import { AuthModule } from './auth/auth.module'
+import { PortfoliosModule } from './portfolios/portfolios.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig),
     AuthModule,
+    PortfoliosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
