@@ -23,12 +23,14 @@ export class UsersService {
     username = username.toLowerCase()
 
     // Check uniqueness of username
+    let existingUser: User
     try {
-      const existingUser = this.getOneByUsername(username)
-      if (existingUser) {
-        throw new BadRequestException('Username is alreay in use.')
-      }
+      existingUser = await this.getOneByUsername(username)
     } catch {}
+
+    if (existingUser) {
+      throw new BadRequestException('Username is already in use.')
+    }
 
     // Create new user
     const newUser = new User()
