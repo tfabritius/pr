@@ -7,7 +7,7 @@ import { Session } from '../sessions/session.entity'
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
+  @Exclude()
   id: number
 
   @Column({ unique: true })
