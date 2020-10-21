@@ -26,9 +26,9 @@ import { UsersService } from './users.service'
 import { UpdatePasswordDto } from './users.dto'
 import { User } from './user.entity'
 
-@Controller('users')
+@Controller('auth/users')
 @UseGuards(DefaultAuthGuard)
-@ApiTags('user')
+@ApiTags('auth/users')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
