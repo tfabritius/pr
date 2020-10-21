@@ -27,7 +27,7 @@ export class PortfoliosService {
   /**
    * Gets all portfolios of an user
    */
-  async getAllOfOwner(user: User) {
+  async getAllOfUser(user: User) {
     return this.portfoliosRepository.find({
       where: { user: { id: user.id } },
     })
