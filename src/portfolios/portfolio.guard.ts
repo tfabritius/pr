@@ -32,7 +32,10 @@ export class PortfolioGuard implements CanActivate {
     }
 
     // Check if portfolio can be obtained by user or throw Exception
-    await this.portfoliosService.getOneOfUser(user, req.params)
+    const p = await this.portfoliosService.getOneOfUser(user, req.params)
+
+    // Store portfolio in request
+    req.portfolio = p
 
     return true
   }
