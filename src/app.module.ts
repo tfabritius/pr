@@ -6,7 +6,7 @@ import { AppService } from './app.service'
 import * as ormconfig from './ormconfig'
 
 import { AuthModule } from './auth/auth.module'
-import { PortfoliosModule } from './portfolios/portfolios.module';
+import { PortfoliosModule } from './portfolios/portfolios.module'
 
 @Module({
   imports: [
