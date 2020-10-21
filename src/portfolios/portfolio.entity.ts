@@ -4,11 +4,13 @@ import {
   Column,
   ManyToOne,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
 import { User } from '../auth/users/user.entity'
+import { Security } from './securities/security.entity'
 
 @Entity('portfolios')
 export class Portfolio {
@@ -48,4 +50,9 @@ export class Portfolio {
   @Exclude()
   @ApiHideProperty()
   user: User
+
+  @OneToMany(() => Security, (s) => s.portfolio)
+  @Exclude()
+  @ApiHideProperty()
+  securities: Security[]
 }
