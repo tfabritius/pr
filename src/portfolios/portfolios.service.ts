@@ -29,7 +29,7 @@ export class PortfoliosService {
    */
   async getAllOfUser(user: User) {
     return this.portfoliosRepository.find({
-      where: { user: { id: user.id } },
+      where: { user },
     })
   }
 
@@ -55,7 +55,7 @@ export class PortfoliosService {
    */
   async getOneOfUser(user: User, params: PortfolioParams): Promise<Portfolio> {
     const portfolio = await this.portfoliosRepository.findOne({
-      where: { id: params.portfolioId, user: { id: user.id } },
+      where: { id: params.portfolioId, user },
     })
 
     if (!portfolio) {
