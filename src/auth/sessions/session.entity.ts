@@ -8,7 +8,7 @@ import { Exclude } from 'class-transformer'
 export class Session {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty()
-  uuid: string
+  token: string
 
   @Column({
     type: 'timestamp with time zone',

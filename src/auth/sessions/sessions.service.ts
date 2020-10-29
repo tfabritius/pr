@@ -35,7 +35,7 @@ export class SessionsService {
           'EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - session."lastActivityAt"))::integer < :sessionTimeout',
           { sessionTimeout: this.sessionTimeout },
         )
-        .andWhere('session.uuid = :token', { token })
+        .andWhere('session.token = :token', { token })
         .innerJoinAndSelect('session.user', 'user')
         .getOne()
 
@@ -81,8 +81,8 @@ export class SessionsService {
    * Deletes session
    * or throws NotFoundException
    */
-  async delete(uuid: string): Promise<void> {
-    const { affected } = await this.sessionsRepository.delete(uuid)
+  async delete(token: string): Promise<void> {
+    const { affected } = await this.sessionsRepository.delete(token)
     if (affected == 0) {
       throw new NotFoundException('Session not found')
     }
