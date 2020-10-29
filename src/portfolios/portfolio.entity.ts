@@ -24,7 +24,7 @@ export class Portfolio {
 
   @Column()
   @ApiProperty()
-  description: string
+  note: string
 
   @Column()
   @ApiProperty()
