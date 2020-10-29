@@ -22,11 +22,11 @@ export class Portfolio {
   @ApiProperty()
   name: string
 
-  @Column({ default: '' })
+  @Column()
   @ApiProperty()
   description: string
 
-  @Column({ default: 'EUR' })
+  @Column()
   @ApiProperty()
   baseCurrencyCode: string
 
