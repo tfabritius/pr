@@ -30,11 +30,17 @@ export class Portfolio {
   @ApiProperty()
   baseCurrencyCode: string
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   @ApiProperty()
   createdAt: Date
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   @ApiProperty()
   updatedAt: Date
 
