@@ -18,6 +18,7 @@ import {
   ApiUnauthorizedResponse,
   ApiTags,
   ApiOkResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
 
 import { DefaultAuthGuard } from '../default-auth.guard'
@@ -32,6 +33,7 @@ import { User } from './user.entity'
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
+@ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 

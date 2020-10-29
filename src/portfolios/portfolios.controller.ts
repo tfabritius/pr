@@ -19,6 +19,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
 
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
@@ -36,6 +37,7 @@ import { User } from '../auth/users/user.entity'
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
+@ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class PortfoliosController {
   constructor(private readonly portfoliosService: PortfoliosService) {}
 

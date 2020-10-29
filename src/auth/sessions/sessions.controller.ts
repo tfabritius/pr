@@ -2,6 +2,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -20,6 +21,7 @@ import { SessionsService } from './sessions.service'
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
+@ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class SessionsController {
   constructor(private sessionsService: SessionsService) {}
 

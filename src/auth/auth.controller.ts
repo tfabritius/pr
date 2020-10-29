@@ -11,6 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiOperation,
   ApiTags,
@@ -27,6 +28,7 @@ import { UsersService } from './users/users.service'
 @Controller('auth')
 @ApiTags('auth')
 @ApiBadRequestResponse({ description: 'Bad request' })
+@ApiInternalServerErrorResponse({ description: 'Internal server error' })
 @Controller('auth')
 export class AuthController {
   constructor(

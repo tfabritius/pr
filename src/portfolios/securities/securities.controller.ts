@@ -14,6 +14,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -37,6 +38,7 @@ import { PortfolioParams } from '../portfolio.params'
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
 @ApiNotFoundResponse({ description: 'Portfolio not found' })
+@ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class SecuritiesController {
   constructor(public securitiesService: SecuritiesService) {}
 
