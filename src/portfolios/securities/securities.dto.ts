@@ -26,4 +26,8 @@ export class SecurityDto {
   @ApiProperty()
   @IsString()
   readonly symbol: string
+
+  @ApiProperty()
+  @IsString()
+  readonly note: string
 }

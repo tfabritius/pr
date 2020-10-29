@@ -34,6 +34,10 @@ export class Security {
   @ApiProperty()
   symbol: string
 
+  @Column()
+  @ApiProperty()
+  note: string
+
   @ManyToOne(() => Portfolio, (p) => p.securities, {
     nullable: false,
     onDelete: 'CASCADE',
