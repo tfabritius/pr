@@ -1,7 +1,10 @@
 import { ConnectionOptions } from 'typeorm'
 import 'dotenv/config'
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 
 const ormConfig: ConnectionOptions = {
+  namingStrategy: new SnakeNamingStrategy(),
+
   type: 'postgres',
 
   host: process.env.DB_HOST || 'localhost',
