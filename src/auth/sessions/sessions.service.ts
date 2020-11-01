@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { LessThan, MoreThan, Repository } from 'typeorm'
 
 import { UsersService } from '../users/users.service'
 import { User } from '../users/user.entity'
@@ -18,10 +18,18 @@ export class SessionsService {
   ) {}
 
   /**
-   * Returns configured session timeout
+   * Configured session timeout (in seconds)
    */
   get sessionTimeout(): number {
     return this.configService.get<number>('SESSION_TIMEOUT', 15 * 60)
+  }
+
+  /**
+   * Last date/time for activity to consider session valid
+   */
+  get lastActivityLimit(): Date {
+    const now = new Date()
+    return new Date(now.getTime() - this.sessionTimeout * 1000)
   }
 
   /**
@@ -29,15 +37,10 @@ export class SessionsService {
    */
   async validateToken(token: string): Promise<User | undefined> {
     try {
-      const session = await this.sessionsRepository
-        .createQueryBuilder('session')
-        .where(
-          'EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - session."lastActivityAt"))::integer < :sessionTimeout',
-          { sessionTimeout: this.sessionTimeout },
-        )
-        .andWhere('session.token = :token', { token })
-        .innerJoinAndSelect('session.user', 'user')
-        .getOne()
+      const session = await this.sessionsRepository.findOne(token, {
+        where: { lastActivityAt: MoreThan(this.lastActivityLimit) },
+        relations: ['user'],
+      })
 
       if (!!session && !!session.user) {
         // Update lastActivityAt in background
@@ -67,14 +70,12 @@ export class SessionsService {
    * Gets all sessions of user
    */
   async getAllOfUser(user: User): Promise<Session[]> {
-    return await this.sessionsRepository
-      .createQueryBuilder('session')
-      .where(
-        'EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - session."lastActivityAt"))::integer < :sessionTimeout',
-        { sessionTimeout: this.sessionTimeout },
-      )
-      .andWhere('session."userId" = :userId', { userId: user.id })
-      .getMany()
+    return await this.sessionsRepository.find({
+      where: {
+        lastActivityAt: MoreThan(this.lastActivityLimit),
+        user,
+      },
+    })
   }
 
   /**
@@ -92,13 +93,8 @@ export class SessionsService {
    * Deletes expired sessions
    */
   async cleanupExpired(): Promise<void> {
-    await this.sessionsRepository
-      .createQueryBuilder()
-      .delete()
-      .where(
-        'EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - "lastActivityAt"))::integer > :sessionTimeout',
-        { sessionTimeout: this.sessionTimeout },
-      )
-      .execute()
+    await this.sessionsRepository.delete({
+      lastActivityAt: LessThan(this.lastActivityLimit),
+    })
   }
 }
