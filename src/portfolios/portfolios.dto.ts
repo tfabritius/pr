@@ -9,7 +9,7 @@ export class PortfolioDto {
 
   @ApiProperty()
   @IsString()
-  readonly description: string
+  readonly note: string
 
   @ApiProperty()
   @IsString()
