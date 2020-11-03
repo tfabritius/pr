@@ -1,8 +1,15 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm'
 import { Exclude } from 'class-transformer'
 
 import { Portfolio } from '../portfolio.entity'
+import { Transaction } from '../transactions/transaction.entity'
 
 @Entity('securities')
 export class Security {
@@ -45,4 +52,8 @@ export class Security {
   @Exclude()
   @ApiHideProperty()
   portfolio: Portfolio
+
+  @OneToMany(() => Transaction, (t) => t.security)
+  @ApiHideProperty()
+  transactions: Transaction[]
 }
