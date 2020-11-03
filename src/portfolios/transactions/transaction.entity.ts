@@ -148,7 +148,7 @@ export class Transaction {
    * (only if transaction belongs to securities account)
    */
   @ManyToOne(() => Security, (security) => security.transactions, {
-    nullable: false,
+    nullable: true,
     onDelete: 'CASCADE',
   })
   security: Security
