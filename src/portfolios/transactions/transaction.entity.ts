@@ -1,4 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
+import { Exclude, Type } from 'class-transformer'
 import {
   Entity,
   Column,
@@ -6,9 +11,11 @@ import {
   ManyToOne,
   OneToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm'
 
 import { Account } from '../accounts/account.entity'
+import { Portfolio } from '../portfolio.entity'
 import { Security } from '../securities/security.entity'
 import { TransactionUnit } from './unit.entity'
 
@@ -97,6 +104,17 @@ export class Transaction {
   id: number
 
   /**
+   * Portfolio this transaction belongs to
+   */
+  @ManyToOne(() => Portfolio, (p) => p.transactions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @Exclude()
+  @ApiHideProperty()
+  portfolio: Portfolio
+
+  /**
    * Account this transaction belongs to
    */
   @ManyToOne(() => Account, (a) => a.transactions, {
@@ -126,8 +144,13 @@ export class Transaction {
    * Corresponding transaction on different (securities/deposit) account
    * depending on transaction type
    */
-  @OneToOne(() => Transaction, { nullable: true, onDelete: 'CASCADE' })
-  @ApiProperty()
+  @OneToOne(() => Transaction, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  @ApiPropertyOptional()
+  @Type(() => Transaction)
   partnerTransaction: Transaction
 
   /**
@@ -141,6 +164,7 @@ export class Transaction {
    * (only if transaction belongs to securities account)
    */
   @Column('decimal', { precision: 12, scale: 6, nullable: true })
+  @ApiProperty()
   shares: number
 
   /**

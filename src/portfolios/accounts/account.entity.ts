@@ -49,7 +49,7 @@ export class Account {
   @ApiProperty()
   note: string
 
-  @ManyToOne(() => Portfolio, (p) => p.securities, {
+  @ManyToOne(() => Portfolio, (p) => p.accounts, {
     nullable: false,
     onDelete: 'CASCADE',
   })

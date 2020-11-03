@@ -11,6 +11,8 @@ import { Exclude } from 'class-transformer'
 
 import { User } from '../auth/users/user.entity'
 import { Security } from './securities/security.entity'
+import { Account } from './accounts/account.entity'
+import { Transaction } from './transactions/transaction.entity'
 
 @Entity('portfolios')
 export class Portfolio {
@@ -61,4 +63,14 @@ export class Portfolio {
   @Exclude()
   @ApiHideProperty()
   securities: Security[]
+
+  @OneToMany(() => Account, (a) => a.portfolio)
+  @Exclude()
+  @ApiHideProperty()
+  accounts: Account[]
+
+  @OneToMany(() => Transaction, (t) => t.portfolio)
+  @Exclude()
+  @ApiHideProperty()
+  transactions: Transaction[]
 }
