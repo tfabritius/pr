@@ -140,7 +140,7 @@ export class Transaction {
    * Number of shares
    * (only if transaction belongs to securities account)
    */
-  @Column('decimal', { precision: 12, scale: 6 })
+  @Column('decimal', { precision: 12, scale: 6, nullable: true })
   shares: number
 
   /**
