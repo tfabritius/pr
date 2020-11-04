@@ -31,8 +31,8 @@ export class TransactionUnit {
    * Amount of currency
    */
   @Column('decimal', { precision: 10, scale: 2 })
-  @ApiProperty()
-  amount: number
+  @ApiProperty({ example: '0.00' })
+  amount: string
 
   /**
    * Currency code for amount
@@ -46,8 +46,8 @@ export class TransactionUnit {
    * in case of currency conversion
    */
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  @ApiProperty()
-  originalAmount: number // in forex
+  @ApiProperty({ example: '0.00' })
+  originalAmount: string
 
   /**
    * Currency code of original (foreign) currency
@@ -61,6 +61,6 @@ export class TransactionUnit {
    * Exchange rate for currency conversion
    */
   @Column('decimal', { precision: 10, scale: 4, nullable: true })
-  @ApiProperty()
-  exchangeRate: number
+  @ApiProperty({ example: '0.0000' })
+  exchangeRate: string
 }
