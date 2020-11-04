@@ -1,5 +1,11 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+
+export class SecurityIdDto {
+  @ApiProperty()
+  @IsNumber()
+  readonly id: number
+}
 
 export class SecurityDto {
   @ApiProperty()
