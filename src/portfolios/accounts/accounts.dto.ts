@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { AccountType } from './account.entity'
 import { Type } from 'class-transformer'
 
-class AccountIdDto {
+export class AccountIdDto {
   @ApiProperty()
   @IsNumber()
   readonly id: number
