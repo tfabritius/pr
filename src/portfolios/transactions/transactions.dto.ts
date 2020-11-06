@@ -57,8 +57,8 @@ class PartnerTransactionDto {
   @IsDefined()
   readonly account: AccountIdDto
 
-  @ApiPropertyOptional({ isArray: true, type: TransactionUnitDto })
-  @IsOptional()
+  @ApiProperty({ isArray: true, type: TransactionUnitDto })
+  @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => TransactionUnitDto)
   readonly units: TransactionUnitDto[]
@@ -96,8 +96,8 @@ export class TransactionDto {
   @Type(() => PartnerTransactionDto)
   readonly partnerTransaction: PartnerTransactionDto
 
-  @ApiPropertyOptional({ isArray: true, type: TransactionUnitDto })
-  @IsOptional()
+  @ApiProperty({ isArray: true, type: TransactionUnitDto })
+  @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => TransactionUnitDto)
   readonly units: TransactionUnitDto[]
