@@ -71,6 +71,7 @@ class PartnerTransactionDto {
   @ApiPropertyOptional()
   @IsOptional()
   @ValidateNested()
+  @Type(() => SecurityIdDto)
   readonly security: SecurityIdDto
 }
 
@@ -109,6 +110,7 @@ export class TransactionDto {
   @ApiPropertyOptional()
   @IsOptional()
   @ValidateNested()
+  @Type(() => SecurityIdDto)
   readonly security: SecurityIdDto
 
   @ApiProperty()
