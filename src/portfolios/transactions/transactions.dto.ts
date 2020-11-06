@@ -16,7 +16,7 @@ import { AccountIdDto } from '../accounts/accounts.dto'
 import { SecurityIdDto } from '../securities/securities.dto'
 import { UnitType } from './unit.entity'
 
-class TransactionUnitDto {
+export class TransactionUnitDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
