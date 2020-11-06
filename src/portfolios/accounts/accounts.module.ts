@@ -13,5 +13,6 @@ import { PortfoliosModule } from '../portfolios.module'
   ],
   providers: [AccountsService],
   controllers: [AccountsController],
+  exports: [AccountsService],
 })
 export class AccountsModule {}
