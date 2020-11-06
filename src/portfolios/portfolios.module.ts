@@ -6,12 +6,14 @@ import { PortfoliosService } from './portfolios.service'
 import { PortfoliosController } from './portfolios.controller'
 import { SecuritiesModule } from './securities/securities.module'
 import { AccountsModule } from './accounts/accounts.module'
+import { TransactionsModule } from './transactions/transactions.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Portfolio]),
     forwardRef(() => SecuritiesModule),
     forwardRef(() => AccountsModule),
+    forwardRef(() => TransactionsModule),
   ],
   providers: [PortfoliosService],
   controllers: [PortfoliosController],

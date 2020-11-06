@@ -156,7 +156,10 @@ export class Transaction {
   /**
    * Units of transaction
    */
-  @OneToMany(() => TransactionUnit, (u) => u.transaction)
+  @OneToMany(() => TransactionUnit, (u) => u.transaction, {
+    cascade: true,
+    eager: true,
+  })
   units: TransactionUnit[]
 
   /**
