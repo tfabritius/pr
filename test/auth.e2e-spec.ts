@@ -268,5 +268,94 @@ describe('Authentication (e2e)', () => {
         )
       })
     })
+
+    describe('/auth/users', () => {
+      let registerResponse
+
+      beforeAll(async () => {
+        registerResponse = await request(http).post('/auth/register').send(user)
+        expect(registerResponse.status).toBe(201)
+      })
+
+      describe('GET ../me', () => {
+        it('returns user information', async () => {
+          const response = await request(http)
+            .get('/auth/users/me')
+            .set('Authorization', 'bearer ' + registerResponse.body.token)
+
+          expect(response.status).toBe(200)
+          expect(response.body.username).toBe(user.username.toLowerCase())
+          expect(response.body.lastSeenAt).toBe(
+            new Date().toISOString().slice(0, 10),
+          )
+        })
+      })
+
+      describe('POST ../me/password', () => {
+        it('fails if old password is wrong', async () => {
+          const response = await request(http)
+            .post('/auth/users/me/password')
+            .set('Authorization', 'bearer ' + registerResponse.body.token)
+            .send({ oldPassword: 'wrong', newPassword: 'newPassword' })
+          expect(response.status).toBe(403)
+        })
+
+        describe('successful change', () => {
+          let changeResponse
+
+          beforeAll(async () => {
+            changeResponse = await request(http)
+              .post('/auth/users/me/password')
+              .set('Authorization', 'bearer ' + registerResponse.body.token)
+              .send({ oldPassword: user.password, newPassword: 'newPassword' })
+          })
+
+          it('returns nothing', () => {
+            expect(changeResponse.status).toBe(201)
+            expect(changeResponse.body).toStrictEqual({})
+          })
+
+          it('prevents login with old password', async () => {
+            const response = await request(http).post('/auth/login').send(user)
+            expect(response.status).toBe(401)
+          })
+
+          it('allows login with new password', async () => {
+            const response = await request(http)
+              .post('/auth/login')
+              .send({ username: user.username, password: 'newPassword' })
+            expect(response.status).toBe(201)
+          })
+        })
+      })
+
+      describe('DELETE ../me', () => {
+        let deleteResponse
+
+        beforeAll(async () => {
+          deleteResponse = await request(http)
+            .delete('/auth/users/me')
+            .set('Authorization', 'bearer ' + registerResponse.body.token)
+        })
+
+        it('returns nothing', () => {
+          expect(deleteResponse.status).toBe(204)
+          expect(deleteResponse.body).toStrictEqual({})
+        })
+
+        it('removes the session', async () => {
+          const response = await request(http)
+            .get('/auth/users/me')
+            .set('Authorization', 'bearer ' + registerResponse.body.token)
+
+          expect(response.status).toBe(401)
+        })
+
+        it('removes the user', async () => {
+          const response = await request(http).post('/auth/login').send(user)
+          expect(response.status).toBe(401)
+        })
+      })
+    })
   })
 })
