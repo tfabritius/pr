@@ -115,9 +115,10 @@ describe('Authentication (e2e)', () => {
       })
 
       afterAll(async () => {
-        await request(http)
+        const response = await request(http)
           .delete('/auth/users/me')
           .set('Authorization', 'bearer ' + registerResponse.body.token)
+        expect(response.status).toBe(204)
       })
     })
 
@@ -126,7 +127,9 @@ describe('Authentication (e2e)', () => {
       let me
 
       beforeAll(async () => {
-        await request(http).post('/auth/register').send(user)
+        const response = await request(http).post('/auth/register').send(user)
+        expect(response.status).toBe(201)
+
         loginResponse = await request(http).post('/auth/login').send(user)
       })
 
@@ -176,9 +179,10 @@ describe('Authentication (e2e)', () => {
       })
 
       afterAll(async () => {
-        await request(http)
+        const response = await request(http)
           .delete('/auth/users/me')
           .set('Authorization', 'bearer ' + loginResponse.body.token)
+        expect(response.status).toBe(204)
       })
     })
 
@@ -187,6 +191,7 @@ describe('Authentication (e2e)', () => {
 
       beforeAll(async () => {
         registerResponse = await request(http).post('/auth/register').send(user)
+        expect(registerResponse.status).toBe(201)
       })
 
       describe('successful logout', () => {
