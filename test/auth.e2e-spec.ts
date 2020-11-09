@@ -134,7 +134,7 @@ describe('Authentication (e2e)', () => {
       })
 
       describe('successful login', () => {
-        it('returns session token', async () => {
+        it('returns session token', () => {
           expect(loginResponse.status).toBe(201)
           expect(typeof loginResponse.body.token).toBe('string')
         })
@@ -207,12 +207,6 @@ describe('Authentication (e2e)', () => {
           const response = await request(http)
             .get('/auth/users/me')
             .set('Authorization', 'bearer ' + registerResponse.body.token)
-
-          expect(response.status).toBe(401)
-        })
-
-        it('removes user', async () => {
-          const response = await request(http).post('/auth/login')
 
           expect(response.status).toBe(401)
         })
