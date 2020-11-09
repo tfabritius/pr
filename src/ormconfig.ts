@@ -16,7 +16,7 @@ const ormConfig: ConnectionOptions = {
   // use .ts in development, compiled .js in production
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
-  logging: true,
+  logging: process.env.DB_LOGGING === 'true',
 
   synchronize: process.env.DB_SYNC === 'true',
 }
