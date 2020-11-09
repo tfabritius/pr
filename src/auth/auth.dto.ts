@@ -3,6 +3,7 @@ import { MinLength, MaxLength, Matches, IsNotEmpty } from 'class-validator'
 
 export class RegisterUserDto {
   @ApiProperty()
+  @IsNotEmpty({ message: 'Username is missing' })
   @MinLength(6, {
     message: 'Username is too short ($constraint1 characters required)',
   })
@@ -15,11 +16,12 @@ export class RegisterUserDto {
   readonly username: string
 
   @ApiProperty()
+  @IsNotEmpty({ message: 'Password is missing' })
   @MinLength(8, {
     message: 'Password is too short ($constraint1 characters required)',
   })
   @MaxLength(255, {
-    message: 'Password is too long ($constraint1 characters required)',
+    message: 'Password is too long ($constraint1 characters maximum)',
   })
   readonly password: string
 }
