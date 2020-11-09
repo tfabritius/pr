@@ -195,12 +195,17 @@ describe('Authentication (e2e)', () => {
       })
 
       describe('successful logout', () => {
-        it('returns nothing', async () => {
-          const response = await request(http)
+        let logoutResponse
+
+        beforeAll(async () => {
+          logoutResponse = await request(http)
             .post('/auth/logout')
             .set('Authorization', 'bearer ' + registerResponse.body.token)
-          expect(response.status).toBe(204)
-          expect(response.body).toStrictEqual({})
+        })
+
+        it('returns nothing', () => {
+          expect(logoutResponse.status).toBe(204)
+          expect(logoutResponse.body).toStrictEqual({})
         })
 
         it('invalidates session token', async () => {
@@ -217,10 +222,21 @@ describe('Authentication (e2e)', () => {
         expect(response.status).toBe(401)
       })
 
+      it('fails with invalid token', async () => {
+        const response = await request(http)
+          .post('/auth/logout')
+          .set('Authorization', 'bearer non-existent')
+
+        expect(response.status).toBe(401)
+      })
+
       afterAll(async () => {
-        await request(http)
+        const loginResponse = await request(http).post('/auth/login').send(user)
+        expect(loginResponse.status).toBe(201)
+        const deleteResponse = await request(http)
           .delete('/auth/users/me')
-          .set('Authorization', 'bearer ' + registerResponse.body.token)
+          .set('Authorization', 'bearer ' + loginResponse.body.token)
+        expect(deleteResponse.status).toBe(204)
       })
     })
   })
