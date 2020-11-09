@@ -217,6 +217,12 @@ describe('Authentication (e2e)', () => {
         const response = await request(http).post('/auth/logout')
         expect(response.status).toBe(401)
       })
+
+      afterAll(async () => {
+        await request(http)
+          .delete('/auth/users/me')
+          .set('Authorization', 'bearer ' + registerResponse.body.token)
+      })
     })
   })
 })
