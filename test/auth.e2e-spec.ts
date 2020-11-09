@@ -239,5 +239,34 @@ describe('Authentication (e2e)', () => {
         expect(deleteResponse.status).toBe(204)
       })
     })
+
+    describe('/auth/sessions', () => {
+      let registerResponse
+
+      beforeAll(async () => {
+        registerResponse = await request(http).post('/auth/register').send(user)
+        expect(registerResponse.status).toBe(201)
+      })
+
+      afterAll(async () => {
+        const response = await request(http)
+          .delete('/auth/users/me')
+          .set('Authorization', 'bearer ' + registerResponse.body.token)
+        expect(response.status).toBe(204)
+      })
+
+      it('returns list of sessions', async () => {
+        const response = await request(http)
+          .get('/auth/sessions')
+          .set('Authorization', 'bearer ' + registerResponse.body.token)
+
+        expect(response.status).toBe(200)
+        expect(response.body).toContainEqual(
+          expect.objectContaining({
+            token: registerResponse.body.token,
+          }),
+        )
+      })
+    })
   })
 })
