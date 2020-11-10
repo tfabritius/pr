@@ -12,6 +12,7 @@ import {
   OneToOne,
   OneToMany,
   JoinColumn,
+  Index,
 } from 'typeorm'
 
 import { Account } from '../accounts/account.entity'
@@ -111,6 +112,7 @@ export class Transaction {
     onDelete: 'CASCADE',
   })
   @Exclude()
+  @Index()
   @ApiHideProperty()
   portfolio: Portfolio
 
@@ -121,6 +123,7 @@ export class Transaction {
     nullable: false,
     onDelete: 'CASCADE',
   })
+  @Index()
   @ApiProperty()
   account: Account
 
@@ -178,6 +181,7 @@ export class Transaction {
     nullable: true,
     onDelete: 'CASCADE',
   })
+  @Index()
   security: Security
 
   /**

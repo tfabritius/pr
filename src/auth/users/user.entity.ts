@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Index,
+} from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
@@ -12,6 +18,7 @@ export class User {
   id: number
 
   @Column({ unique: true })
+  @Index()
   @ApiProperty()
   username: string
 

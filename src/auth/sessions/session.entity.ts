@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  Index,
+} from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { User } from '../users/user.entity'
@@ -28,6 +34,7 @@ export class Session {
     nullable: false,
     onDelete: 'CASCADE',
   })
+  @Index()
   @Exclude()
   user: User
 }

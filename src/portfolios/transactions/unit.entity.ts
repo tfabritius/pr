@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Index,
+} from 'typeorm'
 import { Transaction } from './transaction.entity'
 
 /**
@@ -20,6 +26,7 @@ export class TransactionUnit {
     nullable: false,
     onDelete: 'CASCADE',
   })
+  @Index()
   @ApiProperty()
   transaction: Transaction
 
