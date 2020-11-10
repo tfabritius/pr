@@ -217,19 +217,6 @@ describe('Authentication (e2e)', () => {
         })
       })
 
-      it('fails without session token', async () => {
-        const response = await request(http).post('/auth/logout')
-        expect(response.status).toBe(401)
-      })
-
-      it('fails with invalid token', async () => {
-        const response = await request(http)
-          .post('/auth/logout')
-          .set('Authorization', 'bearer non-existent')
-
-        expect(response.status).toBe(401)
-      })
-
       afterAll(async () => {
         const loginResponse = await request(http).post('/auth/login').send(user)
         expect(loginResponse.status).toBe(201)
