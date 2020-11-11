@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
-import { deleteUserIfExisting } from './utils'
+import { loginAndDeleteUser } from './utils'
 
 describe('Authentication (e2e)', () => {
   let app: INestApplication
@@ -25,7 +25,7 @@ describe('Authentication (e2e)', () => {
       let registerResponse
 
       beforeAll(async () => {
-        await deleteUserIfExisting(http, user)
+        await loginAndDeleteUser(http, user)
       })
 
       describe('successful registration', () => {
