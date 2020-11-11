@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
+import { deleteUserIfExisting } from './utils'
 
 describe('Authentication (e2e)', () => {
   let app: INestApplication
@@ -24,13 +25,7 @@ describe('Authentication (e2e)', () => {
       let registerResponse
 
       beforeAll(async () => {
-        try {
-          // Delete potentially existing user
-          const response = await request(http).post('/auth/login').send(user)
-          await request(http)
-            .delete('/auth/users/me')
-            .set('Authorization', 'bearer ' + response.body.token)
-        } catch {}
+        await deleteUserIfExisting(http, user)
       })
 
       describe('successful registration', () => {
