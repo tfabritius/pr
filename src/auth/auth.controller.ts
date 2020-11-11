@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  Logger,
   Post,
   Req,
   UseGuards,
@@ -31,6 +32,8 @@ import { UsersService } from './users/users.service'
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name)
+
   constructor(
     private usersService: UsersService,
     private sessionsService: SessionsService,
@@ -67,7 +70,11 @@ export class AuthController {
     const session = await this.sessionsService.create(req.user)
 
     // Start cleanup in background
-    this.sessionsService.cleanupExpired()
+    this.sessionsService.cleanupExpired().catch((e) => {
+      this.logger.error(
+        `Error while cleaning up expired sessions in background: ${e}`,
+      )
+    })
 
     return session
   }

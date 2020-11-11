@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 import { LessThan, MoreThan, Repository } from 'typeorm'
@@ -9,6 +9,8 @@ import { Session } from './session.entity'
 
 @Injectable()
 export class SessionsService {
+  private readonly logger = new Logger(SessionsService.name)
+
   constructor(
     private usersService: UsersService,
     private configService: ConfigService,
@@ -45,10 +47,18 @@ export class SessionsService {
       if (!!session && !!session.user) {
         // Update lastActivityAt in background
         session.lastActivityAt = new Date()
-        this.sessionsRepository.save(session)
+        this.sessionsRepository.save(session).catch((e) => {
+          this.logger.error(
+            `Error while updating session.lastActivityAt in background: ${e}`,
+          )
+        })
 
         // Update last seen date in background
-        this.usersService.updateLastSeen(session.user)
+        this.usersService.updateLastSeen(session.user).catch((e) => {
+          this.logger.error(
+            `Error while updating user.lastSeen in background: ${e}`,
+          )
+        })
 
         return session.user
       }
