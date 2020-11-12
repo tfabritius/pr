@@ -47,7 +47,7 @@ describe('Security (e2e)', () => {
     ]
 
     test.each(endpoints)(
-      '%p %p fails without session token',
+      '%s %s fails without session token',
       async (method, url) => {
         const response = await request(http)[method](url)
         expect(response.status).toBe(401)
@@ -55,7 +55,7 @@ describe('Security (e2e)', () => {
     )
 
     test.each(endpoints)(
-      '%p %p fails with invalid session token',
+      '%s %s fails with invalid session token',
       async (method, url) => {
         const response = await request(http)
           [method](url)
