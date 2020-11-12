@@ -3,6 +3,7 @@ import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
 import {
+  createPortfolio,
   createTestPortfolio,
   getObjectsWithMissingAttribute,
   registerUser,
@@ -89,16 +90,7 @@ describe('Portfolios (e2e)', () => {
     let portfolioId: number
 
     beforeEach(async () => {
-      const createResponse = await request(http)
-        .post('/portfolios')
-        .send(testPortfolio)
-        .set('Authorization', 'bearer ' + sessionToken)
-
-      if (createResponse.status !== 201) {
-        throw new Error('Failed to create portfolio')
-      }
-
-      portfolioId = createResponse.body.id
+      portfolioId = await createPortfolio(http, sessionToken, testPortfolio)
     })
 
     test('GET /portfolios contains portfolio', async () => {

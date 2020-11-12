@@ -17,6 +17,22 @@ export async function registerUser(http, user): Promise<string> {
   return registerResponse.body.token
 }
 
+export async function createPortfolio(
+  http,
+  sessionToken: string,
+  portfolio,
+): Promise<number> {
+  const createResponse = await request(http)
+    .post('/portfolios')
+    .send(portfolio)
+    .set('Authorization', 'bearer ' + sessionToken)
+
+  if (createResponse.status !== 201) {
+    throw new Error('Failed to create portfolio')
+  }
+  return createResponse.body.id
+}
+
 export async function createTestPortfolio(
   http,
   sessionToken: string,
@@ -26,16 +42,7 @@ export async function createTestPortfolio(
     note: 'Test comment',
     baseCurrencyCode: 'EUR',
   }
-
-  const createResponse = await request(http)
-    .post('/portfolios')
-    .send(testPortfolio)
-    .set('Authorization', 'bearer ' + sessionToken)
-
-  if (createResponse.status !== 201) {
-    throw new Error('Failed to create portfolio')
-  }
-  return createResponse.body.id
+  return await createPortfolio(http, sessionToken, testPortfolio)
 }
 
 export async function createAccount(
