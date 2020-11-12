@@ -1,5 +1,9 @@
 {
   "coverageDirectory": "coverage/e2e",
+  "collectCoverageFrom": [
+    "src/**/*.{ts,tsx}",
+    "!**/*.spec.ts"
+  ],
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "../",
   "testEnvironment": "node",
