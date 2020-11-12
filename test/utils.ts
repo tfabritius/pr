@@ -55,6 +55,23 @@ export async function createAccount(
   return createResponse.body.id
 }
 
+export async function createSecurity(
+  http,
+  sessionToken: string,
+  portfolioId: number,
+  security,
+): Promise<number> {
+  const createResponse = await request(http)
+    .post(`/portfolios/${portfolioId}/securities`)
+    .send(security)
+    .set('Authorization', 'bearer ' + sessionToken)
+
+  if (createResponse.status !== 201) {
+    throw new Error('Failed to create security')
+  }
+  return createResponse.body.id
+}
+
 /**
  * Takes an object and creates a list of objects, each missing a single attribute
  */
