@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
-import { registerUser } from './utils'
+import { getObjectsWithMissingAttribute, registerUser } from './utils'
 
 describe('Portfolios (e2e)', () => {
   let app: INestApplication
@@ -15,14 +15,6 @@ describe('Portfolios (e2e)', () => {
     note: 'Test comment',
     baseCurrencyCode: 'EUR',
   }
-
-  const testMissingAttributes = Object.keys(testPortfolio).map(
-    (missingAttribute) => {
-      const portfolioCopy = { ...testPortfolio }
-      delete portfolioCopy[missingAttribute]
-      return [missingAttribute, portfolioCopy]
-    },
-  )
 
   beforeAll(async () => {
     app = await createApp('test')
@@ -62,7 +54,7 @@ describe('Portfolios (e2e)', () => {
       },
     )
 
-    test.each(testMissingAttributes)(
+    test.each(getObjectsWithMissingAttribute(testPortfolio))(
       'POST /portfolios fails if attribute %p is missing',
       async (missingAttribute: string, portfolio) => {
         const response = await request(http)
@@ -136,7 +128,7 @@ describe('Portfolios (e2e)', () => {
       expect(getResponse.body).toMatchObject(changedPortfolio)
     })
 
-    test.each(testMissingAttributes)(
+    test.each(getObjectsWithMissingAttribute(testPortfolio))(
       'PUT /portfolios/$id fails if attribute %p is missing',
       async (missingAttribute: string, portfolio) => {
         const updateResponse = await request(http)
