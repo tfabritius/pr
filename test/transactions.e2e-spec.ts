@@ -3,6 +3,8 @@ import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
 import {
+  createSecurity,
+  createTestDepositAccount,
   createTestDepositSecuritiesAccounts,
   createTestPortfolio,
   createTransaction,
@@ -34,16 +36,20 @@ describe('Transactions (e2e)', () => {
   let portfolioId: number
   let depositAccountId: number
   let securitiesAccountId: number
+  let securityId: number
 
-  const testTransaction = {
+  const testTransactionMinimal = {
     account: { id: undefined },
     type: 'Payment',
     datetime: '2020-11-01T08:00:00.000Z',
-    // partnerTransaction
     units: [],
-    // shares
-    // security
     note: 'comment',
+  }
+
+  const testTransactionFull = {
+    ...testTransactionMinimal,
+    shares: '1.230000',
+    security: { id: undefined },
   }
 
   beforeAll(async () => {
@@ -54,7 +60,11 @@ describe('Transactions (e2e)', () => {
       portfolioId,
     )
     ;[depositAccountId, securitiesAccountId] = ids
-    testTransaction.account.id = depositAccountId
+    securityId = await createSecurity(http, sessionToken, portfolioId)
+
+    testTransactionMinimal.account.id = depositAccountId
+    testTransactionFull.account.id = depositAccountId
+    testTransactionFull.security.id = securityId
   })
 
   test('GET .../transactions returns empty list', async () => {
@@ -89,7 +99,7 @@ describe('Transactions (e2e)', () => {
       async (method) => {
         const response = await request(http)
           [method.toLowerCase()](`/portfolios/${portfolioId}/transactions/42`)
-          .send(testTransaction)
+          .send(testTransactionMinimal)
           .set('Authorization', 'bearer ' + sessionToken)
 
         expect(response.status).toBe(404)
@@ -99,7 +109,7 @@ describe('Transactions (e2e)', () => {
   })
 
   describe('POST .../transactions', () => {
-    it.each(getObjectsWithMissingAttribute(testTransaction))(
+    it.each(getObjectsWithMissingAttribute(testTransactionMinimal))(
       `fails if attribute %p is missing`,
       async (missingAttribute, transaction) => {
         const response = await request(http)
@@ -114,31 +124,50 @@ describe('Transactions (e2e)', () => {
       },
     )
 
-    test('returns transaction with id', async () => {
+    it('returns minimal transaction with id', async () => {
       const createResponse = await request(http)
         .post(`/portfolios/${portfolioId}/transactions`)
-        .send(testTransaction)
+        .send(testTransactionMinimal)
         .set('Authorization', 'bearer ' + sessionToken)
 
       expect(createResponse.status).toBe(201)
-      expect(createResponse.body).toMatchObject(testTransaction)
+      expect(createResponse.body).toMatchObject(testTransactionMinimal)
+      expect(typeof createResponse.body.id).toBe('number')
+    })
+
+    it('returns full transaction with id', async () => {
+      const createResponse = await request(http)
+        .post(`/portfolios/${portfolioId}/transactions`)
+        .send(testTransactionFull)
+        .set('Authorization', 'bearer ' + sessionToken)
+
+      expect(createResponse.status).toBe(201)
+      expect(createResponse.body).toMatchObject(testTransactionFull)
       expect(typeof createResponse.body.id).toBe('number')
     })
   })
 
   describe('GET/PUT/DELETE .../transactions', () => {
-    let transactionId: number
+    let minTransactionId: number
+    let fullTransactionId: number
 
     beforeEach(async () => {
-      transactionId = await createTransaction(
+      minTransactionId = await createTransaction(
         http,
         sessionToken,
         portfolioId,
-        testTransaction,
+        testTransactionMinimal,
+      )
+
+      fullTransactionId = await createTransaction(
+        http,
+        sessionToken,
+        portfolioId,
+        testTransactionFull,
       )
     })
 
-    test('GET .../transactions contains transaction', async () => {
+    test('GET .../transactions contains minimal transaction', async () => {
       const response = await request(http)
         .get(`/portfolios/${portfolioId}/transactions`)
         .set('Authorization', 'bearer ' + sessionToken)
@@ -146,28 +175,64 @@ describe('Transactions (e2e)', () => {
       expect(response.status).toBe(200)
       expect(response.body).toContainEqual(
         expect.objectContaining({
-          ...testTransaction,
-          id: transactionId,
-          account: expect.objectContaining({ id: testTransaction.account.id }),
+          ...testTransactionMinimal,
+          id: minTransactionId,
+          account: expect.objectContaining({
+            id: testTransactionMinimal.account.id,
+          }),
         }),
       )
     })
 
-    test('GET .../transactions/$id returns transaction', async () => {
+    test('GET .../transactions contains full transaction', async () => {
       const response = await request(http)
-        .get(`/portfolios/${portfolioId}/transactions/${transactionId}`)
+        .get(`/portfolios/${portfolioId}/transactions`)
         .set('Authorization', 'bearer ' + sessionToken)
 
       expect(response.status).toBe(200)
-      expect(response.body).toMatchObject(testTransaction)
+      expect(response.body).toContainEqual(
+        expect.objectContaining({
+          ...testTransactionFull,
+          id: fullTransactionId,
+          account: expect.objectContaining({
+            id: testTransactionFull.account.id,
+          }),
+          security: expect.objectContaining({
+            id: testTransactionFull.security.id,
+          }),
+        }),
+      )
+    })
+
+    test('GET .../transactions/$id returns minimal transaction', async () => {
+      const response = await request(http)
+        .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+        .set('Authorization', 'bearer ' + sessionToken)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject(testTransactionMinimal)
+    })
+
+    test('GET .../transactions/$id returns full transaction', async () => {
+      const response = await request(http)
+        .get(`/portfolios/${portfolioId}/transactions/${fullTransactionId}`)
+        .set('Authorization', 'bearer ' + sessionToken)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject(testTransactionFull)
     })
 
     describe('PUT .../transactions/$id', () => {
-      it.each(getObjectsWithMissingAttribute(testTransaction))(
+      let otherSecurityId
+      beforeAll(async () => {
+        otherSecurityId = await createSecurity(http, sessionToken, portfolioId)
+      })
+
+      it.each(getObjectsWithMissingAttribute(testTransactionMinimal))(
         'fails if attribute %p is missing',
         async (missingAttribute, security) => {
           const response = await request(http)
-            .put(`/portfolios/${portfolioId}/transactions/${transactionId}`)
+            .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
             .send(security)
             .set('Authorization', 'bearer ' + sessionToken)
 
@@ -178,16 +243,16 @@ describe('Transactions (e2e)', () => {
         },
       )
 
-      it('updates the transactions', async () => {
+      it('updates minimal attributes of transaction', async () => {
         const changedTransaction = {
-          ...testTransaction,
+          ...testTransactionMinimal,
           type: 'DepositInterest',
           datetime: '2020-11-02T00:00:00.000Z',
           note: 'changed comment',
         }
 
         const updateResponse = await request(http)
-          .put(`/portfolios/${portfolioId}/transactions/${transactionId}`)
+          .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
           .send(changedTransaction)
           .set('Authorization', 'bearer ' + sessionToken)
 
@@ -195,7 +260,81 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await request(http)
-          .get(`/portfolios/${portfolioId}/transactions/${transactionId}`)
+          .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(getResponse.status).toBe(200)
+        expect(getResponse.body).toMatchObject(changedTransaction)
+      })
+
+      it('updates account of transaction', async () => {
+        const otherAccountId = await createTestDepositAccount(
+          http,
+          sessionToken,
+          portfolioId,
+        )
+
+        const changedTransaction = {
+          ...testTransactionMinimal,
+          account: { id: otherAccountId },
+        }
+
+        const updateResponse = await request(http)
+          .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .send(changedTransaction)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body).toMatchObject(changedTransaction)
+
+        const getResponse = await request(http)
+          .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(getResponse.status).toBe(200)
+        expect(getResponse.body).toMatchObject(changedTransaction)
+      })
+
+      it('adds optional attributes to transaction', async () => {
+        const changedTransaction = {
+          ...testTransactionMinimal,
+          shares: '5.550000',
+          security: { id: otherSecurityId },
+        }
+
+        const updateResponse = await request(http)
+          .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .send(changedTransaction)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body).toMatchObject(changedTransaction)
+
+        const getResponse = await request(http)
+          .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(getResponse.status).toBe(200)
+        expect(getResponse.body).toMatchObject(changedTransaction)
+      })
+
+      it('updates optional attributes of transaction', async () => {
+        const changedTransaction = {
+          ...testTransactionFull,
+          shares: '11.220000',
+          security: { id: otherSecurityId },
+        }
+
+        const updateResponse = await request(http)
+          .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .send(changedTransaction)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body).toMatchObject(changedTransaction)
+
+        const getResponse = await request(http)
+          .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
           .set('Authorization', 'bearer ' + sessionToken)
 
         expect(getResponse.status).toBe(200)
@@ -205,14 +344,14 @@ describe('Transactions (e2e)', () => {
 
     test('DELETE .../transactions/$id removes transaction', async () => {
       const deleteResponse = await request(http)
-        .delete(`/portfolios/${portfolioId}/transactions/${transactionId}`)
+        .delete(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
         .set('Authorization', 'bearer ' + sessionToken)
 
       expect(deleteResponse.status).toBe(204)
       expect(deleteResponse.body).toStrictEqual({})
 
       const getResponse = await request(http)
-        .get(`/portfolios/${portfolioId}/transactions/${transactionId}`)
+        .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
         .set('Authorization', 'bearer ' + sessionToken)
 
       expect(getResponse.status).toBe(404)

@@ -112,8 +112,18 @@ export async function createSecurity(
   http,
   sessionToken: string,
   portfolioId: number,
-  security,
+  security?,
 ): Promise<number> {
+  security = security ?? {
+    name: 'Test security',
+    uuid: '',
+    note: '',
+    currencyCode: '',
+    isin: '',
+    wkn: '',
+    symbol: '',
+  }
+
   const createResponse = await request(http)
     .post(`/portfolios/${portfolioId}/securities`)
     .send(security)
