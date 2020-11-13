@@ -134,6 +134,7 @@ export class TransactionsService {
     return this.transactionsRepository.find({
       relations: [
         'account',
+        'security',
         'partnerTransaction',
         'partnerTransaction.account',
       ],
