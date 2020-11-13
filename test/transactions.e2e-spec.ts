@@ -50,6 +50,20 @@ describe('Transactions (e2e)', () => {
     ...testTransactionMinimal,
     shares: '1.230000',
     security: { id: undefined },
+    units: [
+      {
+        type: 'base',
+        amount: '0.01',
+        currencyCode: 'EUR',
+        originalAmount: '0.01',
+        originalCurrencyCode: 'USD',
+      },
+      {
+        type: 'fee',
+        amount: '-1.11',
+        currencyCode: 'CHF',
+      },
+    ],
   }
 
   beforeAll(async () => {
@@ -200,6 +214,9 @@ describe('Transactions (e2e)', () => {
           security: expect.objectContaining({
             id: testTransactionFull.security.id,
           }),
+          units: expect.arrayContaining(
+            testTransactionFull.units.map((u) => expect.objectContaining(u)),
+          ),
         }),
       )
     })
@@ -339,6 +356,53 @@ describe('Transactions (e2e)', () => {
 
         expect(getResponse.status).toBe(200)
         expect(getResponse.body).toMatchObject(changedTransaction)
+      })
+
+      it('adds unit to transaction', async () => {
+        const changedTransaction = {
+          ...testTransactionMinimal,
+          units: [{ type: 'tax', amount: '100.00', currencyCode: 'JPY' }],
+        }
+
+        const updateResponse = await request(http)
+          .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .send(changedTransaction)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body).toMatchObject(changedTransaction)
+
+        const getResponse = await request(http)
+          .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(getResponse.status).toBe(200)
+        expect(getResponse.body).toMatchObject(changedTransaction)
+      })
+
+      it('removes units from transaction', async () => {
+        const changedTransaction = {
+          ...testTransactionFull,
+          units: testTransactionFull.units.slice(0, 1),
+        }
+
+        const updateResponse = await request(http)
+          .put(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .send(changedTransaction)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body).toMatchObject(changedTransaction)
+
+        const getResponse = await request(http)
+          .get(`/portfolios/${portfolioId}/transactions/${minTransactionId}`)
+          .set('Authorization', 'bearer ' + sessionToken)
+
+        expect(getResponse.status).toBe(200)
+        expect(getResponse.body).toMatchObject(changedTransaction)
+        expect(getResponse.body.units).toHaveLength(
+          changedTransaction.units.length,
+        )
       })
     })
 
