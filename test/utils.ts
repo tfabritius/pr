@@ -62,6 +62,52 @@ export async function createAccount(
   return createResponse.body.id
 }
 
+export async function createTestDepositAccount(
+  http,
+  sessionToken,
+  portfolioId: number,
+): Promise<number> {
+  const testDepositAccount = {
+    type: 'deposit',
+    name: 'Test deposit account',
+    uuid: '42',
+    note: 'comment',
+    currencyCode: 'EUR',
+  }
+  return await createAccount(
+    http,
+    sessionToken,
+    portfolioId,
+    testDepositAccount,
+  )
+}
+
+export async function createTestDepositSecuritiesAccounts(
+  http,
+  sessionToken,
+  portfolioId,
+): Promise<[number, number]> {
+  const testDepositAccountId = await createTestDepositAccount(
+    http,
+    sessionToken,
+    portfolioId,
+  )
+  const testSecuritiesAccount = {
+    type: 'securities',
+    name: 'Test securities account',
+    uuid: '42',
+    note: 'comment',
+    referenceAccount: { id: testDepositAccountId },
+  }
+  const testSecuritiesAccountId = await createAccount(
+    http,
+    sessionToken,
+    portfolioId,
+    testSecuritiesAccount,
+  )
+  return [testDepositAccountId, testSecuritiesAccountId]
+}
+
 export async function createSecurity(
   http,
   sessionToken: string,
@@ -75,6 +121,23 @@ export async function createSecurity(
 
   if (createResponse.status !== 201) {
     throw new Error('Failed to create security')
+  }
+  return createResponse.body.id
+}
+
+export async function createTransaction(
+  http,
+  sessionToken: string,
+  portfolioId: number,
+  transaction,
+): Promise<number> {
+  const createResponse = await request(http)
+    .post(`/portfolios/${portfolioId}/transactions`)
+    .send(transaction)
+    .set('Authorization', 'bearer ' + sessionToken)
+
+  if (createResponse.status !== 201) {
+    throw new Error('Failed to create transaction')
   }
   return createResponse.body.id
 }
