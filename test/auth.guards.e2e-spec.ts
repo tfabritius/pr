@@ -3,7 +3,7 @@ import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
 
-describe('Security (e2e)', () => {
+describe('Guards (e2e)', () => {
   let app: INestApplication
   let http: any
 
