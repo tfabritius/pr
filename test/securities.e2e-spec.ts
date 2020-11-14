@@ -1,22 +1,17 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
-import {
-  createSecurity,
-  createTestPortfolio,
-  getObjectsWithMissingAttribute,
-  registerUser,
-} from './utils'
+import { ApiClient } from './api.client'
+import { getObjectsWithMissingAttribute } from './utils'
 
 describe('Securities (e2e)', () => {
   let app: INestApplication
-  let http: any
+  let api: ApiClient
 
   beforeAll(async () => {
     app = await createApp('test')
     await app.init()
-    http = app.getHttpServer()
+    api = ApiClient.create(app.getHttpServer())
   }, 30000) // Timeout: 30s
 
   afterAll(async () => {
@@ -24,16 +19,16 @@ describe('Securities (e2e)', () => {
   })
 
   const user = { username: 'test-securities', password: 'testpassword' }
-  let sessionToken: string
 
   beforeAll(async () => {
-    sessionToken = await registerUser(http, user)
+    await api.cleanUser(user, false)
+    ;[api] = await api.register(user)
   })
 
   let portfolioId: number
 
   beforeAll(async () => {
-    portfolioId = await createTestPortfolio(http, sessionToken)
+    portfolioId = await api.createPortfolio()
   })
 
   const testSecurity = {
@@ -47,9 +42,7 @@ describe('Securities (e2e)', () => {
   }
 
   test('GET .../securities returns empty list', async () => {
-    const response = await request(http)
-      .get(`/portfolios/${portfolioId}/securities`)
-      .set('Authorization', 'bearer ' + sessionToken)
+    const response = await api.get(`/portfolios/${portfolioId}/securities`)
 
     expect(response.status).toBe(200)
     expect(response.body).toStrictEqual([])
@@ -64,22 +57,24 @@ describe('Securities (e2e)', () => {
     ])(
       '%s /portfolios/42%s returns 404 Portfolio not found',
       async (method, url) => {
-        const response = await request(http)
-          [method.toLowerCase()](`/portfolios/42${url}`)
-          .set('Authorization', 'bearer ' + sessionToken)
-
+        const response = await api[method.toLowerCase()](`/portfolios/42${url}`)
         expect(response.status).toBe(404)
         expect(response.body.message).toContain('Portfolio not found')
       },
     )
 
-    test.each([['GET'], ['PUT'], ['DELETE']])(
+    test.each([
+      ['GET', undefined],
+      ['PUT', testSecurity],
+      ['DELETE', undefined],
+    ])(
       '%s .../securities/42 returns 404 Security not found',
-      async (method) => {
-        const response = await request(http)
-          [method.toLowerCase()](`/portfolios/${portfolioId}/securities/42`)
-          .send(testSecurity)
-          .set('Authorization', 'bearer ' + sessionToken)
+      async (method, payload) => {
+        const args: any[] = [`/portfolios/${portfolioId}/securities/42`]
+        if (payload) {
+          args.push(payload)
+        }
+        const response = await api[method.toLowerCase()](...args)
 
         expect(response.status).toBe(404)
         expect(response.body.message).toContain('Security not found')
@@ -91,10 +86,10 @@ describe('Securities (e2e)', () => {
     it.each(getObjectsWithMissingAttribute(testSecurity))(
       `fails if attribute %p is missing`,
       async (missingAttribute, security) => {
-        const response = await request(http)
-          .post(`/portfolios/${portfolioId}/securities`)
-          .send(security)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api.post(
+          `/portfolios/${portfolioId}/securities`,
+          security,
+        )
 
         expect(response.status).toBe(400)
         expect(response.body.message).toContainEqual(
@@ -104,10 +99,10 @@ describe('Securities (e2e)', () => {
     )
 
     test('returns security with id', async () => {
-      const createResponse = await request(http)
-        .post(`/portfolios/${portfolioId}/securities`)
-        .send(testSecurity)
-        .set('Authorization', 'bearer ' + sessionToken)
+      const createResponse = await api.post(
+        `/portfolios/${portfolioId}/securities`,
+        testSecurity,
+      )
 
       expect(createResponse.status).toBe(201)
       expect(createResponse.body).toMatchObject(testSecurity)
@@ -119,19 +114,11 @@ describe('Securities (e2e)', () => {
     let securityId: number
 
     beforeEach(async () => {
-      securityId = await createSecurity(
-        http,
-        sessionToken,
-        portfolioId,
-        testSecurity,
-      )
+      securityId = await api.createSecurity(portfolioId, testSecurity)
     })
 
     test('GET .../securities contains security', async () => {
-      const response = await request(http)
-        .get(`/portfolios/${portfolioId}/securities`)
-        .set('Authorization', 'bearer ' + sessionToken)
-
+      const response = await api.get(`/portfolios/${portfolioId}/securities`)
       expect(response.status).toBe(200)
       expect(response.body).toContainEqual(
         expect.objectContaining({
@@ -142,9 +129,9 @@ describe('Securities (e2e)', () => {
     })
 
     test('GET .../securities/$id returns security', async () => {
-      const response = await request(http)
-        .get(`/portfolios/${portfolioId}/securities/${securityId}`)
-        .set('Authorization', 'bearer ' + sessionToken)
+      const response = await api.get(
+        `/portfolios/${portfolioId}/securities/${securityId}`,
+      )
 
       expect(response.status).toBe(200)
       expect(response.body).toMatchObject(testSecurity)
@@ -154,10 +141,10 @@ describe('Securities (e2e)', () => {
       it.each(getObjectsWithMissingAttribute(testSecurity))(
         'fails if attribute %p is missing',
         async (missingAttribute, security) => {
-          const response = await request(http)
-            .put(`/portfolios/${portfolioId}/securities/${securityId}`)
-            .send(security)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const response = await api.put(
+            `/portfolios/${portfolioId}/securities/${securityId}`,
+            security,
+          )
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContainEqual(
@@ -177,17 +164,17 @@ describe('Securities (e2e)', () => {
           symbol: 'another symbol',
         }
 
-        const updateResponse = await request(http)
-          .put(`/portfolios/${portfolioId}/securities/${securityId}`)
-          .send(changedSecurity)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/securities/${securityId}`,
+          changedSecurity,
+        )
 
         expect(updateResponse.status).toBe(200)
         expect(updateResponse.body).toMatchObject(changedSecurity)
 
-        const getResponse = await request(http)
-          .get(`/portfolios/${portfolioId}/securities/${securityId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/securities/${securityId}`,
+        )
 
         expect(getResponse.status).toBe(200)
         expect(getResponse.body).toMatchObject(changedSecurity)
@@ -195,16 +182,16 @@ describe('Securities (e2e)', () => {
     })
 
     test('DELETE .../securities/$id removes security', async () => {
-      const deleteResponse = await request(http)
-        .delete(`/portfolios/${portfolioId}/securities/${securityId}`)
-        .set('Authorization', 'bearer ' + sessionToken)
+      const deleteResponse = await api.delete(
+        `/portfolios/${portfolioId}/securities/${securityId}`,
+      )
 
       expect(deleteResponse.status).toBe(204)
       expect(deleteResponse.body).toStrictEqual({})
 
-      const getResponse = await request(http)
-        .get(`/portfolios/${portfolioId}/securites/${securityId}`)
-        .set('Authorization', 'bearer ' + sessionToken)
+      const getResponse = await api.get(
+        `/portfolios/${portfolioId}/securites/${securityId}`,
+      )
 
       expect(getResponse.status).toBe(404)
     })

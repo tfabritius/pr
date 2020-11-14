@@ -69,6 +69,28 @@ export class ApiClient {
     return createResponse.body.id
   }
 
+  async createSecurity(portfolioId: number, security?): Promise<number> {
+    security = security ?? {
+      name: 'Test security',
+      uuid: '',
+      note: '',
+      currencyCode: '',
+      isin: '',
+      wkn: '',
+      symbol: '',
+    }
+
+    const createResponse = await this.post(
+      `/portfolios/${portfolioId}/securities`,
+      security,
+    )
+
+    if (createResponse.status !== 201) {
+      throw new Error('Failed to create security')
+    }
+    return createResponse.body.id
+  }
+
   public async get(url: string) {
     const req = this.request.get(url)
     this.addAuth(req)
