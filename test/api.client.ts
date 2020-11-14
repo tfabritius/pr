@@ -91,6 +91,18 @@ export class ApiClient {
     return createResponse.body.id
   }
 
+  async createAccount(portfolioId: number, account): Promise<number> {
+    const createResponse = await this.post(
+      `/portfolios/${portfolioId}/accounts`,
+      account,
+    )
+
+    if (createResponse.status !== 201) {
+      throw new Error('Failed to create account')
+    }
+    return createResponse.body.id
+  }
+
   public async get(url: string) {
     const req = this.request.get(url)
     this.addAuth(req)

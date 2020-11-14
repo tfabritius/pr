@@ -1,22 +1,17 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
-import {
-  createAccount,
-  createTestPortfolio,
-  getObjectsWithMissingAttribute,
-  registerUser,
-} from './utils'
+import { ApiClient } from './api.client'
+import { getObjectsWithMissingAttribute } from './utils'
 
 describe('Accounts (e2e)', () => {
   let app: INestApplication
-  let http: any
+  let api: ApiClient
 
   beforeAll(async () => {
     app = await createApp('test')
     await app.init()
-    http = app.getHttpServer()
+    api = ApiClient.create(app.getHttpServer())
   }, 30000) // Timeout: 30s
 
   afterAll(async () => {
@@ -24,16 +19,16 @@ describe('Accounts (e2e)', () => {
   })
 
   const user = { username: 'test-accounts', password: 'testpassword' }
-  let sessionToken: string
 
   beforeAll(async () => {
-    sessionToken = await registerUser(http, user)
+    await api.cleanUser(user, false)
+    ;[api] = await api.register(user)
   })
 
   let portfolioId: number
 
   beforeAll(async () => {
-    portfolioId = await createTestPortfolio(http, sessionToken)
+    portfolioId = await api.createPortfolio()
   })
 
   const testDepositAccount = {
@@ -45,9 +40,7 @@ describe('Accounts (e2e)', () => {
   }
 
   test('GET .../accounts returns empty list', async () => {
-    const response = await request(http)
-      .get(`/portfolios/${portfolioId}/accounts`)
-      .set('Authorization', 'bearer ' + sessionToken)
+    const response = await api.get(`/portfolios/${portfolioId}/accounts`)
 
     expect(response.status).toBe(200)
     expect(response.body).toStrictEqual([])
@@ -62,22 +55,25 @@ describe('Accounts (e2e)', () => {
     ])(
       '%s /portfolios/42%s returns 404 Portfolio not found',
       async (method, url) => {
-        const response = await request(http)
-          [method.toLowerCase()](`/portfolios/42${url}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api[method.toLowerCase()](`/portfolios/42${url}`)
 
         expect(response.status).toBe(404)
         expect(response.body.message).toContain('Portfolio not found')
       },
     )
 
-    test.each([['GET'], ['PUT'], ['DELETE']])(
+    test.each([
+      ['GET', undefined],
+      ['PUT', testDepositAccount],
+      ['DELETE', undefined],
+    ])(
       '%s .../accounts/42 returns 404 Account not found',
-      async (method) => {
-        const response = await request(http)
-          [method.toLowerCase()](`/portfolios/${portfolioId}/accounts/42`)
-          .send(testDepositAccount)
-          .set('Authorization', 'bearer ' + sessionToken)
+      async (method, payload) => {
+        const args: any[] = [`/portfolios/${portfolioId}/accounts/42`]
+        if (payload) {
+          args.push(payload)
+        }
+        const response = await api[method.toLowerCase()](...args)
 
         expect(response.status).toBe(404)
         expect(response.body.message).toContain('Account not found')
@@ -90,10 +86,10 @@ describe('Accounts (e2e)', () => {
       it.each(getObjectsWithMissingAttribute(testDepositAccount))(
         `fails if attribute %p is missing`,
         async (missingAttribute, account) => {
-          const response = await request(http)
-            .post(`/portfolios/${portfolioId}/accounts`)
-            .send(account)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const response = await api.post(
+            `/portfolios/${portfolioId}/accounts`,
+            account,
+          )
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContainEqual(
@@ -103,10 +99,10 @@ describe('Accounts (e2e)', () => {
       )
 
       test('returns account with id', async () => {
-        const createResponse = await request(http)
-          .post(`/portfolios/${portfolioId}/accounts`)
-          .send(testDepositAccount)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const createResponse = await api.post(
+          `/portfolios/${portfolioId}/accounts`,
+          testDepositAccount,
+        )
 
         expect(createResponse.status).toBe(201)
         expect(createResponse.body).toMatchObject(testDepositAccount)
@@ -118,18 +114,14 @@ describe('Accounts (e2e)', () => {
       let depositAccountId: number
 
       beforeEach(async () => {
-        depositAccountId = await createAccount(
-          http,
-          sessionToken,
+        depositAccountId = await api.createAccount(
           portfolioId,
           testDepositAccount,
         )
       })
 
       test('GET .../accounts contains account', async () => {
-        const response = await request(http)
-          .get(`/portfolios/${portfolioId}/accounts`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api.get(`/portfolios/${portfolioId}/accounts`)
 
         expect(response.status).toBe(200)
         expect(response.body).toContainEqual(
@@ -141,9 +133,9 @@ describe('Accounts (e2e)', () => {
       })
 
       test('GET .../accounts/$id returns account', async () => {
-        const response = await request(http)
-          .get(`/portfolios/${portfolioId}/accounts/${depositAccountId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api.get(
+          `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+        )
 
         expect(response.status).toBe(200)
         expect(response.body).toMatchObject(testDepositAccount)
@@ -153,10 +145,10 @@ describe('Accounts (e2e)', () => {
         it.each(getObjectsWithMissingAttribute(testDepositAccount))(
           'fails if attribute %p is missing',
           async (missingAttribute, account) => {
-            const response = await request(http)
-              .put(`/portfolios/${portfolioId}/accounts/${depositAccountId}`)
-              .send(account)
-              .set('Authorization', 'bearer ' + sessionToken)
+            const response = await api.put(
+              `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+              account,
+            )
 
             expect(response.status).toBe(400)
             expect(response.body.message).toContainEqual(
@@ -174,17 +166,17 @@ describe('Accounts (e2e)', () => {
             currencyCode: 'USD',
           }
 
-          const updateResponse = await request(http)
-            .put(`/portfolios/${portfolioId}/accounts/${depositAccountId}`)
-            .send(changedAccount)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const updateResponse = await api.put(
+            `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+            changedAccount,
+          )
 
           expect(updateResponse.status).toBe(200)
           expect(updateResponse.body).toMatchObject(changedAccount)
 
-          const getResponse = await request(http)
-            .get(`/portfolios/${portfolioId}/accounts/${depositAccountId}`)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const getResponse = await api.get(
+            `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+          )
 
           expect(getResponse.status).toBe(200)
           expect(getResponse.body).toMatchObject(changedAccount)
@@ -192,16 +184,16 @@ describe('Accounts (e2e)', () => {
       })
 
       test('DELETE .../accounts/$id removes account', async () => {
-        const deleteResponse = await request(http)
-          .delete(`/portfolios/${portfolioId}/accounts/${depositAccountId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const deleteResponse = await api.delete(
+          `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+        )
 
         expect(deleteResponse.status).toBe(204)
         expect(deleteResponse.body).toStrictEqual({})
 
-        const getResponse = await request(http)
-          .get(`/portfolios/${portfolioId}/accounts/${depositAccountId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+        )
 
         expect(getResponse.status).toBe(404)
       })
@@ -220,9 +212,7 @@ describe('Accounts (e2e)', () => {
     let depositAccountId: number
 
     beforeAll(async () => {
-      depositAccountId = await createAccount(
-        http,
-        sessionToken,
+      depositAccountId = await api.createAccount(
         portfolioId,
         testDepositAccount,
       )
@@ -234,10 +224,10 @@ describe('Accounts (e2e)', () => {
       it.each(getObjectsWithMissingAttribute(testSecuritiesAccount))(
         `fails if attribute %p is missing`,
         async (missingAttribute, account) => {
-          const response = await request(http)
-            .post(`/portfolios/${portfolioId}/accounts`)
-            .send(account)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const response = await api.post(
+            `/portfolios/${portfolioId}/accounts`,
+            account,
+          )
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContainEqual(
@@ -247,10 +237,10 @@ describe('Accounts (e2e)', () => {
       )
 
       it('returns account with id', async () => {
-        const response = await request(http)
-          .post(`/portfolios/${portfolioId}/accounts`)
-          .send(testSecuritiesAccount)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api.post(
+          `/portfolios/${portfolioId}/accounts`,
+          testSecuritiesAccount,
+        )
 
         expect(response.status).toBe(201)
         expect(response.body).toMatchObject(testSecuritiesAccount)
@@ -262,18 +252,14 @@ describe('Accounts (e2e)', () => {
       let securitiesAccountId: number
 
       beforeEach(async () => {
-        securitiesAccountId = await createAccount(
-          http,
-          sessionToken,
+        securitiesAccountId = await api.createAccount(
           portfolioId,
           testSecuritiesAccount,
         )
       })
 
       test('GET .../accounts contains account', async () => {
-        const response = await request(http)
-          .get(`/portfolios/${portfolioId}/accounts`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api.get(`/portfolios/${portfolioId}/accounts`)
 
         expect(response.status).toBe(200)
         expect(response.body).toContainEqual(
@@ -289,9 +275,9 @@ describe('Accounts (e2e)', () => {
       })
 
       test('GET .../accounts/$id returns account', async () => {
-        const response = await request(http)
-          .get(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const response = await api.get(
+          `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+        )
 
         expect(response.status).toBe(200)
         expect(response.body).toMatchObject(testSecuritiesAccount)
@@ -302,10 +288,10 @@ describe('Accounts (e2e)', () => {
         it.each(getObjectsWithMissingAttribute(testSecuritiesAccount))(
           'fails if attribute %p is missing',
           async (missingAttribute, account) => {
-            const response = await request(http)
-              .put(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-              .send(account)
-              .set('Authorization', 'bearer ' + sessionToken)
+            const response = await api.put(
+              `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+              account,
+            )
 
             expect(response.status).toBe(400)
             expect(response.body.message).toContainEqual(
@@ -322,26 +308,24 @@ describe('Accounts (e2e)', () => {
             referenceAccount: { id: depositAccountId },
           }
 
-          const updateResponse = await request(http)
-            .put(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-            .send(changedAccount)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const updateResponse = await api.put(
+            `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+            changedAccount,
+          )
 
           expect(updateResponse.status).toBe(200)
           expect(updateResponse.body).toMatchObject(changedAccount)
 
-          const getResponse = await request(http)
-            .get(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const getResponse = await api.get(
+            `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+          )
 
           expect(getResponse.status).toBe(200)
           expect(getResponse.body).toMatchObject(changedAccount)
         })
 
         it('updates referenceAccount of account', async () => {
-          const secondDepositAccountId = await createAccount(
-            http,
-            sessionToken,
+          const secondDepositAccountId = await api.createAccount(
             portfolioId,
             testDepositAccount,
           )
@@ -351,17 +335,17 @@ describe('Accounts (e2e)', () => {
             referenceAccount: { id: secondDepositAccountId },
           }
 
-          const updateResponse = await request(http)
-            .put(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-            .send(changedAccount)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const updateResponse = await api.put(
+            `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+            changedAccount,
+          )
 
           expect(updateResponse.status).toBe(200)
           expect(updateResponse.body).toMatchObject(changedAccount)
 
-          const getResponse = await request(http)
-            .get(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const getResponse = await api.get(
+            `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+          )
 
           expect(getResponse.status).toBe(200)
           expect(getResponse.body).toMatchObject(changedAccount)
@@ -373,10 +357,10 @@ describe('Accounts (e2e)', () => {
             referenceAccount: { id: -1 },
           }
 
-          const response = await request(http)
-            .put(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-            .send(changedAccount)
-            .set('Authorization', 'bearer ' + sessionToken)
+          const response = await api.put(
+            `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+            changedAccount,
+          )
 
           expect(response.status).toBe(400)
           expect(response.body.message).toMatch('referenceAccount')
@@ -384,16 +368,16 @@ describe('Accounts (e2e)', () => {
       })
 
       test('DELETE .../accounts/$id removes account', async () => {
-        const deleteResponse = await request(http)
-          .delete(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const deleteResponse = await api.delete(
+          `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+        )
 
         expect(deleteResponse.status).toBe(204)
         expect(deleteResponse.body).toStrictEqual({})
 
-        const getResponse = await request(http)
-          .get(`/portfolios/${portfolioId}/accounts/${securitiesAccountId}`)
-          .set('Authorization', 'bearer ' + sessionToken)
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/accounts/${securitiesAccountId}`,
+        )
 
         expect(getResponse.status).toBe(404)
       })
