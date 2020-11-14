@@ -64,7 +64,9 @@ export class ApiClient {
     const createResponse = await this.post('/portfolios', portfolio)
 
     if (createResponse.status !== 201) {
-      throw new Error('Failed to create portfolio')
+      throw new Error(
+        `Failed to create portfolio: ${JSON.stringify(createResponse.body)}`,
+      )
     }
     return createResponse.body.id
   }
@@ -86,7 +88,9 @@ export class ApiClient {
     )
 
     if (createResponse.status !== 201) {
-      throw new Error('Failed to create security')
+      throw new Error(
+        `Failed to create security: ${JSON.stringify(createResponse.body)}`,
+      )
     }
     return createResponse.body.id
   }
@@ -98,7 +102,9 @@ export class ApiClient {
     )
 
     if (createResponse.status !== 201) {
-      throw new Error('Failed to create account')
+      throw new Error(
+        `Failed to create account: : ${JSON.stringify(createResponse.body)}`,
+      )
     }
     return createResponse.body.id
   }
@@ -138,7 +144,9 @@ export class ApiClient {
     )
 
     if (createResponse.status !== 201) {
-      throw new Error('Failed to create transaction')
+      throw new Error(
+        `Failed to create transaction: ${JSON.stringify(createResponse.body)}`,
+      )
     }
     return createResponse.body.id
   }
