@@ -54,23 +54,20 @@ export class TransactionsService {
   }
 
   /**
-   * Creates transaction
+   * Make sure referenced entities exist and belong to this portfolio
    */
-  async create(
-    portfolio: Portfolio,
+  private async checkOwnerOfReferences(
+    portfolioId: number,
     dto: TransactionDto,
-  ): Promise<Transaction> {
-    const hasPartnerTransaction = !!dto.partnerTransaction
-
-    // Make sure referenced entities exist and belong to this portfolio
+  ) {
     try {
       await this.accountsService.getOne({
-        portfolioId: portfolio.id,
+        portfolioId,
         accountId: dto.account.id,
       })
-      if (hasPartnerTransaction) {
+      if (dto.partnerTransaction) {
         await this.accountsService.getOne({
-          portfolioId: portfolio.id,
+          portfolioId,
           accountId: dto.partnerTransaction.account.id,
         })
       }
@@ -81,19 +78,31 @@ export class TransactionsService {
     try {
       if (dto.security) {
         await this.securitiesService.getOne({
-          portfolioId: portfolio.id,
+          portfolioId,
           securityId: dto.security.id,
         })
       }
-      if (hasPartnerTransaction && dto.partnerTransaction.security) {
+      if (dto.partnerTransaction && dto.partnerTransaction.security) {
         await this.securitiesService.getOne({
-          portfolioId: portfolio.id,
+          portfolioId,
           securityId: dto.partnerTransaction.security.id,
         })
       }
     } catch (e) {
       throw new BadRequestException('Security not found')
     }
+  }
+
+  /**
+   * Creates transaction
+   */
+  async create(
+    portfolio: Portfolio,
+    dto: TransactionDto,
+  ): Promise<Transaction> {
+    const hasPartnerTransaction = !!dto.partnerTransaction
+
+    await this.checkOwnerOfReferences(portfolio.id, dto)
 
     let transaction = new Transaction()
     transaction.portfolio = portfolio
@@ -213,6 +222,8 @@ export class TransactionsService {
         dto.partnerTransaction.units,
       )
     }
+
+    await this.checkOwnerOfReferences(params.portfolioId, dto)
 
     // Get transaction from db without deleted units
     transaction = await this.getOne(params)
