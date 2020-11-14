@@ -103,6 +103,46 @@ export class ApiClient {
     return createResponse.body.id
   }
 
+  async createTestDepositSecuritiesAccounts(
+    portfolioId,
+  ): Promise<[number, number]> {
+    const testDepositAccount = {
+      type: 'deposit',
+      name: 'Test deposit account',
+      uuid: '',
+      note: '',
+      currencyCode: 'EUR',
+    }
+    const testDepositAccountId = await this.createAccount(
+      portfolioId,
+      testDepositAccount,
+    )
+    const testSecuritiesAccount = {
+      type: 'securities',
+      name: 'Test securities account',
+      uuid: '',
+      note: '',
+      referenceAccount: { id: testDepositAccountId },
+    }
+    const testSecuritiesAccountId = await this.createAccount(
+      portfolioId,
+      testSecuritiesAccount,
+    )
+    return [testDepositAccountId, testSecuritiesAccountId]
+  }
+
+  async createTransaction(portfolioId: number, transaction): Promise<number> {
+    const createResponse = await this.post(
+      `/portfolios/${portfolioId}/transactions`,
+      transaction,
+    )
+
+    if (createResponse.status !== 201) {
+      throw new Error('Failed to create transaction')
+    }
+    return createResponse.body.id
+  }
+
   public async get(url: string) {
     const req = this.request.get(url)
     this.addAuth(req)
