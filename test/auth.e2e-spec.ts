@@ -1,19 +1,18 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
-import { loginAndDeleteUser } from './utils'
+import { ApiClient } from './api.client'
 
 describe('Authentication (e2e)', () => {
   let app: INestApplication
-  let http: any
+  let api: ApiClient
 
   const user = { username: 'TestUser', password: 'testpassword' }
 
   beforeAll(async () => {
     app = await createApp('test')
     await app.init()
-    http = app.getHttpServer()
+    api = ApiClient.create(app.getHttpServer())
   })
 
   afterAll(async () => {
@@ -25,16 +24,15 @@ describe('Authentication (e2e)', () => {
       let registerResponse
 
       beforeAll(async () => {
-        await loginAndDeleteUser(http, user)
+        const [authApi] = await api.login(user, false)
+        await authApi.delete('/auth/users/me')
       })
 
       describe('successful registration', () => {
         let me
 
         beforeAll(async () => {
-          registerResponse = await request(http)
-            .post('/auth/register')
-            .send(user)
+          registerResponse = await api.post('/auth/register', user)
         })
 
         it('returns session token', () => {
@@ -47,9 +45,9 @@ describe('Authentication (e2e)', () => {
         })
 
         it('returns valid session token', async () => {
-          const response = await request(http)
+          const response = await api
+            .session(registerResponse.body.token)
             .get('/auth/users/me')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
 
           expect(response.status).toBe(200)
           me = response.body
@@ -63,7 +61,7 @@ describe('Authentication (e2e)', () => {
         })
 
         it('fails to register same user again', async () => {
-          const response = await request(http).post('/auth/register').send(user)
+          const response = await api.post('/auth/register', user)
           expect(response.status).toBe(400)
           expect(response.body.message).toBe('Username is already in use.')
         })
@@ -71,36 +69,38 @@ describe('Authentication (e2e)', () => {
 
       describe('failed registrations', () => {
         it('fails without username', async () => {
-          const response = await request(http)
-            .post('/auth/register')
-            .send({ password: 'testpassword' })
+          const response = await api.post('/auth/register', {
+            password: 'testpassword',
+          })
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContain('Username is missing')
         })
 
         it('fails with empty username', async () => {
-          const response = await request(http)
-            .post('/auth/register')
-            .send({ user: '', password: 'testpassword' })
+          const response = await api.post('/auth/register', {
+            user: '',
+            password: 'testpassword',
+          })
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContain('Username is missing')
         })
 
         it('fails without password', async () => {
-          const response = await request(http)
-            .post('/auth/register')
-            .send({ username: 'randomuser' })
+          const response = await api.post('/auth/register', {
+            username: 'randomuser',
+          })
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContain('Password is missing')
         })
 
         it('fails with empty password', async () => {
-          const response = await request(http)
-            .post('/auth/register')
-            .send({ username: 'randomuser', password: '' })
+          const response = await api.post('/auth/register', {
+            username: 'randomuser',
+            password: '',
+          })
 
           expect(response.status).toBe(400)
           expect(response.body.message).toContainEqual(
@@ -110,9 +110,10 @@ describe('Authentication (e2e)', () => {
       })
 
       afterAll(async () => {
-        const response = await request(http)
+        const response = await api
+          .session(registerResponse.body.token)
           .delete('/auth/users/me')
-          .set('Authorization', 'bearer ' + registerResponse.body.token)
+
         expect(response.status).toBe(204)
       })
     })
@@ -122,10 +123,10 @@ describe('Authentication (e2e)', () => {
       let me
 
       beforeAll(async () => {
-        const response = await request(http).post('/auth/register').send(user)
+        const response = await api.post('/auth/register', user)
         expect(response.status).toBe(201)
 
-        loginResponse = await request(http).post('/auth/login').send(user)
+        loginResponse = await api.post('/auth/login', user)
       })
 
       describe('successful login', () => {
@@ -135,9 +136,9 @@ describe('Authentication (e2e)', () => {
         })
 
         it('returns valid session token', async () => {
-          const response = await request(http)
+          const response = await api
+            .session(loginResponse.body.token)
             .get('/auth/users/me')
-            .set('Authorization', 'bearer ' + loginResponse.body.token)
 
           expect(response.status).toBe(200)
           me = response.body
@@ -157,45 +158,43 @@ describe('Authentication (e2e)', () => {
 
       describe('failed logins', () => {
         it('fails without password', async () => {
-          const response = await request(http)
-            .post('/auth/login')
-            .send({ username: user.username })
+          const response = await api.post('/auth/login', {
+            username: user.username,
+          })
 
           expect(response.status).toBe(401)
         })
 
         it('fails with wrong password', async () => {
-          const response = await request(http)
-            .post('/auth/login')
-            .send({ username: user.username, password: 'wrong' })
+          const response = await api.post('/auth/login', {
+            username: user.username,
+            password: 'wrong',
+          })
 
           expect(response.status).toBe(401)
         })
       })
 
       afterAll(async () => {
-        const response = await request(http)
+        const response = await api
+          .session(loginResponse.body.token)
           .delete('/auth/users/me')
-          .set('Authorization', 'bearer ' + loginResponse.body.token)
         expect(response.status).toBe(204)
       })
     })
 
     describe('/auth/logout', () => {
-      let registerResponse
+      let authApi: ApiClient
 
       beforeAll(async () => {
-        registerResponse = await request(http).post('/auth/register').send(user)
-        expect(registerResponse.status).toBe(201)
+        ;[authApi] = await api.register(user)
       })
 
       describe('successful logout', () => {
         let logoutResponse
 
         beforeAll(async () => {
-          logoutResponse = await request(http)
-            .post('/auth/logout')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
+          logoutResponse = await authApi.post('/auth/logout')
         })
 
         it('returns nothing', () => {
@@ -204,43 +203,34 @@ describe('Authentication (e2e)', () => {
         })
 
         it('invalidates session token', async () => {
-          const response = await request(http)
-            .get('/auth/users/me')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
+          const response = await authApi.get('/auth/users/me')
 
           expect(response.status).toBe(401)
         })
       })
 
       afterAll(async () => {
-        const loginResponse = await request(http).post('/auth/login').send(user)
-        expect(loginResponse.status).toBe(201)
-        const deleteResponse = await request(http)
-          .delete('/auth/users/me')
-          .set('Authorization', 'bearer ' + loginResponse.body.token)
+        const [authApi] = await api.login(user)
+        const deleteResponse = await authApi.delete('/auth/users/me')
         expect(deleteResponse.status).toBe(204)
       })
     })
 
     describe('/auth/sessions', () => {
       let registerResponse
+      let authApi: ApiClient
 
       beforeAll(async () => {
-        registerResponse = await request(http).post('/auth/register').send(user)
-        expect(registerResponse.status).toBe(201)
+        ;[authApi, registerResponse] = await api.register(user)
       })
 
       afterAll(async () => {
-        const response = await request(http)
-          .delete('/auth/users/me')
-          .set('Authorization', 'bearer ' + registerResponse.body.token)
+        const response = await authApi.delete('/auth/users/me')
         expect(response.status).toBe(204)
       })
 
       it('returns list of sessions', async () => {
-        const response = await request(http)
-          .get('/auth/sessions')
-          .set('Authorization', 'bearer ' + registerResponse.body.token)
+        const response = await authApi.get('/auth/sessions')
 
         expect(response.status).toBe(200)
         expect(response.body).toContainEqual(
@@ -252,18 +242,15 @@ describe('Authentication (e2e)', () => {
     })
 
     describe('/auth/users', () => {
-      let registerResponse
+      let authApi: ApiClient
 
       beforeAll(async () => {
-        registerResponse = await request(http).post('/auth/register').send(user)
-        expect(registerResponse.status).toBe(201)
+        ;[authApi] = await api.register(user)
       })
 
       describe('GET ../me', () => {
         it('returns user information', async () => {
-          const response = await request(http)
-            .get('/auth/users/me')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
+          const response = await authApi.get('/auth/users/me')
 
           expect(response.status).toBe(200)
           expect(response.body.username).toBe(user.username.toLowerCase())
@@ -275,10 +262,11 @@ describe('Authentication (e2e)', () => {
 
       describe('POST ../me/password', () => {
         it('fails if old password is wrong', async () => {
-          const response = await request(http)
-            .post('/auth/users/me/password')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
-            .send({ oldPassword: 'wrong', newPassword: 'newPassword' })
+          const response = await authApi.post('/auth/users/me/password', {
+            oldPassword: 'wrong',
+            newPassword: 'newPassword',
+          })
+
           expect(response.status).toBe(403)
         })
 
@@ -286,10 +274,10 @@ describe('Authentication (e2e)', () => {
           let changeResponse
 
           beforeAll(async () => {
-            changeResponse = await request(http)
-              .post('/auth/users/me/password')
-              .set('Authorization', 'bearer ' + registerResponse.body.token)
-              .send({ oldPassword: user.password, newPassword: 'newPassword' })
+            changeResponse = await authApi.post('/auth/users/me/password', {
+              oldPassword: user.password,
+              newPassword: 'newPassword',
+            })
           })
 
           it('returns nothing', () => {
@@ -298,14 +286,15 @@ describe('Authentication (e2e)', () => {
           })
 
           it('prevents login with old password', async () => {
-            const response = await request(http).post('/auth/login').send(user)
+            const response = await api.post('/auth/login', user)
             expect(response.status).toBe(401)
           })
 
           it('allows login with new password', async () => {
-            const response = await request(http)
-              .post('/auth/login')
-              .send({ username: user.username, password: 'newPassword' })
+            const response = await api.post('/auth/login', {
+              username: user.username,
+              password: 'newPassword',
+            })
             expect(response.status).toBe(201)
           })
         })
@@ -315,9 +304,7 @@ describe('Authentication (e2e)', () => {
         let deleteResponse
 
         beforeAll(async () => {
-          deleteResponse = await request(http)
-            .delete('/auth/users/me')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
+          deleteResponse = await authApi.delete('/auth/users/me')
         })
 
         it('returns nothing', () => {
@@ -326,15 +313,13 @@ describe('Authentication (e2e)', () => {
         })
 
         it('removes the session', async () => {
-          const response = await request(http)
-            .get('/auth/users/me')
-            .set('Authorization', 'bearer ' + registerResponse.body.token)
+          const response = await authApi.get('/auth/users/me')
 
           expect(response.status).toBe(401)
         })
 
         it('removes the user', async () => {
-          const response = await request(http).post('/auth/login').send(user)
+          const response = await api.post('/auth/login', user)
           expect(response.status).toBe(401)
         })
       })
