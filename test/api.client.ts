@@ -55,6 +55,20 @@ export class ApiClient {
     }
   }
 
+  public async createPortfolio(portfolio?): Promise<number> {
+    portfolio = portfolio ?? {
+      name: 'Test Portfolio',
+      note: 'Test comment',
+      baseCurrencyCode: 'EUR',
+    }
+    const createResponse = await this.post('/portfolios', portfolio)
+
+    if (createResponse.status !== 201) {
+      throw new Error('Failed to create portfolio')
+    }
+    return createResponse.body.id
+  }
+
   public async get(url: string) {
     const req = this.request.get(url)
     this.addAuth(req)
