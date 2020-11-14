@@ -24,8 +24,7 @@ describe('Authentication (e2e)', () => {
       let registerResponse
 
       beforeAll(async () => {
-        const [authApi] = await api.login(user, false)
-        await authApi.delete('/auth/users/me')
+        await api.cleanUser(user, false)
       })
 
       describe('successful registration', () => {

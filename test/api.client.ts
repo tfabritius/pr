@@ -17,6 +17,14 @@ export class ApiClient {
     return apiClient
   }
 
+  async cleanUser(user, validate = true) {
+    const [authApi] = await this.login(user, validate)
+    const response = await authApi.delete('/auth/users/me')
+    if (validate && response.status !== 204) {
+      throw new Error(`Failed to delete user: ${JSON.stringify(response.body)}`)
+    }
+  }
+
   async register(
     payload,
     validate = true,
