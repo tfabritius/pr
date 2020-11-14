@@ -181,6 +181,24 @@ describe('Accounts (e2e)', () => {
           expect(getResponse.status).toBe(200)
           expect(getResponse.body).toMatchObject(changedAccount)
         })
+
+        it('does not update "id"', async () => {
+          const updateResponse = await api.put(
+            `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+            {
+              ...testDepositAccount,
+              id: depositAccountId + 666,
+            },
+          )
+
+          expect(updateResponse.status).toBe(200)
+          expect(updateResponse.body.id).toBe(depositAccountId)
+
+          const getResponse = await api.get(
+            `/portfolios/${portfolioId}/accounts/${depositAccountId}`,
+          )
+          expect(getResponse.status).toBe(200)
+        })
       })
 
       test('DELETE .../accounts/$id removes account', async () => {

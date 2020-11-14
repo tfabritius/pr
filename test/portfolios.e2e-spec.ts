@@ -122,6 +122,19 @@ describe('Portfolios (e2e)', () => {
         expect(getResponse.status).toBe(200)
         expect(getResponse.body).toMatchObject(changedPortfolio)
       })
+
+      it('does not update "id"', async () => {
+        const updateResponse = await api.put(`/portfolios/${portfolioId}`, {
+          ...testPortfolio,
+          id: portfolioId + 666,
+        })
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body.id).toBe(portfolioId)
+
+        const getResponse = await api.get(`/portfolios/${portfolioId}`)
+        expect(getResponse.status).toBe(200)
+      })
     })
 
     test('DELETE /portfolios/$id removes portfolio', async () => {

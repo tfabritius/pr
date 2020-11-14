@@ -179,6 +179,24 @@ describe('Securities (e2e)', () => {
         expect(getResponse.status).toBe(200)
         expect(getResponse.body).toMatchObject(changedSecurity)
       })
+
+      it('does not update "id"', async () => {
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/securities/${securityId}`,
+          {
+            ...testSecurity,
+            id: securityId + 666,
+          },
+        )
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body.id).toBe(securityId)
+
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/securities/${securityId}`,
+        )
+        expect(getResponse.status).toBe(200)
+      })
     })
 
     test('DELETE .../securities/$id removes security', async () => {

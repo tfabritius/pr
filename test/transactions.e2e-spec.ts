@@ -383,6 +383,24 @@ describe('Transactions (e2e)', () => {
           changedTransaction.units.length,
         )
       })
+
+      it('does not update "id"', async () => {
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          {
+            ...testTransactionMinimal,
+            id: minTransactionId + 666,
+          },
+        )
+
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body.id).toBe(minTransactionId)
+
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+        )
+        expect(getResponse.status).toBe(200)
+      })
     })
 
     test('DELETE .../transactions/$id removes transaction', async () => {
