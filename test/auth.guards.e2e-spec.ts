@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 import { createApp } from '../src/app.factory'
 import { ApiClient } from './api.client'
 
-describe('Guards (e2e)', () => {
+describe('Auth Guards (e2e)', () => {
   let app: INestApplication
   let api: ApiClient
 
