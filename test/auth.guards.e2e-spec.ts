@@ -1,16 +1,16 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
 
 import { createApp } from '../src/app.factory'
+import { ApiClient } from './api.client'
 
 describe('Guards (e2e)', () => {
   let app: INestApplication
-  let http: any
+  let api: ApiClient
 
   beforeAll(async () => {
     app = await createApp('test')
     await app.init()
-    http = app.getHttpServer()
+    api = ApiClient.create(app.getHttpServer())
   })
 
   afterAll(async () => {
@@ -49,7 +49,7 @@ describe('Guards (e2e)', () => {
     test.each(endpoints)(
       '%s %s fails without session token',
       async (method, url) => {
-        const response = await request(http)[method](url)
+        const response = await api[method](url)
         expect(response.status).toBe(401)
       },
     )
@@ -57,9 +57,7 @@ describe('Guards (e2e)', () => {
     test.each(endpoints)(
       '%s %s fails with invalid session token',
       async (method, url) => {
-        const response = await request(http)
-          [method](url)
-          .set('Authorization', 'bearer non-existent')
+        const response = await api.session('non-existent')[method](url)
         expect(response.status).toBe(401)
       },
     )

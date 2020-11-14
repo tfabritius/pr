@@ -62,6 +62,15 @@ export class ApiClient {
     return req
   }
 
+  public async put(url: string, payload?) {
+    const req = this.request.put(url)
+    this.addAuth(req)
+    if (payload) {
+      req.send(payload)
+    }
+    return req
+  }
+
   public async delete(url: string) {
     const req = this.request.delete(url)
     this.addAuth(req)
