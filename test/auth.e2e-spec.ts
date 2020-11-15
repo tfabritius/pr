@@ -19,116 +19,120 @@ describe('Authentication (e2e)', () => {
     await app.close()
   })
 
-  describe('Authentication', () => {
-    describe('/auth/register', () => {
+  describe('/auth/register', () => {
+    beforeAll(async () => {
+      await api.cleanUser(user, false)
+    })
+
+    describe('successful registration', () => {
       let registerResponse
 
       beforeAll(async () => {
-        await api.cleanUser(user, false)
+        registerResponse = await api.post('/auth/register', user)
       })
 
-      describe('successful registration', () => {
-        let me
-
-        beforeAll(async () => {
-          registerResponse = await api.post('/auth/register', user)
-        })
-
-        it('returns session token', () => {
-          expect(registerResponse.status).toBe(201)
-          expect(typeof registerResponse.body.token).toBe('string')
-        })
-
-        it('does not return user information', () => {
-          expect(registerResponse.body.user).toBeUndefined()
-        })
-
-        it('returns valid session token', async () => {
-          const response = await api
-            .session(registerResponse.body.token)
-            .get('/auth/users/me')
-
-          expect(response.status).toBe(200)
-          me = response.body
-        })
-
-        it('converts username to lowercase', () => {
-          expect(me.username).toBe(user.username.toLowerCase())
-
-          // Make sure we are not testing with lowercase username only
-          expect(me.username).not.toBe(user.username)
-        })
-
-        it('fails to register same user again', async () => {
-          const response = await api.post('/auth/register', user)
-          expect(response.status).toBe(400)
-          expect(response.body.message).toBe('Username is already in use.')
-        })
+      it('returns session token', () => {
+        expect(registerResponse.status).toBe(201)
+        expect(typeof registerResponse.body.token).toBe('string')
       })
 
-      describe('failed registrations', () => {
-        it('fails without username', async () => {
-          const response = await api.post('/auth/register', {
-            password: 'testpassword',
-          })
-
-          expect(response.status).toBe(400)
-          expect(response.body.message).toContain('Username is missing')
-        })
-
-        it('fails with empty username', async () => {
-          const response = await api.post('/auth/register', {
-            user: '',
-            password: 'testpassword',
-          })
-
-          expect(response.status).toBe(400)
-          expect(response.body.message).toContain('Username is missing')
-        })
-
-        it('fails without password', async () => {
-          const response = await api.post('/auth/register', {
-            username: 'randomuser',
-          })
-
-          expect(response.status).toBe(400)
-          expect(response.body.message).toContain('Password is missing')
-        })
-
-        it('fails with empty password', async () => {
-          const response = await api.post('/auth/register', {
-            username: 'randomuser',
-            password: '',
-          })
-
-          expect(response.status).toBe(400)
-          expect(response.body.message).toContainEqual(
-            expect.stringContaining('Password is too short'),
-          )
-        })
+      it('does not return user information', () => {
+        expect(registerResponse.body.user).toBeUndefined()
       })
 
-      afterAll(async () => {
+      it('returns valid session token', async () => {
         const response = await api
           .session(registerResponse.body.token)
-          .delete('/auth/users/me')
+          .get('/auth/users/me')
 
-        expect(response.status).toBe(204)
+        expect(response.status).toBe(200)
+      })
+
+      it('converts username to lowercase', async () => {
+        const response = await api
+          .session(registerResponse.body.token)
+          .get('/auth/users/me')
+
+        expect(response.body.username).toBe(user.username.toLowerCase())
+
+        // Make sure we are not testing with lowercase username only
+        expect(response.body.username).not.toBe(user.username)
+      })
+
+      it('fails to register same user again', async () => {
+        const response = await api.post('/auth/register', user)
+        expect(response.status).toBe(400)
+        expect(response.body.message).toBe('Username is already in use.')
       })
     })
 
-    describe('/auth/login', () => {
-      let loginResponse
-      let me
+    describe('failed registrations', () => {
+      it('fails without username', async () => {
+        const response = await api.post('/auth/register', {
+          password: 'testpassword',
+        })
 
-      beforeAll(async () => {
-        const response = await api.post('/auth/register', user)
-        expect(response.status).toBe(201)
-
-        loginResponse = await api.post('/auth/login', user)
+        expect(response.status).toBe(400)
+        expect(response.body.message).toContain('Username is missing')
       })
 
+      it('fails with empty username', async () => {
+        const response = await api.post('/auth/register', {
+          user: '',
+          password: 'testpassword',
+        })
+
+        expect(response.status).toBe(400)
+        expect(response.body.message).toContain('Username is missing')
+      })
+
+      it('fails without password', async () => {
+        const response = await api.post('/auth/register', {
+          username: 'randomuser',
+        })
+
+        expect(response.status).toBe(400)
+        expect(response.body.message).toContain('Password is missing')
+      })
+
+      it('fails with empty password', async () => {
+        const response = await api.post('/auth/register', {
+          username: 'randomuser',
+          password: '',
+        })
+
+        expect(response.status).toBe(400)
+        expect(response.body.message).toContainEqual(
+          expect.stringContaining('Password is too short'),
+        )
+      })
+    })
+
+    afterAll(async () => {
+      await api.cleanUser(user)
+    })
+  })
+
+  describe('with registered user', () => {
+    let authApi: ApiClient
+    let registerResponse
+
+    beforeAll(async () => {
+      ;[authApi, registerResponse] = await api.register(user)
+    })
+
+    afterAll(async () => {
+      await api.cleanUser(user)
+    })
+
+    describe('/auth/login', () => {
       describe('successful login', () => {
+        let loginResponse
+
+        beforeAll(async () => {
+          loginResponse = await api.post('/auth/login', user)
+        })
+
         it('returns session token', () => {
           expect(loginResponse.status).toBe(201)
           expect(typeof loginResponse.body.token).toBe('string')
@@ -140,18 +144,21 @@ describe('Authentication (e2e)', () => {
             .get('/auth/users/me')
 
           expect(response.status).toBe(200)
-          me = response.body
         })
 
         it('does not return user information', () => {
           expect(loginResponse.body.user).toBeUndefined()
         })
 
-        it('converts username to lowercase', () => {
-          expect(me.username).toBe(user.username.toLowerCase())
+        it('converts username to lowercase', async () => {
+          const response = await api
+            .session(loginResponse.body.token)
+            .get('/auth/users/me')
+
+          expect(response.body.username).toBe(user.username.toLowerCase())
 
           // Make sure we are not testing with lowercase username only
-          expect(me.username).not.toBe(user.username)
+          expect(response.body.username).not.toBe(user.username)
         })
       })
 
@@ -173,27 +180,16 @@ describe('Authentication (e2e)', () => {
           expect(response.status).toBe(401)
         })
       })
-
-      afterAll(async () => {
-        const response = await api
-          .session(loginResponse.body.token)
-          .delete('/auth/users/me')
-        expect(response.status).toBe(204)
-      })
     })
 
     describe('/auth/logout', () => {
-      let authApi: ApiClient
-
-      beforeAll(async () => {
-        ;[authApi] = await api.register(user)
-      })
-
       describe('successful logout', () => {
         let logoutResponse
+        let sessionApi: ApiClient
 
         beforeAll(async () => {
-          logoutResponse = await authApi.post('/auth/logout')
+          ;[sessionApi] = await api.login(user)
+          logoutResponse = await sessionApi.post('/auth/logout')
         })
 
         it('returns nothing', () => {
@@ -202,32 +198,13 @@ describe('Authentication (e2e)', () => {
         })
 
         it('invalidates session token', async () => {
-          const response = await authApi.get('/auth/users/me')
-
+          const response = await sessionApi.get('/auth/users/me')
           expect(response.status).toBe(401)
         })
-      })
-
-      afterAll(async () => {
-        const [authApi] = await api.login(user)
-        const deleteResponse = await authApi.delete('/auth/users/me')
-        expect(deleteResponse.status).toBe(204)
       })
     })
 
     describe('/auth/sessions', () => {
-      let registerResponse
-      let authApi: ApiClient
-
-      beforeAll(async () => {
-        ;[authApi, registerResponse] = await api.register(user)
-      })
-
-      afterAll(async () => {
-        const response = await authApi.delete('/auth/users/me')
-        expect(response.status).toBe(204)
-      })
-
       it('returns list of sessions', async () => {
         const response = await authApi.get('/auth/sessions')
 
@@ -241,12 +218,6 @@ describe('Authentication (e2e)', () => {
     })
 
     describe('/auth/users', () => {
-      let authApi: ApiClient
-
-      beforeAll(async () => {
-        ;[authApi] = await api.register(user)
-      })
-
       describe('GET ../me', () => {
         it('returns user information', async () => {
           const response = await authApi.get('/auth/users/me')
@@ -258,70 +229,84 @@ describe('Authentication (e2e)', () => {
           )
         })
       })
+    })
+  })
 
-      describe('POST ../me/password', () => {
-        it('fails if old password is wrong', async () => {
-          const response = await authApi.post('/auth/users/me/password', {
-            oldPassword: 'wrong',
-            newPassword: 'newPassword',
-          })
+  describe('POST /auth/users/me/password', () => {
+    let authApi: ApiClient
 
-          expect(response.status).toBe(403)
-        })
+    beforeAll(async () => {
+      ;[authApi] = await api.register(user)
+    })
 
-        describe('successful change', () => {
-          let changeResponse
+    afterAll(async () => {
+      // Password might be changed after tests
+      const response = await authApi.delete('/auth/users/me')
+      expect(response.status).toBe(204)
+    })
 
-          beforeAll(async () => {
-            changeResponse = await authApi.post('/auth/users/me/password', {
-              oldPassword: user.password,
-              newPassword: 'newPassword',
-            })
-          })
+    it('fails if old password is wrong', async () => {
+      const response = await authApi.post('/auth/users/me/password', {
+        oldPassword: 'wrong',
+        newPassword: 'newPassword',
+      })
 
-          it('returns nothing', () => {
-            expect(changeResponse.status).toBe(201)
-            expect(changeResponse.body).toStrictEqual({})
-          })
+      expect(response.status).toBe(403)
+    })
 
-          it('prevents login with old password', async () => {
-            const response = await api.post('/auth/login', user)
-            expect(response.status).toBe(401)
-          })
+    describe('successful change', () => {
+      let changeResponse
 
-          it('allows login with new password', async () => {
-            const response = await api.post('/auth/login', {
-              username: user.username,
-              password: 'newPassword',
-            })
-            expect(response.status).toBe(201)
-          })
+      beforeAll(async () => {
+        changeResponse = await authApi.post('/auth/users/me/password', {
+          oldPassword: user.password,
+          newPassword: 'newPassword',
         })
       })
 
-      describe('DELETE ../me', () => {
-        let deleteResponse
-
-        beforeAll(async () => {
-          deleteResponse = await authApi.delete('/auth/users/me')
-        })
-
-        it('returns nothing', () => {
-          expect(deleteResponse.status).toBe(204)
-          expect(deleteResponse.body).toStrictEqual({})
-        })
-
-        it('removes the session', async () => {
-          const response = await authApi.get('/auth/users/me')
-
-          expect(response.status).toBe(401)
-        })
-
-        it('removes the user', async () => {
-          const response = await api.post('/auth/login', user)
-          expect(response.status).toBe(401)
-        })
+      it('returns nothing', () => {
+        expect(changeResponse.status).toBe(201)
+        expect(changeResponse.body).toStrictEqual({})
       })
+
+      it('prevents login with old password', async () => {
+        const response = await api.post('/auth/login', user)
+        expect(response.status).toBe(401)
+      })
+
+      it('allows login with new password', async () => {
+        const response = await api.post('/auth/login', {
+          username: user.username,
+          password: 'newPassword',
+        })
+        expect(response.status).toBe(201)
+      })
+    })
+  })
+
+  describe('DELETE /auth/users/me', () => {
+    let authApi: ApiClient
+    let deleteResponse
+
+    beforeAll(async () => {
+      ;[authApi] = await api.register(user)
+      deleteResponse = await authApi.delete('/auth/users/me')
+    })
+
+    it('returns nothing', () => {
+      expect(deleteResponse.status).toBe(204)
+      expect(deleteResponse.body).toStrictEqual({})
+    })
+
+    it('removes the session', async () => {
+      const response = await authApi.get('/auth/users/me')
+
+      expect(response.status).toBe(401)
+    })
+
+    it('removes the user', async () => {
+      const response = await api.post('/auth/login', user)
+      expect(response.status).toBe(401)
     })
   })
 })
