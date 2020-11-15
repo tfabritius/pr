@@ -104,28 +104,57 @@ describe('Portfolio Guards (e2e)', () => {
       ]
     })
 
-    describe.each([['GET'], ['PUT'], ['DELETE']])(
-      '%s foreign object',
-      (method) => {
-        test('via foreign portfolio returns 404', async () => {
+    describe('via foreign portfolio', () => {
+      test.each([['GET'], ['PUT'], ['DELETE']])(
+        '%s foreign object returns 404',
+        async (method) => {
           for (const url of urls) {
             const response = await apiTwo[method.toLowerCase()](
               `/portfolios/${portfolioOne}${url}`,
             )
             expect(response.status).toBe(404)
+            expect(response.body.message).toContain('Portfolio not found')
           }
-        })
+        },
+      )
+    })
 
-        test('via own portfolio returns 404', async () => {
+    describe('via own portfolio', () => {
+      test.each([['GET'], ['DELETE']])(
+        '%s foreign object returns 404',
+        async (method) => {
           for (const url of urls) {
             const response = await apiTwo[method.toLowerCase()](
-              `/portfolios/${portfolioTwo}/${url}`,
+              `/portfolios/${portfolioTwo}${url}`,
             )
             expect(response.status).toBe(404)
+            expect(response.body.message).toMatch(
+              /(Account)|(Security)|(Transaction) not found/,
+            )
           }
-        })
-      },
-    )
+        },
+      )
+
+      test('PUT foreign object returns 404', async () => {
+        for (const url of urls) {
+          // Get valid object to pass global validation
+          const getResponse = await apiOne.get(
+            `/portfolios/${portfolioOne}${url}`,
+          )
+          expect(getResponse.status).toBe(200)
+          const validObject = getResponse.body
+
+          const updateResponse = await apiTwo.put(
+            `/portfolios/${portfolioTwo}${url}`,
+            validObject,
+          )
+          expect(updateResponse.status).toBe(404)
+          expect(updateResponse.body.message).toMatch(
+            /(Account)|(Security)|(Transaction) not found/,
+          )
+        }
+      })
+    })
 
     describe('References across users', () => {
       test('Creating account with referenceAccount in foreign portfolio fails', async () => {
