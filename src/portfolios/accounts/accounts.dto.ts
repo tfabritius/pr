@@ -1,22 +1,13 @@
 import {
-  IsDefined,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsString,
   ValidateIf,
-  ValidateNested,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { AccountType } from './account.entity'
-import { Type } from 'class-transformer'
-
-export class AccountIdDto {
-  @ApiProperty()
-  @IsNumber()
-  readonly id: number
-}
 
 export class AccountDto {
   @ApiProperty({ enum: AccountType, enumName: 'AccountType' })
@@ -39,10 +30,8 @@ export class AccountDto {
 
   @ApiProperty()
   @ValidateIf((o) => o.type === AccountType.SECURITIES)
-  @ValidateNested()
-  @Type(() => AccountIdDto)
-  @IsDefined()
-  readonly referenceAccount: AccountIdDto
+  @IsNumber()
+  readonly referenceAccountId: number
 
   @ApiProperty()
   @IsString()

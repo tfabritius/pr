@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   Index,
+  RelationId,
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
 
@@ -43,8 +44,13 @@ export class Account {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  @ApiProperty()
+  @ApiHideProperty()
   referenceAccount: Account
+
+  @Column({ nullable: true })
+  @RelationId((account: Account) => account.referenceAccount)
+  @ApiProperty()
+  referenceAccountId: number
 
   @Column()
   @ApiProperty()

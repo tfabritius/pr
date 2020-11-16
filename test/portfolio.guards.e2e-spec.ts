@@ -165,7 +165,7 @@ describe('Portfolio Guards (e2e)', () => {
             name: '...',
             uuid: '',
             note: '',
-            referenceAccount: { id: accountOne },
+            referenceAccountId: accountOne,
           },
         )
         expect(response.status).toBe(400)
@@ -180,7 +180,7 @@ describe('Portfolio Guards (e2e)', () => {
             name: '...',
             uuid: '',
             note: '',
-            referenceAccount: { id: accountOne },
+            referenceAccountId: accountOne,
           },
         )
         expect(response.status).toBe(400)

@@ -224,7 +224,7 @@ describe('Accounts (e2e)', () => {
       name: 'Test securities account',
       uuid: '42',
       note: 'comment',
-      referenceAccount: undefined,
+      referenceAccountId: undefined,
     }
 
     let depositAccountId: number
@@ -235,7 +235,7 @@ describe('Accounts (e2e)', () => {
         testDepositAccount,
       )
 
-      testSecuritiesAccount.referenceAccount = { id: depositAccountId }
+      testSecuritiesAccount.referenceAccountId = depositAccountId
     })
 
     describe('POST .../accounts', () => {
@@ -284,10 +284,6 @@ describe('Accounts (e2e)', () => {
           expect.objectContaining({
             ...testSecuritiesAccount,
             id: securitiesAccountId,
-            referenceAccount: expect.objectContaining({
-              ...testDepositAccount,
-              id: depositAccountId,
-            }),
           }),
         )
       })
@@ -299,7 +295,6 @@ describe('Accounts (e2e)', () => {
 
         expect(response.status).toBe(200)
         expect(response.body).toMatchObject(testSecuritiesAccount)
-        expect(response.body.referenceAccount).toMatchObject(testDepositAccount)
       })
 
       describe('PUT .../accounts/$id', () => {
@@ -323,7 +318,7 @@ describe('Accounts (e2e)', () => {
             name: 'changed name',
             uuid: '',
             note: 'changed comment',
-            referenceAccount: { id: depositAccountId },
+            referenceAccountId: depositAccountId,
           }
 
           const updateResponse = await api.put(
@@ -350,7 +345,7 @@ describe('Accounts (e2e)', () => {
 
           const changedAccount = {
             ...testSecuritiesAccount,
-            referenceAccount: { id: secondDepositAccountId },
+            referenceAccountId: secondDepositAccountId,
           }
 
           const updateResponse = await api.put(
@@ -372,7 +367,7 @@ describe('Accounts (e2e)', () => {
         it('fails if referenceAccount does not exist', async () => {
           const changedAccount = {
             ...testSecuritiesAccount,
-            referenceAccount: { id: -1 },
+            referenceAccountId: -1,
           }
 
           const response = await api.put(

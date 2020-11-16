@@ -128,7 +128,7 @@ export class ApiClient {
       name: 'Test securities account',
       uuid: '',
       note: '',
-      referenceAccount: { id: testDepositAccountId },
+      referenceAccountId: testDepositAccountId,
     }
     const testSecuritiesAccountId = await this.createAccount(
       portfolioId,

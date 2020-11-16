@@ -39,7 +39,7 @@ export class AccountsService {
       account.currencyCode = null
       account.referenceAccount = await this.accountsRepository.findOne({
         where: {
-          id: dto.referenceAccount.id,
+          id: dto.referenceAccountId,
           portfolio: { id: portfolioId },
         },
       })
@@ -65,7 +65,6 @@ export class AccountsService {
    */
   async getAll(params: PortfolioParams): Promise<Account[]> {
     return this.accountsRepository.find({
-      relations: ['portfolio', 'referenceAccount'],
       where: {
         portfolio: { id: params.portfolioId },
       },
@@ -78,7 +77,6 @@ export class AccountsService {
    */
   async getOne(params: AccountParams): Promise<Account> {
     const account = await this.accountsRepository.findOne({
-      relations: ['referenceAccount'],
       where: {
         id: params.accountId,
         portfolio: { id: params.portfolioId },
