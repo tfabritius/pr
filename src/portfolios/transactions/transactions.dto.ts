@@ -12,8 +12,6 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { TransactionType } from './transaction.entity'
-import { AccountIdDto } from '../accounts/accounts.dto'
-import { SecurityIdDto } from '../securities/securities.dto'
 import { UnitType } from './unit.entity'
 
 export class TransactionUnitDto {
@@ -52,10 +50,8 @@ export class TransactionUnitDto {
 
 class PartnerTransactionDto {
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => AccountIdDto)
-  @IsDefined()
-  readonly account: AccountIdDto
+  @IsNumber()
+  readonly accountId: number
 
   @ApiProperty({ isArray: true, type: TransactionUnitDto })
   @IsDefined()
@@ -70,17 +66,14 @@ class PartnerTransactionDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @ValidateNested()
-  @Type(() => SecurityIdDto)
-  readonly security: SecurityIdDto
+  @IsNumber()
+  readonly securityId: number
 }
 
 export class TransactionDto {
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => AccountIdDto)
-  @IsDefined()
-  readonly account: AccountIdDto
+  @IsNumber()
+  readonly accountId: number
 
   @ApiProperty({ enum: TransactionType, enumName: 'TransactionType' })
   @IsEnum(TransactionType)
@@ -109,9 +102,8 @@ export class TransactionDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @ValidateNested()
-  @Type(() => SecurityIdDto)
-  readonly security: SecurityIdDto
+  @IsNumber()
+  readonly securityId: number
 
   @ApiProperty()
   @IsString()

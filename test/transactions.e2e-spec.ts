@@ -31,7 +31,7 @@ describe('Transactions (e2e)', () => {
   let securityId: number
 
   const testTransactionMinimal = {
-    account: { id: undefined },
+    accountId: undefined,
     type: 'Payment',
     datetime: '2020-11-01T08:00:00.000Z',
     units: [],
@@ -41,7 +41,7 @@ describe('Transactions (e2e)', () => {
   const testTransactionFull = {
     ...testTransactionMinimal,
     shares: '1.230000',
-    security: { id: undefined },
+    securityId: undefined,
     units: [
       {
         type: 'base',
@@ -64,9 +64,9 @@ describe('Transactions (e2e)', () => {
     ;[depositAccountId, securitiesAccountId] = ids
     securityId = await api.createSecurity(portfolioId)
 
-    testTransactionMinimal.account.id = depositAccountId
-    testTransactionFull.account.id = depositAccountId
-    testTransactionFull.security.id = securityId
+    testTransactionMinimal.accountId = depositAccountId
+    testTransactionFull.accountId = depositAccountId
+    testTransactionFull.securityId = securityId
   })
 
   test('GET .../transactions returns empty list', async () => {
@@ -174,9 +174,6 @@ describe('Transactions (e2e)', () => {
         expect.objectContaining({
           ...testTransactionMinimal,
           id: minTransactionId,
-          account: expect.objectContaining({
-            id: testTransactionMinimal.account.id,
-          }),
         }),
       )
     })
@@ -189,12 +186,6 @@ describe('Transactions (e2e)', () => {
         expect.objectContaining({
           ...testTransactionFull,
           id: fullTransactionId,
-          account: expect.objectContaining({
-            id: testTransactionFull.account.id,
-          }),
-          security: expect.objectContaining({
-            id: testTransactionFull.security.id,
-          }),
           units: expect.arrayContaining(
             testTransactionFull.units.map((u) => expect.objectContaining(u)),
           ),
@@ -228,10 +219,10 @@ describe('Transactions (e2e)', () => {
 
       it.each(getObjectsWithMissingAttribute(testTransactionMinimal))(
         'fails if attribute %p is missing',
-        async (missingAttribute, security) => {
+        async (missingAttribute, transaction) => {
           const response = await api.put(
             `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
-            security,
+            transaction,
           )
 
           expect(response.status).toBe(400)
@@ -272,7 +263,7 @@ describe('Transactions (e2e)', () => {
 
         const changedTransaction = {
           ...testTransactionMinimal,
-          account: { id: otherAccountId },
+          accountId: otherAccountId,
         }
 
         const updateResponse = await api.put(
@@ -295,7 +286,7 @@ describe('Transactions (e2e)', () => {
         const changedTransaction = {
           ...testTransactionMinimal,
           shares: '5.550000',
-          security: { id: otherSecurityId },
+          securityId: otherSecurityId,
         }
 
         const updateResponse = await api.put(
@@ -318,7 +309,7 @@ describe('Transactions (e2e)', () => {
         const changedTransaction = {
           ...testTransactionFull,
           shares: '11.220000',
-          security: { id: otherSecurityId },
+          securityId: otherSecurityId,
         }
 
         const updateResponse = await api.put(

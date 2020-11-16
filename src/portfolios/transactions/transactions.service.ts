@@ -45,7 +45,7 @@ export class TransactionsService {
     }
 
     // Copy attributes which differ between both transactions
-    for (const i of ['account', 'security', 'shares', 'units']) {
+    for (const i of ['accountId', 'securityId', 'shares', 'units']) {
       transaction[i] = dto[i] ?? null
       if (dto.partnerTransaction) {
         partnerTransaction[i] = dto.partnerTransaction[i] ?? null
@@ -63,12 +63,12 @@ export class TransactionsService {
     try {
       await this.accountsService.getOne({
         portfolioId,
-        accountId: dto.account.id,
+        accountId: dto.accountId,
       })
       if (dto.partnerTransaction) {
         await this.accountsService.getOne({
           portfolioId,
-          accountId: dto.partnerTransaction.account.id,
+          accountId: dto.partnerTransaction.accountId,
         })
       }
     } catch (e) {
@@ -76,16 +76,16 @@ export class TransactionsService {
     }
 
     try {
-      if (dto.security) {
+      if (dto.securityId) {
         await this.securitiesService.getOne({
           portfolioId,
-          securityId: dto.security.id,
+          securityId: dto.securityId,
         })
       }
-      if (dto.partnerTransaction && dto.partnerTransaction.security) {
+      if (dto.partnerTransaction && dto.partnerTransaction.securityId) {
         await this.securitiesService.getOne({
           portfolioId,
-          securityId: dto.partnerTransaction.security.id,
+          securityId: dto.partnerTransaction.securityId,
         })
       }
     } catch (e) {
@@ -141,12 +141,6 @@ export class TransactionsService {
    */
   async getAll(params: PortfolioParams): Promise<Transaction[]> {
     return this.transactionsRepository.find({
-      relations: [
-        'account',
-        'security',
-        'partnerTransaction',
-        'partnerTransaction.account',
-      ],
       where: {
         portfolio: { id: params.portfolioId },
       },
@@ -159,13 +153,7 @@ export class TransactionsService {
    */
   async getOne(params: TransactionParams): Promise<Transaction> {
     const transaction = await this.transactionsRepository.findOne({
-      relations: [
-        'account',
-        'security',
-        'partnerTransaction',
-        'partnerTransaction.account',
-        'partnerTransaction.security',
-      ],
+      relations: ['partnerTransaction'],
       where: {
         id: params.transactionId,
         portfolio: { id: params.portfolioId },

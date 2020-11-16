@@ -13,6 +13,7 @@ import {
   OneToMany,
   JoinColumn,
   Index,
+  RelationId,
 } from 'typeorm'
 
 import { Account } from '../accounts/account.entity'
@@ -124,8 +125,16 @@ export class Transaction {
     onDelete: 'CASCADE',
   })
   @Index()
-  @ApiProperty()
+  @ApiHideProperty()
   account: Account
+
+  /**
+   * ID of account
+   */
+  @Column({ nullable: false })
+  @RelationId((transaction: Transaction) => transaction.account)
+  @ApiProperty()
+  accountId: number
 
   /**
    * Type of transaction
@@ -156,6 +165,11 @@ export class Transaction {
   @Type(() => Transaction)
   partnerTransaction: Transaction
 
+  @Column({ nullable: true })
+  @RelationId((transaction: Transaction) => transaction.partnerTransaction)
+  @ApiProperty()
+  partnerTransactionId: number
+
   /**
    * Units of transaction
    */
@@ -182,7 +196,16 @@ export class Transaction {
     onDelete: 'CASCADE',
   })
   @Index()
+  @ApiHideProperty()
   security: Security
+
+  /**
+   * ID of affected security
+   */
+  @Column({ nullable: true })
+  @RelationId((transaction: Transaction) => transaction.security)
+  @ApiProperty()
+  securityId: number
 
   /**
    * User-defined comment to transaction

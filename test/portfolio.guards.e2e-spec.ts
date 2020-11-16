@@ -83,18 +83,18 @@ describe('Portfolio Guards (e2e)', () => {
       securityTwo = await apiTwo.createSecurity(portfolioTwo)
       transactionOne = await apiOne.createTransaction(portfolioOne, {
         type: 'Payment',
-        account: { id: accountOne },
+        accountId: accountOne,
         datetime: '2020-01-01T00:00:00.000Z',
         units: [],
         note: '',
       })
       transactionTwo = await apiTwo.createTransaction(portfolioTwo, {
         type: 'Payment',
-        account: { id: accountTwo },
+        accountId: accountTwo,
         datetime: '2020-01-01T00:00:00.000Z',
         units: [],
         note: '',
-        security: { id: securityTwo },
+        securityId: securityTwo,
       })
 
       urls = [
@@ -192,7 +192,7 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions`,
           {
             type: 'Payment',
-            account: { id: accountOne },
+            accountId: accountOne,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
@@ -207,7 +207,7 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions/${transactionTwo}`,
           {
             type: 'Payment',
-            account: { id: accountOne },
+            accountId: accountOne,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
@@ -222,11 +222,11 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions`,
           {
             type: 'Payment',
-            account: { id: accountTwo },
+            accountId: accountTwo,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
-            security: { id: securityOne },
+            securityId: securityOne,
           },
         )
         expect(response.status).toBe(400)
@@ -238,11 +238,11 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions/${transactionTwo}`,
           {
             type: 'Payment',
-            account: { id: accountTwo },
+            accountId: accountTwo,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
-            security: { id: securityOne },
+            securityId: securityOne,
           },
         )
         expect(response.status).toBe(400)
