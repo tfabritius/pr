@@ -14,10 +14,6 @@ describe('Transactions (e2e)', () => {
     api = ApiClient.create(app.getHttpServer())
   }, 30000) // Timeout: 30s
 
-  afterAll(async () => {
-    await app.close()
-  })
-
   const user = { username: 'test-transactions', password: 'testpassword' }
 
   beforeAll(async () => {
@@ -67,6 +63,11 @@ describe('Transactions (e2e)', () => {
     testTransactionMinimal.accountId = depositAccountId
     testTransactionFull.accountId = depositAccountId
     testTransactionFull.securityId = securityId
+  })
+
+  afterAll(async () => {
+    await api.cleanUser(user)
+    await app.close()
   })
 
   test('GET .../transactions returns empty list', async () => {

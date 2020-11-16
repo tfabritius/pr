@@ -14,10 +14,6 @@ describe('Securities (e2e)', () => {
     api = ApiClient.create(app.getHttpServer())
   }, 30000) // Timeout: 30s
 
-  afterAll(async () => {
-    await app.close()
-  })
-
   const user = { username: 'test-securities', password: 'testpassword' }
 
   beforeAll(async () => {
@@ -29,6 +25,11 @@ describe('Securities (e2e)', () => {
 
   beforeAll(async () => {
     portfolioId = await api.createPortfolio()
+  })
+
+  afterAll(async () => {
+    await api.cleanUser(user)
+    await app.close()
   })
 
   const testSecurity = {

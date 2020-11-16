@@ -15,16 +15,16 @@ describe('Portfolio Guards (e2e)', () => {
     api = ApiClient.create(app.getHttpServer())
   })
 
-  beforeAll(async () => {
-    const user1 = {
-      username: 'test-portfolio-guards1',
-      password: 'testpassword',
-    }
-    const user2 = {
-      username: 'test-portfolio-guards2',
-      password: 'testpassword',
-    }
+  const user1 = {
+    username: 'test-portfolio-guards1',
+    password: 'testpassword',
+  }
+  const user2 = {
+    username: 'test-portfolio-guards2',
+    password: 'testpassword',
+  }
 
+  beforeAll(async () => {
     await api.cleanUser(user1, false)
     await api.cleanUser(user2, false)
     ;[apiOne] = await api.register(user1)
@@ -37,6 +37,13 @@ describe('Portfolio Guards (e2e)', () => {
   beforeAll(async () => {
     portfolioOne = await apiOne.createPortfolio()
     portfolioTwo = await apiTwo.createPortfolio()
+  })
+
+  afterAll(async () => {
+    await api.cleanUser(user1)
+    await api.cleanUser(user2)
+
+    await app.close()
   })
 
   describe('Portfolio', () => {
@@ -249,9 +256,5 @@ describe('Portfolio Guards (e2e)', () => {
         expect(response.body.message).toBe('Security not found')
       })
     })
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 })

@@ -26,6 +26,7 @@ describe('Portfolios (e2e)', () => {
   }, 30000) // Timeout: 30s
 
   afterAll(async () => {
+    await api.cleanUser(user)
     await app.close()
   })
 
