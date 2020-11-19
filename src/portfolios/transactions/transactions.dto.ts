@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer'
 import {
-  IsDateString,
   IsDecimal,
   IsDefined,
   IsEnum,
+  IsISO8601,
   IsNumber,
   IsOptional,
   IsString,
@@ -80,7 +80,7 @@ export class TransactionDto {
   readonly type: TransactionType
 
   @ApiProperty()
-  @IsDateString()
+  @IsISO8601()
   readonly datetime: Date
 
   @ApiPropertyOptional({ type: PartnerTransactionDto })
