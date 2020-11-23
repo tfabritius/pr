@@ -14,6 +14,20 @@ jobs:
       matrix:
         node-version: [12.x, 14.x]
 
+    services:
+      db:
+        image: postgres:12
+        env:
+          POSTGRES_USER: pr-api
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -22,3 +36,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build
+    - name: Run unit tests
+      run: npm run test
+    - name: Create DB schema
+      run: npm run typeorm schema:sync
+      env:
+        DB_PASS: password
+    - name: Run E2E tests
+      run: npm run test:e2e
+      env:
+        DB_PASS: password
