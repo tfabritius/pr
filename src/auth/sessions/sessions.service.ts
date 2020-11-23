@@ -6,6 +6,7 @@ import { LessThan, MoreThan, Repository } from 'typeorm'
 import { UsersService } from '../users/users.service'
 import { User } from '../users/user.entity'
 import { Session } from './session.entity'
+import { generateUuid } from '../../utils/uuid'
 
 @Injectable()
 export class SessionsService {
@@ -72,6 +73,7 @@ export class SessionsService {
    */
   async create(user: User) {
     const session = new Session()
+    session.token = generateUuid()
     session.user = user
     return await this.sessionsRepository.save(session)
   }

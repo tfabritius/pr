@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  Index,
-} from 'typeorm'
+import { Column, Entity, Index, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { User } from '../users/user.entity'
@@ -12,7 +6,7 @@ import { Exclude } from 'class-transformer'
 
 @Entity('sessions')
 export class Session {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   @ApiProperty()
   token: string
 
