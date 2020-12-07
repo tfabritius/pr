@@ -43,5 +43,8 @@ export async function createApp(
   const document = SwaggerModule.createDocument(app, options)
   SwaggerModule.setup('doc', app, document)
 
+  /* Allow cross-origin requests */
+  app.enableCors()
+
   return app
 }
