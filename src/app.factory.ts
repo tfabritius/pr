@@ -27,6 +27,7 @@ export async function createApp(
   /* Validate input and remove unknown properties */
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true,
       whitelist: true,
     }),
   )
