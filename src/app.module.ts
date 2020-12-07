@@ -6,6 +6,7 @@ import { AppService } from './app.service'
 import * as ormconfig from './ormconfig'
 
 import { AuthModule } from './auth/auth.module'
+import { CurrenciesModule } from './currencies/currencies.module'
 import { PortfoliosModule } from './portfolios/portfolios.module'
 
 @Module({
@@ -13,6 +14,7 @@ import { PortfoliosModule } from './portfolios/portfolios.module'
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig),
     AuthModule,
+    CurrenciesModule,
     PortfoliosModule,
   ],
   controllers: [AppController],
