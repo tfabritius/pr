@@ -15,6 +15,18 @@ DB_PASS = password
 DB_NAME = database
 ```
 
+## Prepare the database
+```bash
+# run pending migrations
+$ npm run typeorm migration:run
+
+# revert last migration
+$ npm run typeorm migration:revert
+
+# clean up ;-)
+$ npm run typeorm schema:drop
+```
+
 ## Running the app
 
 ```bash

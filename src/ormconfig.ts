@@ -19,6 +19,13 @@ const ormConfig: ConnectionOptions = {
   logging: process.env.DB_LOGGING === 'true',
 
   synchronize: process.env.DB_SYNC === 'true',
+
+  migrations: [__dirname + '/_migrations/**/*{.ts,.js}'],
+  migrationsRun: false,
+  migrationsTableName: '_migrations',
+  cli: {
+    migrationsDir: 'src/_migrations',
+  },
 }
 
 export = ormConfig
