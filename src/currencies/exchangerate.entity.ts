@@ -35,6 +35,8 @@ export class ExchangeRate {
   @ApiProperty()
   quoteCurrencyCode: string
 
-  @OneToMany(() => ExchangeRatePrice, (erp) => erp.exchangerate)
+  @OneToMany(() => ExchangeRatePrice, (erp) => erp.exchangerate, {
+    cascade: ['insert'],
+  })
   prices: ExchangeRatePrice[]
 }
