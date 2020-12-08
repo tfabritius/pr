@@ -15,6 +15,13 @@ DB_PASS = password
 DB_NAME = database
 ```
 
+Serve static files
+```bash
+SERVE_STATIC = true
+```
+- Api endpoints will move to `/api` subfolder
+- Files from folder `/static` will be served on URLs except `/api`, e.g. frontend
+
 ## Prepare the database
 ```bash
 # run pending migrations

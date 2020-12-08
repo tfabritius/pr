@@ -16,6 +16,9 @@ export async function createApp(
 
   if (environment === 'prod') {
     app = await NestFactory.create(AppModule)
+    if (process.env.SERVE_STATIC === 'true') {
+      app.setGlobalPrefix('api')
+    }
   } else {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
