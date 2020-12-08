@@ -11,7 +11,6 @@ import * as dayjs from 'dayjs'
 export class IsValidDayjsConstraint implements ValidatorConstraintInterface {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   validate(value: any, args: ValidationArguments) {
-    console.log('validating', value)
     return dayjs.isDayjs(value) && value.isValid()
   }
 

@@ -38,8 +38,6 @@ export class CurrenciesService {
     const startDate =
       query.startDate || dayjs().startOf('day').subtract(30, 'day')
 
-    console.log('startDate', startDate)
-
     const exchangeRate = await this.exchangeRatesRepository
       .createQueryBuilder('exchangerate')
       .where(params)
