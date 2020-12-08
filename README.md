@@ -18,7 +18,7 @@ DB_NAME = database
 ## Prepare the database
 ```bash
 # run pending migrations
-$ npm run typeorm migration:run
+$ npm run typeorm -- migration:run --transaction=each
 
 # revert last migration
 $ npm run typeorm migration:revert

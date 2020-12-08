@@ -39,7 +39,7 @@ jobs:
     - name: Run unit tests
       run: npm run test
     - name: Create DB schema
-      run: npm run typeorm migration:run
+      run: npm run typeorm -- migration:run --transaction=each
       env:
         DB_PASS: password
     - name: Run E2E tests
