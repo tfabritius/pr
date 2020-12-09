@@ -1,4 +1,4 @@
-import { Get, Controller, Param, Query } from '@nestjs/common'
+import { Get, Controller, Param, Query, Post, HttpCode } from '@nestjs/common'
 import {
   ApiOperation,
   ApiTags,
@@ -44,5 +44,13 @@ export class CurrenciesController {
     @Query() query: ExchangeRateQuery,
   ): Promise<ExchangeRate> {
     return await this.currenciesService.getOneExchangeRate(params, query)
+  }
+
+  @Post('update')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Update currencies incl. exchange rate prices' })
+  @ApiOkResponse({ description: 'Update has finished.' })
+  async update(): Promise<void> {
+    return await this.currenciesService.updateExchangeRates()
   }
 }

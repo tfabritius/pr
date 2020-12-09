@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { ScheduleModule } from '@nestjs/schedule'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
@@ -16,6 +17,7 @@ import { PortfoliosModule } from './portfolios/portfolios.module'
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig),
+    ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static'),
       exclude: process.env.SERVE_STATIC === 'true' ? ['/api/*'] : ['*'],

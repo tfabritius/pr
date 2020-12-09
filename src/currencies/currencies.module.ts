@@ -3,11 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { Currency } from './currency.entity'
 import { ExchangeRate } from './exchangerate.entity'
+import { ExchangeRatePrice } from './price.entity'
 import { CurrenciesService } from './currencies.service'
 import { CurrenciesController } from './currencies.controller'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Currency, ExchangeRate])],
+  imports: [
+    TypeOrmModule.forFeature([Currency, ExchangeRate, ExchangeRatePrice]),
+  ],
   providers: [CurrenciesService],
   controllers: [CurrenciesController],
   exports: [CurrenciesService],
