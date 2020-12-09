@@ -1,4 +1,12 @@
-import { Get, Controller, Param, Query, Post, HttpCode } from '@nestjs/common'
+import {
+  Get,
+  Controller,
+  Param,
+  Query,
+  Post,
+  HttpCode,
+  UseGuards,
+} from '@nestjs/common'
 import {
   ApiOperation,
   ApiTags,
@@ -6,6 +14,8 @@ import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
+  ApiUnauthorizedResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 
 import { Currency } from './currency.entity'
@@ -13,6 +23,7 @@ import { ExchangeRate } from './exchangerate.entity'
 import { CurrenciesService } from './currencies.service'
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
+import { DefaultAuthGuard } from '../auth/default-auth.guard'
 
 @Controller('currencies')
 @ApiTags('currencies')
@@ -48,8 +59,11 @@ export class CurrenciesController {
 
   @Post('update')
   @HttpCode(200)
+  @UseGuards(DefaultAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update currencies incl. exchange rate prices' })
   @ApiOkResponse({ description: 'Update has finished.' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async update(): Promise<void> {
     return await this.currenciesService.updateExchangeRates()
   }
