@@ -9,6 +9,7 @@ import {
 } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
+import * as dayjs from 'dayjs'
 
 import { Currency } from './currency.entity'
 import { ExchangeRatePrice } from './price.entity'
@@ -39,8 +40,9 @@ export class ExchangeRate {
   @OneToMany(() => ExchangeRatePrice, (erp) => erp.exchangerate, {
     cascade: ['insert'],
   })
+  @ApiProperty({ type: ExchangeRatePrice, isArray: true })
   prices: ExchangeRatePrice[]
 
-  @ApiProperty()
+  @ApiProperty({ example: dayjs().format('YYYY-MM-DD') })
   latestPriceDate: string
 }

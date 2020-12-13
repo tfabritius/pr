@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne, RelationId, PrimaryColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import Big from 'big.js'
 import { Exclude, Transform } from 'class-transformer'
+import * as dayjs from 'dayjs'
 
 import { ExchangeRate } from './exchangerate.entity'
 import { DecimalTransformer } from '../utils/DecimalTransformer'
@@ -22,7 +23,7 @@ export class ExchangeRatePrice {
   @PrimaryColumn('date', {
     nullable: false,
   })
-  @ApiProperty()
+  @ApiProperty({ example: dayjs().format('YYYY-MM-DD') })
   date: string
 
   @Column('decimal', {
@@ -32,6 +33,6 @@ export class ExchangeRatePrice {
     transformer: new DecimalTransformer(),
   })
   @Transform((value: Big) => value.toFixed(6), { toPlainOnly: true })
-  @ApiProperty()
+  @ApiProperty({ type: String, example: '1.000000' })
   value: Big
 }
