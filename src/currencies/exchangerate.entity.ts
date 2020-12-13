@@ -39,4 +39,7 @@ export class ExchangeRate {
     cascade: ['insert'],
   })
   prices: ExchangeRatePrice[]
+
+  @ApiProperty()
+  latestPriceDate: string
 }

@@ -36,6 +36,29 @@ export class CurrenciesService {
   }
 
   /**
+   * Gets all exchange rates with latestPriceDate but without prices
+   */
+  async getAllExchangeRates() {
+    const { entities, raw } = await this.exchangeRatesRepository
+      .createQueryBuilder('exchangerate')
+      .addSelect((qb) =>
+        qb
+          .select('MAX(p.date) as latest_price_date')
+          .from(ExchangeRatePrice, 'p')
+          .where('p.exchangerate_id = exchangerate.id'),
+      )
+      .getRawAndEntities()
+
+    raw.forEach((item, index) => {
+      entities[index].latestPriceDate = item.latest_price_date
+        ? dayjs(item.latest_price_date).format('YYYY-MM-DD')
+        : null
+    })
+
+    return entities
+  }
+
+  /**
    * Gets exchange rate identified by the parameters
    * or throws NotFoundException
    */
@@ -46,7 +69,7 @@ export class CurrenciesService {
     const startDate =
       query.startDate || dayjs().startOf('day').subtract(30, 'day')
 
-    const exchangeRate = await this.exchangeRatesRepository
+    const { entities, raw } = await this.exchangeRatesRepository
       .createQueryBuilder('exchangerate')
       .where(params)
       .leftJoinAndSelect(
@@ -55,13 +78,25 @@ export class CurrenciesService {
         'prices.date >= :startDate',
         { startDate: startDate.format('YYYY-MM-DD') },
       )
-      .getOne()
+      .addSelect((qb) =>
+        qb
+          .select('MAX(p.date) as latest_price_date')
+          .from(ExchangeRatePrice, 'p')
+          .where('p.exchangerate_id = exchangerate.id'),
+      )
+      .getRawAndEntities()
 
-    if (!exchangeRate) {
+    const exchangerate = entities[0]
+
+    if (!exchangerate) {
       throw new NotFoundException('Exchange rate not found')
     }
 
-    return exchangeRate
+    exchangerate.latestPriceDate = raw[0].latest_price_date
+      ? dayjs(raw[0].latest_price_date).format('YYYY-MM-DD')
+      : null
+
+    return exchangerate
   }
 
   /**
@@ -70,17 +105,15 @@ export class CurrenciesService {
   async updateExchangeRates(): Promise<void> {
     this.logger.log('Updating exchange rates')
 
-    const exchangeRates = await this.exchangeRatesRepository.find()
+    const exchangeRates = await this.getAllExchangeRates()
 
     const today: string = new Date().toISOString().substring(0, 10)
 
     for (const exchangerate of exchangeRates) {
-      const lastPrice = await this.exchangeRatePricesRepository.findOne({
-        order: { date: 'DESC' },
-        where: { exchangerate },
-      })
-
-      if (lastPrice && lastPrice.date === today) {
+      if (
+        exchangerate.latestPriceDate &&
+        exchangerate.latestPriceDate === today
+      ) {
         this.logger.debug(
           'Skipping exchange rate ' + JSON.stringify(exchangerate),
         )
@@ -95,9 +128,9 @@ export class CurrenciesService {
 
       const params: any = {}
 
-      if (lastPrice) {
-        const lastPriceDate = dayjs(lastPrice.date)
-        params.from = lastPriceDate.add(1, 'day').format('YYYY-MM-DD')
+      if (exchangerate.latestPriceDate) {
+        const latestPriceDate = dayjs(exchangerate.latestPriceDate)
+        params.from = latestPriceDate.add(1, 'day').format('YYYY-MM-DD')
       }
 
       this.logger.debug(`GET ${url}, params: ${JSON.stringify(params)}`)
