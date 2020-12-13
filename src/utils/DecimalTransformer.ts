@@ -2,11 +2,11 @@ import { ValueTransformer } from 'typeorm'
 import Big from 'big.js'
 
 export class DecimalTransformer implements ValueTransformer {
-  from(value: string): Big {
-    return new Big(value)
+  from(value: string | null): Big | null {
+    return value ? Big(value) : null
   }
 
-  to(value: Big): string {
-    return value.toString()
+  to(value: Big | null): string | null {
+    return value ? value.toString() : null
   }
 }

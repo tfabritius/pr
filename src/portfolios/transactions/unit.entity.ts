@@ -6,7 +6,11 @@ import {
   ManyToOne,
   Index,
 } from 'typeorm'
+import Big from 'big.js'
+import { Transform } from 'class-transformer'
+
 import { Transaction } from './transaction.entity'
+import { DecimalTransformer } from '../../utils/DecimalTransformer'
 
 /**
  * Enum for unit type
@@ -37,9 +41,14 @@ export class TransactionUnit {
   /**
    * Amount of currency
    */
-  @Column('decimal', { precision: 10, scale: 2 })
-  @ApiProperty({ example: '0.00' })
-  amount: string
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
+    transformer: new DecimalTransformer(),
+  })
+  @Transform((value: Big) => value.toFixed(2), { toPlainOnly: true })
+  @ApiProperty({ type: String, example: '0.00' })
+  amount: Big
 
   /**
    * Currency code for amount
@@ -52,9 +61,17 @@ export class TransactionUnit {
    * Amount in original (foreign) currency
    * in case of currency conversion
    */
-  @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  @ApiProperty({ example: '0.00' })
-  originalAmount: string
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
+    nullable: true,
+    transformer: new DecimalTransformer(),
+  })
+  @Transform((value: Big | null) => (value ? value.toFixed(2) : null), {
+    toPlainOnly: true,
+  })
+  @ApiProperty({ type: String, example: '0.00', nullable: true })
+  originalAmount: Big | null
 
   /**
    * Currency code of original (foreign) currency
@@ -67,7 +84,15 @@ export class TransactionUnit {
   /**
    * Exchange rate for currency conversion
    */
-  @Column('decimal', { precision: 10, scale: 4, nullable: true })
-  @ApiProperty({ example: '0.0000' })
-  exchangeRate: string
+  @Column('decimal', {
+    precision: 10,
+    scale: 4,
+    nullable: true,
+    transformer: new DecimalTransformer(),
+  })
+  @Transform((value: Big | null) => (value ? value.toFixed(4) : null), {
+    toPlainOnly: true,
+  })
+  @ApiProperty({ type: String, example: '0.0000', nullable: true })
+  exchangeRate: Big | null
 }
