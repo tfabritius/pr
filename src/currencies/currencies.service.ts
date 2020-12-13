@@ -161,7 +161,7 @@ export class CurrenciesService {
     this.logger.log('Updating exchange rates finished.')
   }
 
-  @Timeout(30 * 1000)
+  @Timeout(5 * 60 * 1000)
   private async runAfterStart() {
     await this.updateExchangeRates()
   }
