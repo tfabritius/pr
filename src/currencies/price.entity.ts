@@ -17,7 +17,7 @@ export class ExchangeRatePrice {
   @PrimaryColumn({ nullable: false })
   @RelationId((erp: ExchangeRatePrice) => erp.exchangerate)
   @Exclude()
-  exchangerateId: string
+  exchangerateId: number
 
   @PrimaryColumn('date', {
     nullable: false,
