@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { Test, TestingModule } from '@nestjs/testing'
+import * as helmet from 'helmet'
 
 import { AppModule } from './app.module'
 
@@ -26,6 +27,9 @@ export async function createApp(
 
     app = moduleFixture.createNestApplication()
   }
+
+  /* Activate security measures */
+  app.use(helmet())
 
   /* Validate input and remove unknown properties */
   app.useGlobalPipes(
