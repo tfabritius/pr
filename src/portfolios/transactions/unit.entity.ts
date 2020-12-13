@@ -31,7 +31,6 @@ export class TransactionUnit {
     onDelete: 'CASCADE',
   })
   @Index()
-  @ApiProperty()
   transaction: Transaction
 
   @Column()

@@ -177,6 +177,7 @@ export class Transaction {
     cascade: true,
     eager: true,
   })
+  @ApiProperty({ type: () => TransactionUnit, isArray: true })
   units: TransactionUnit[]
 
   /**
