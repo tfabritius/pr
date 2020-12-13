@@ -1,8 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Interval, Timeout } from '@nestjs/schedule'
+import Big from 'big.js'
 import * as dayjs from 'dayjs'
-import { Repository } from 'typeorm'
+import { MoreThanOrEqual, Repository } from 'typeorm'
 import axios from 'axios'
 
 import { Currency } from './currency.entity'
@@ -69,31 +70,35 @@ export class CurrenciesService {
     const startDate =
       query.startDate || dayjs().startOf('day').subtract(30, 'day')
 
-    const { entities, raw } = await this.exchangeRatesRepository
-      .createQueryBuilder('exchangerate')
-      .where(params)
-      .leftJoinAndSelect(
-        'exchangerate.prices',
-        'prices',
-        'prices.date >= :startDate',
-        { startDate: startDate.format('YYYY-MM-DD') },
-      )
-      .addSelect((qb) =>
-        qb
-          .select('MAX(p.date) as latest_price_date')
-          .from(ExchangeRatePrice, 'p')
-          .where('p.exchangerate_id = exchangerate.id'),
-      )
-      .getRawAndEntities()
-
-    const exchangerate = entities[0]
+    const exchangerate = await this.exchangeRatesRepository.findOne(params)
 
     if (!exchangerate) {
       throw new NotFoundException('Exchange rate not found')
     }
 
-    exchangerate.latestPriceDate = raw[0].latest_price_date
-      ? dayjs(raw[0].latest_price_date).format('YYYY-MM-DD')
+    const prices = await this.exchangeRatePricesRepository
+      .createQueryBuilder('prices')
+      .where({
+        exchangerate,
+        date: MoreThanOrEqual(startDate.format('YYYY-MM-DD')),
+      })
+      .getRawMany()
+
+    exchangerate.prices = prices.map((el) => {
+      const p = new ExchangeRatePrice()
+      p.date = dayjs(el.prices_date).format('YYYY-MM-DD')
+      p.value = Big(el.prices_value)
+      return p
+    })
+
+    const latestPrice = await this.exchangeRatePricesRepository
+      .createQueryBuilder('p')
+      .select('MAX(p.date) as date')
+      .where('p.exchangerate_id = :id', { id: exchangerate.id })
+      .getRawOne()
+
+    exchangerate.latestPriceDate = latestPrice.date
+      ? dayjs(latestPrice.date).format('YYYY-MM-DD')
       : null
 
     return exchangerate
