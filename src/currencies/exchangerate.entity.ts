@@ -8,6 +8,7 @@ import {
   RelationId,
 } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
+import { Exclude } from 'class-transformer'
 
 import { Currency } from './currency.entity'
 import { ExchangeRatePrice } from './price.entity'
@@ -16,7 +17,7 @@ import { ExchangeRatePrice } from './price.entity'
 @Index(['baseCurrencyCode', 'quoteCurrencyCode'], { unique: true })
 export class ExchangeRate {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
+  @Exclude()
   id: number
 
   @ManyToOne(() => Currency, { nullable: false })
