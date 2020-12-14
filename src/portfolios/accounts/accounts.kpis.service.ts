@@ -28,14 +28,13 @@ export class AccountsKpisService {
    * Gets balance of deposit account
    */
   private async getDepositBalance(account: Account): Promise<Big> {
-    const b1 = await this.accountsRepository
+    const { balance } = await this.accountsRepository
       .createQueryBuilder('account')
       .select('SUM(u.amount)', 'balance')
       .innerJoin('account.transactions', 't')
       .innerJoin('t.units', 'u')
       .where({ id: account.id })
       .getRawOne()
-    console.log(Big(b1.balance).toString())
-    return Big(b1.balance)
+    return Big(balance)
   }
 }
