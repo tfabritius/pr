@@ -63,11 +63,24 @@ export class AccountsService {
   /**
    * Gets all accounts in a portfolio
    */
-  async getAll(params: PortfolioParams): Promise<Account[]> {
+  async getAll(
+    params: PortfolioParams,
+    {
+      includeTransactions = false,
+    }: {
+      includeTransactions?: boolean
+    } = {},
+  ): Promise<Account[]> {
+    const relations = []
+    if (includeTransactions) {
+      relations.push('transactions')
+    }
+
     return this.accountsRepository.find({
       where: {
         portfolio: { id: params.portfolioId },
       },
+      relations,
     })
   }
 
@@ -75,12 +88,25 @@ export class AccountsService {
    * Gets account identified by parameters
    * or throws NotFoundException
    */
-  async getOne(params: AccountParams): Promise<Account> {
+  async getOne(
+    params: AccountParams,
+    {
+      includeTransactions = false,
+    }: {
+      includeTransactions?: boolean
+    } = {},
+  ): Promise<Account> {
+    const relations = []
+    if (includeTransactions) {
+      relations.push('transactions')
+    }
+
     const account = await this.accountsRepository.findOne({
       where: {
         id: params.accountId,
         portfolio: { id: params.portfolioId },
       },
+      relations,
     })
 
     if (!account) {
