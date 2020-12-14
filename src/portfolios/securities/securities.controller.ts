@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common'
@@ -19,9 +20,12 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiPropertyOptional,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import { IsBoolean, IsOptional } from 'class-validator'
+import { Transform } from 'class-transformer'
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
@@ -29,7 +33,17 @@ import { Security } from './security.entity'
 import { SecurityDto } from './securities.dto'
 import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
+import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
+import { AccountQuery } from '../accounts/accounts.controller'
+
+export class SecurityQuery {
+  @IsOptional()
+  @Transform((value) => value === 'true', { toClassOnly: true })
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly kpis?: boolean
+}
 
 @Controller('portfolios/:portfolioId/securities')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -40,7 +54,10 @@ import { PortfolioParams } from '../portfolio.params'
 @ApiNotFoundResponse({ description: 'Portfolio not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class SecuritiesController {
-  constructor(public securitiesService: SecuritiesService) {}
+  constructor(
+    public securitiesService: SecuritiesService,
+    private readonly kpisService: SecuritiesKpisService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create security' })
@@ -63,16 +80,32 @@ export class SecuritiesController {
     type: Security,
     isArray: true,
   })
-  async readAll(@Param() params: PortfolioParams): Promise<Security[]> {
-    return await this.securitiesService.getAll(params)
+  async readAll(
+    @Param() params: PortfolioParams,
+    @Query() query: AccountQuery,
+  ): Promise<Security[]> {
+    const securities = await this.securitiesService.getAll(params)
+    if (query.kpis) {
+      for (const security of securities) {
+        security.kpis = await this.kpisService.getKpis(security)
+      }
+    }
+    return securities
   }
 
   @Get(':securityId')
   @ApiOperation({ summary: 'Get security' })
   @ApiOkResponse({ description: 'The security is returned.', type: Security })
   @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
-  async readOne(@Param() params: SecurityParams): Promise<Security> {
-    return await this.securitiesService.getOne(params)
+  async readOne(
+    @Param() params: SecurityParams,
+    @Query() query: AccountQuery,
+  ): Promise<Security> {
+    const security = await this.securitiesService.getOne(params)
+    if (query.kpis) {
+      security.kpis = await this.kpisService.getKpis(security)
+    }
+    return security
   }
 
   @Put(':securityId')

@@ -1,4 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Entity,
   Column,
@@ -11,6 +15,7 @@ import { Exclude } from 'class-transformer'
 
 import { Portfolio } from '../portfolio.entity'
 import { Transaction } from '../transactions/transaction.entity'
+import { SecurityKpis } from './security.kpis'
 
 @Entity('securities')
 export class Security {
@@ -58,4 +63,7 @@ export class Security {
   @OneToMany(() => Transaction, (t) => t.security)
   @ApiHideProperty()
   transactions: Transaction[]
+
+  @ApiPropertyOptional()
+  kpis: SecurityKpis
 }
