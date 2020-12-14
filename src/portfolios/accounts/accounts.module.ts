@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { Account } from './account.entity'
 import { AccountsService } from './accounts.service'
+import { AccountsKpisService } from './accounts.kpis.service'
 import { AccountsController } from './accounts.controller'
 import { PortfoliosModule } from '../portfolios.module'
 
@@ -11,7 +12,7 @@ import { PortfoliosModule } from '../portfolios.module'
     TypeOrmModule.forFeature([Account]),
     forwardRef(() => PortfoliosModule),
   ],
-  providers: [AccountsService],
+  providers: [AccountsService, AccountsKpisService],
   controllers: [AccountsController],
   exports: [AccountsService],
 })

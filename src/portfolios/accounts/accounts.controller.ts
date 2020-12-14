@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common'
@@ -19,6 +20,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiPropertyOptional,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -29,7 +31,18 @@ import { Account } from './account.entity'
 import { AccountDto } from './accounts.dto'
 import { AccountParams } from './account.params'
 import { AccountsService } from './accounts.service'
+import { AccountsKpisService } from './accounts.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
+import { IsOptional, IsBoolean } from 'class-validator'
+import { Transform } from 'class-transformer'
+
+export class AccountQuery {
+  @IsOptional()
+  @Transform((value) => value === 'true', { toClassOnly: true })
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly kpis?: boolean
+}
 
 @Controller('portfolios/:portfolioId/accounts')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -40,7 +53,10 @@ import { PortfolioParams } from '../portfolio.params'
 @ApiNotFoundResponse({ description: 'Portfolio not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class AccountsController {
-  constructor(public service: AccountsService) {}
+  constructor(
+    public service: AccountsService,
+    private readonly kpisService: AccountsKpisService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create account' })
@@ -63,8 +79,17 @@ export class AccountsController {
     type: Account,
     isArray: true,
   })
-  async readAll(@Param() params: PortfolioParams): Promise<Account[]> {
-    return await this.service.getAll(params)
+  async readAll(
+    @Param() params: PortfolioParams,
+    @Query() query: AccountQuery,
+  ): Promise<Account[]> {
+    const accounts = await this.service.getAll(params)
+    if (query.kpis) {
+      for (const account of accounts) {
+        account.kpis = await this.kpisService.getKpis(account)
+      }
+    }
+    return accounts
   }
 
   @Get(':accountId')
@@ -76,8 +101,15 @@ export class AccountsController {
   @ApiNotFoundResponse({
     description: 'Portfolio or account not found',
   })
-  async readOne(@Param() params: AccountParams): Promise<Account> {
-    return await this.service.getOne(params)
+  async readOne(
+    @Param() params: AccountParams,
+    @Query() query: AccountQuery,
+  ): Promise<Account> {
+    const account = await this.service.getOne(params)
+    if (query.kpis) {
+      account.kpis = await this.kpisService.getKpis(account)
+    }
+    return account
   }
 
   @Put(':accountId')
