@@ -105,14 +105,19 @@ export class CurrenciesService {
   }
 
   /**
-   * Gets latest exchange rate price identified by the parameters
+   * Gets exchange rate price at certain date
    *
    * @throws NotFoundException
    */
-  async getOneExchangeRatePrice(params: ExchangeRateParams): Promise<Big> {
-    const date = dayjs()
+  async getOneExchangeRatePrice(
+    options: ExchangeRateParams & { date: dayjs.Dayjs },
+  ): Promise<Big> {
+    const date = options.date
 
-    const exchangerate = await this.exchangeRatesRepository.findOne(params)
+    const exchangerate = await this.exchangeRatesRepository.findOne({
+      baseCurrencyCode: options.baseCurrencyCode,
+      quoteCurrencyCode: options.quoteCurrencyCode,
+    })
 
     if (!exchangerate) {
       throw new NotFoundException('Exchange rate not found')

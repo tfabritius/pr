@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Timeout } from '@nestjs/schedule'
 import Big from 'big.js'
+import * as dayjs from 'dayjs'
 
 import { findAllPairsShortestPath } from '../utils/floyd.warshall'
 import { CurrenciesService } from './currencies.service'
@@ -84,7 +85,10 @@ export class CurrenciesConversionService {
     amount: Big,
     sourceCurrencyCode: string,
     targetCurrencyCode: string,
+    date?: dayjs.Dayjs,
   ): Promise<Big> {
+    date = date || dayjs()
+
     const route = this.getConversionRoute(
       sourceCurrencyCode,
       targetCurrencyCode,
@@ -100,12 +104,14 @@ export class CurrenciesConversionService {
         const erPrice = await this.currenciesService.getOneExchangeRatePrice({
           baseCurrencyCode: current,
           quoteCurrencyCode: next,
+          date,
         })
         amount = amount.times(erPrice)
       } catch {
         const erPrice = await this.currenciesService.getOneExchangeRatePrice({
           baseCurrencyCode: next,
           quoteCurrencyCode: current,
+          date,
         })
         amount = amount.div(erPrice)
       }

@@ -91,12 +91,15 @@ export class CurrenciesController {
         Big(dto.sourceAmount),
         dto.sourceCurrencyCode,
         dto.targetCurrencyCode,
+        dto.date,
       )
 
       return { ...dto, targetAmount: targetAmount.toString() }
     } catch (err) {
       if (err instanceof CurrencyConversionError) {
         throw new BadRequestException(err.message)
+      } else {
+        throw err
       }
     }
   }
