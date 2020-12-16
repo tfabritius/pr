@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Interval, Timeout } from '@nestjs/schedule'
 import Big from 'big.js'
 import * as dayjs from 'dayjs'
-import { MoreThanOrEqual, Repository } from 'typeorm'
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm'
 import axios from 'axios'
 
 import { Currency } from './currency.entity'
@@ -102,6 +102,33 @@ export class CurrenciesService {
       : null
 
     return exchangerate
+  }
+
+  /**
+   * Gets latest exchange rate price identified by the parameters
+   *
+   * @throws NotFoundException
+   */
+  async getOneExchangeRatePrice(params: ExchangeRateParams): Promise<Big> {
+    const date = dayjs()
+
+    const exchangerate = await this.exchangeRatesRepository.findOne(params)
+
+    if (!exchangerate) {
+      throw new NotFoundException('Exchange rate not found')
+    }
+
+    const price = await this.exchangeRatePricesRepository
+      .createQueryBuilder('prices')
+      .where({
+        exchangerate,
+        date: LessThanOrEqual(date.format('YYYY-MM-DD')),
+      })
+      .orderBy('prices.date', 'DESC')
+      .take(1)
+      .getOne()
+
+    return Big(price.value)
   }
 
   /**
