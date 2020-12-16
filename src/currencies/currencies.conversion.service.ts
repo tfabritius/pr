@@ -5,6 +5,15 @@ import Big from 'big.js'
 import { findAllPairsShortestPath } from '../utils/floyd.warshall'
 import { CurrenciesService } from './currencies.service'
 
+export class CurrencyConversionError extends Error {
+  constructor(message: string) {
+    super(message)
+    Object.setPrototypeOf(this, CurrencyConversionError.prototype)
+
+    this.name = 'CurrencyConversionError'
+  }
+}
+
 @Injectable()
 export class CurrenciesConversionService {
   private readonly logger = new Logger(CurrenciesConversionService.name)
@@ -56,7 +65,7 @@ export class CurrenciesConversionService {
         ?.get(targetCurrencyCode)
 
       if (!nextCurrencyCode) {
-        throw new Error(
+        throw new CurrencyConversionError(
           `No conversion route found from currency code ${currentCode} to ${targetCurrencyCode}`,
         )
       }
