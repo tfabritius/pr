@@ -3,8 +3,8 @@ import { getRepository, MigrationInterface } from 'typeorm'
 import { Currency } from '../currencies/currency.entity'
 import { ExchangeRate } from '../currencies/exchangerate.entity'
 
-// except EUR and USD
 const ecbCurrencies = [
+  // except EUR
   'AUD',
   'BGN',
   'BRL',
@@ -35,7 +35,16 @@ const ecbCurrencies = [
   'SGD',
   'THB',
   'TRY',
+  'USD',
   'ZAR',
+]
+
+const currencies = ['EUR', ...ecbCurrencies, 'GBX', 'AED']
+
+const exchangerates = [
+  ...ecbCurrencies.map((code) => ['EUR', code]),
+  ['GBP', 'GBX'],
+  ['USD', 'AED'],
 ]
 
 const exchangeRateEurUsd = [
@@ -63,33 +72,44 @@ const exchangeRateEurUsd = [
 
 export class seedCurrencies1607453242436 implements MigrationInterface {
   public async up(): Promise<void> {
-    await getRepository(Currency).insert({ code: 'EUR' })
-    await getRepository(Currency).insert({ code: 'USD' })
+    // Create currencies
+    for (const code of currencies) {
+      await getRepository(Currency).insert({ code })
+    }
 
+    let idEurUsd: number
+
+    // Create exchange rates
+    for (const [baseCurrencyCode, quoteCurrencyCode] of exchangerates) {
+      const er = await getRepository(ExchangeRate).save({
+        baseCurrencyCode,
+        quoteCurrencyCode,
+      })
+
+      if (baseCurrencyCode === 'EUR' && quoteCurrencyCode === 'USD') {
+        idEurUsd = er.id
+      }
+    }
+
+    // Store initial data for EUR/USD
     await getRepository(ExchangeRate).save({
-      baseCurrencyCode: 'EUR',
-      quoteCurrencyCode: 'USD',
+      id: idEurUsd,
       prices: exchangeRateEurUsd.map((el) => ({ date: el[0], value: el[1] })),
     })
-
-    for (const code of ecbCurrencies) {
-      await getRepository(Currency).insert({ code })
-      await getRepository('exchangerates').insert({
-        baseCurrencyCode: 'EUR',
-        quoteCurrencyCode: code,
-      })
-    }
   }
 
   public async down(): Promise<void> {
-    for (const code of [...ecbCurrencies, 'USD']) {
+    // Delete exchange rates
+    for (const [baseCurrencyCode, quoteCurrencyCode] of exchangerates) {
       await getRepository(ExchangeRate).delete({
-        baseCurrencyCode: 'EUR',
-        quoteCurrencyCode: code,
+        baseCurrencyCode,
+        quoteCurrencyCode,
       })
-      await getRepository(Currency).delete({ code })
     }
 
-    await getRepository(Currency).delete({ code: 'EUR' })
+    // Delete currencies
+    for (const code of currencies) {
+      await getRepository(Currency).delete({ code })
+    }
   }
 }
