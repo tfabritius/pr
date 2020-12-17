@@ -13,7 +13,6 @@ import {
   OneToMany,
   JoinColumn,
   Index,
-  RelationId,
 } from 'typeorm'
 
 import { Account } from '../accounts/account.entity'
@@ -132,7 +131,6 @@ export class Transaction {
    * ID of account
    */
   @Column({ nullable: false })
-  @RelationId((transaction: Transaction) => transaction.account)
   @ApiProperty()
   accountId: number
 
@@ -166,7 +164,6 @@ export class Transaction {
   partnerTransaction: Transaction
 
   @Column({ nullable: true })
-  @RelationId((transaction: Transaction) => transaction.partnerTransaction)
   @ApiProperty()
   partnerTransactionId: number
 
@@ -204,7 +201,6 @@ export class Transaction {
    * ID of affected security
    */
   @Column({ nullable: true })
-  @RelationId((transaction: Transaction) => transaction.security)
   @ApiProperty()
   securityId: number
 

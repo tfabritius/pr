@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, RelationId, PrimaryColumn } from 'typeorm'
+import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import Big from 'big.js'
 import { Exclude, Transform } from 'class-transformer'
@@ -16,7 +16,6 @@ export class ExchangeRatePrice {
   exchangerate: ExchangeRate
 
   @PrimaryColumn({ nullable: false })
-  @RelationId((erp: ExchangeRatePrice) => erp.exchangerate)
   @Exclude()
   exchangerateId: number
 
