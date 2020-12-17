@@ -82,14 +82,9 @@ export class CurrenciesService {
         exchangerate,
         date: MoreThanOrEqual(startDate.format('YYYY-MM-DD')),
       })
-      .getRawMany()
+      .getMany()
 
-    exchangerate.prices = prices.map((el) => {
-      const p = new ExchangeRatePrice()
-      p.date = dayjs(el.prices_date).format('YYYY-MM-DD')
-      p.value = Big(el.prices_value)
-      return p
-    })
+    exchangerate.prices = prices
 
     const latestPrice = await this.exchangeRatePricesRepository
       .createQueryBuilder('p')
