@@ -4,8 +4,8 @@ import Big from 'big.js'
 import { Exclude, Transform } from 'class-transformer'
 import * as dayjs from 'dayjs'
 
-import { Security } from './security.entity'
-import { DecimalTransformer } from '../../utils/DecimalTransformer'
+import { Security } from '../security.entity'
+import { DecimalTransformer } from '../../../utils/DecimalTransformer'
 
 @Entity('securities_prices')
 export class SecurityPrice {

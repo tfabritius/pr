@@ -15,7 +15,7 @@ import { Exclude } from 'class-transformer'
 import * as dayjs from 'dayjs'
 
 import { Portfolio } from '../portfolio.entity'
-import { SecurityPrice } from './price.entity'
+import { SecurityPrice } from './prices/price.entity'
 import { Transaction } from '../transactions/transaction.entity'
 import { SecurityKpis } from './security.kpis'
 

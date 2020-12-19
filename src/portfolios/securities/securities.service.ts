@@ -6,7 +6,7 @@ import * as dayjs from 'dayjs'
 import { Portfolio } from '../portfolio.entity'
 import { SecurityDto } from './securities.dto'
 import { Security } from './security.entity'
-import { SecurityPrice } from './price.entity'
+import { SecurityPrice } from './prices/price.entity'
 import { SecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 
