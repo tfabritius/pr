@@ -48,7 +48,7 @@ describe('Securities (e2e)', () => {
       expect(response.body).toHaveLength(0)
     })
 
-    test('GET .../securities/$id returns no lastPriceDate', async () => {
+    test('GET .../securities/$id returns no latestPriceDate', async () => {
       const response = await api.get(
         `/portfolios/${portfolioId}/securities/${securityId}`,
       )
@@ -86,6 +86,7 @@ describe('Securities (e2e)', () => {
           [
             { date: '2020-12-01', value: '100.00' },
             { date: '2020-12-02', value: '101.01' },
+            { date: '2020-12-03', value: '102.02' },
           ],
         )
         expect(response.status).toBe(200)
@@ -98,7 +99,7 @@ describe('Securities (e2e)', () => {
 
         expect(response.status).toBe(200)
         expect(Array.isArray(response.body)).toBe(true)
-        expect(response.body).toHaveLength(2)
+        expect(response.body).toHaveLength(3)
         expect(response.body).toContainEqual({
           date: '2020-12-01',
           value: '100.0000',
@@ -107,23 +108,67 @@ describe('Securities (e2e)', () => {
           date: '2020-12-02',
           value: '101.0100',
         })
+        expect(response.body).toContainEqual({
+          date: '2020-12-03',
+          value: '102.0200',
+        })
       })
 
-      test('GET .../securities/$id returns lastPriceDate', async () => {
+      test('GET .../securities/$id/prices?startDate=2020-12-02 returns filtered prices', async () => {
+        const response = await api.get(
+          `/portfolios/${portfolioId}/securities/${securityId}/prices?startDate=2020-12-02`,
+        )
+
+        expect(response.status).toBe(200)
+        expect(Array.isArray(response.body)).toBe(true)
+        expect(response.body).toHaveLength(2)
+        expect(response.body).toContainEqual(
+          expect.objectContaining({
+            date: '2020-12-02',
+          }),
+        )
+        expect(response.body).toContainEqual(
+          expect.objectContaining({
+            date: '2020-12-03',
+          }),
+        )
+      })
+
+      test('GET .../securities/$id/prices?endDate=2020-12-02 returns filtered prices', async () => {
+        const response = await api.get(
+          `/portfolios/${portfolioId}/securities/${securityId}/prices?endDate=2020-12-02`,
+        )
+
+        expect(response.status).toBe(200)
+        expect(Array.isArray(response.body)).toBe(true)
+        expect(response.body).toHaveLength(2)
+        expect(response.body).toContainEqual(
+          expect.objectContaining({
+            date: '2020-12-01',
+          }),
+        )
+        expect(response.body).toContainEqual(
+          expect.objectContaining({
+            date: '2020-12-02',
+          }),
+        )
+      })
+
+      test('GET .../securities/$id returns latestPriceDate', async () => {
         const response = await api.get(
           `/portfolios/${portfolioId}/securities/${securityId}`,
         )
 
         expect(response.status).toBe(200)
-        expect(response.body.latestPriceDate).toBe('2020-12-02')
+        expect(response.body.latestPriceDate).toBe('2020-12-03')
       })
 
       test('PATCH .../prices returns prices', async () => {
         const response = await api.patch(
           `/portfolios/${portfolioId}/securities/${securityId}/prices`,
           [
-            { date: '2020-12-02', value: '102.02' },
             { date: '2020-12-03', value: '103.03' },
+            { date: '2020-12-04', value: '104.04' },
           ],
         )
 
@@ -131,12 +176,12 @@ describe('Securities (e2e)', () => {
         expect(Array.isArray(response.body)).toBe(true)
         expect(response.body).toHaveLength(2)
         expect(response.body).toContainEqual({
-          date: '2020-12-02',
-          value: '102.0200',
-        })
-        expect(response.body).toContainEqual({
           date: '2020-12-03',
           value: '103.0300',
+        })
+        expect(response.body).toContainEqual({
+          date: '2020-12-04',
+          value: '104.0400',
         })
       })
     })

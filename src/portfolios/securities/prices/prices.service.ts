@@ -7,6 +7,7 @@ import { Security } from '../security.entity'
 import { SecurityPrice } from './price.entity'
 import { SecurityParams } from '../security.params'
 import { SecurityPriceDto } from './prices.dto'
+import { PricesQuery } from './prices.query'
 
 @Injectable()
 export class SecuritiesPricesService {
@@ -36,11 +37,26 @@ export class SecuritiesPricesService {
   /**
    * Gets prices of a security
    */
-  async getAll(params: SecurityParams): Promise<SecurityPrice[]> {
-    const prices = await this.securitiesPricesRepository.find({
-      where: { securityId: params.securityId },
-    })
+  async getAll(
+    params: SecurityParams,
+    query: PricesQuery,
+  ): Promise<SecurityPrice[]> {
+    let select = await this.securitiesPricesRepository
+      .createQueryBuilder('price')
+      .where('security_id = :securityId', params)
 
-    return prices
+    if (query.startDate) {
+      select = select.andWhere('date >= :startDate', {
+        startDate: query.startDate.format('YYYY-MM-DD'),
+      })
+    }
+
+    if (query.endDate) {
+      select = select.andWhere('date <= :endDate', {
+        endDate: query.endDate.format('YYYY-MM-DD'),
+      })
+    }
+
+    return select.getMany()
   }
 }

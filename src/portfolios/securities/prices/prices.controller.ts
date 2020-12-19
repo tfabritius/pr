@@ -5,6 +5,7 @@ import {
   Param,
   ParseArrayPipe,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -26,6 +27,7 @@ import { SecurityParams } from '../security.params'
 import { SecurityPrice } from './price.entity'
 import { SecurityPriceDto } from './prices.dto'
 import { SecuritiesPricesService } from './prices.service'
+import { PricesQuery } from './prices.query'
 
 @Controller('portfolios/:portfolioId/securities/:securityId/prices')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -69,9 +71,9 @@ export class SecuritiesPricesController {
   })
   async readAll(
     @Param() params: SecurityParams,
-    // @Query() query: DateRangeQuery,
+    @Query() query: PricesQuery,
   ): Promise<SecurityPrice[]> {
-    const prices = await this.pricesService.getAll(params)
+    const prices = await this.pricesService.getAll(params, query)
     return prices
   }
 }
