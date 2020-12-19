@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import * as dayjs from 'dayjs'
 
 import { Portfolio } from '../portfolio.entity'
 import { SecurityDto } from './securities.dto'
 import { Security } from './security.entity'
+import { SecurityPrice } from './price.entity'
 import { SecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 
@@ -13,6 +15,9 @@ export class SecuritiesService {
   constructor(
     @InjectRepository(Security)
     private readonly securitiesRepository: Repository<Security>,
+
+    @InjectRepository(SecurityPrice)
+    private readonly securitiesPricesRepository: Repository<SecurityPrice>,
   ) {}
 
   /**
@@ -29,12 +34,26 @@ export class SecuritiesService {
    * Gets all securities in a portfolio
    */
   async getAll(params: PortfolioParams): Promise<Security[]> {
-    return this.securitiesRepository.find({
-      relations: ['portfolio'],
-      where: {
-        portfolio: { id: params.portfolioId },
-      },
+    const { entities, raw } = await this.securitiesRepository
+      .createQueryBuilder('security')
+      .where('security.portfolio_id = :portfolioId', {
+        portfolioId: params.portfolioId,
+      })
+      .addSelect((qb) =>
+        qb
+          .select('MAX(p.date) as latest_price_date')
+          .from(SecurityPrice, 'p')
+          .where('p.security_id = security.id'),
+      )
+      .getRawAndEntities()
+
+    raw.forEach((item, index) => {
+      entities[index].latestPriceDate = item.latest_price_date
+        ? dayjs(item.latest_price_date).format('YYYY-MM-DD')
+        : null
     })
+
+    return entities
   }
 
   /**
@@ -49,6 +68,16 @@ export class SecuritiesService {
     if (!security) {
       throw new NotFoundException('Security not found')
     }
+
+    const latestPrice = await this.securitiesPricesRepository
+      .createQueryBuilder('p')
+      .select('MAX(p.date) as date')
+      .where('p.security_id = :id', { id: params.securityId })
+      .getRawOne()
+
+    security.latestPriceDate = latestPrice.date
+      ? dayjs(latestPrice.date).format('YYYY-MM-DD')
+      : null
 
     return security
   }

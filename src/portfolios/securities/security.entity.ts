@@ -12,6 +12,7 @@ import {
   Index,
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
+import * as dayjs from 'dayjs'
 
 import { Portfolio } from '../portfolio.entity'
 import { SecurityPrice } from './price.entity'
@@ -68,6 +69,9 @@ export class Security {
   @OneToMany(() => SecurityPrice, (sp) => sp.security)
   @ApiProperty({ type: SecurityPrice, isArray: true })
   prices: SecurityPrice[]
+
+  @ApiProperty({ example: dayjs().format('YYYY-MM-DD') })
+  latestPriceDate: string
 
   @ApiPropertyOptional()
   kpis: SecurityKpis
