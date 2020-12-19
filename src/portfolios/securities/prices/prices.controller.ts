@@ -10,6 +10,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -47,6 +48,7 @@ export class SecuritiesPricesController {
     type: SecurityPrice,
     isArray: true,
   })
+  @ApiBody({ type: SecurityPrice, isArray: true })
   async upsert(
     @Param()
     params: SecurityParams,
