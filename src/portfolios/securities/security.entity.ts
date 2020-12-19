@@ -14,6 +14,7 @@ import {
 import { Exclude } from 'class-transformer'
 
 import { Portfolio } from '../portfolio.entity'
+import { SecurityPrice } from './price.entity'
 import { Transaction } from '../transactions/transaction.entity'
 import { SecurityKpis } from './security.kpis'
 
@@ -63,6 +64,10 @@ export class Security {
   @OneToMany(() => Transaction, (t) => t.security)
   @ApiHideProperty()
   transactions: Transaction[]
+
+  @OneToMany(() => SecurityPrice, (sp) => sp.security)
+  @ApiProperty({ type: SecurityPrice, isArray: true })
+  prices: SecurityPrice[]
 
   @ApiPropertyOptional()
   kpis: SecurityKpis

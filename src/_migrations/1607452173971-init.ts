@@ -61,6 +61,14 @@ export class init1607452173971 implements MigrationInterface {
             CREATE INDEX "IDX_9cb5d1be66e92b4763281199d1" ON "transactions" ("security_id")
         `)
     await queryRunner.query(`
+        CREATE TABLE "securities_prices" (
+            "security_id" integer NOT NULL,
+            "date" date NOT NULL,
+            "value" numeric(10, 4) NOT NULL,
+            CONSTRAINT "PK_ac8f071a70248346145c07ad9bf" PRIMARY KEY ("security_id", "date")
+        )
+    `)
+    await queryRunner.query(`
             CREATE TABLE "securities" (
                 "id" SERIAL NOT NULL,
                 "name" character varying NOT NULL,
@@ -173,6 +181,10 @@ export class init1607452173971 implements MigrationInterface {
             ADD CONSTRAINT "FK_9cb5d1be66e92b4763281199d12" FOREIGN KEY ("security_id") REFERENCES "securities"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
     await queryRunner.query(`
+        ALTER TABLE "securities_prices"
+        ADD CONSTRAINT "FK_9c46cc850aa6efc1bd1f9ec4699" FOREIGN KEY ("security_id") REFERENCES "securities"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+    `)
+    await queryRunner.query(`
             ALTER TABLE "securities"
             ADD CONSTRAINT "FK_3821d01657b92c92d505cfe8ed9" FOREIGN KEY ("portfolio_id") REFERENCES "portfolios"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
@@ -216,6 +228,9 @@ export class init1607452173971 implements MigrationInterface {
         `)
     await queryRunner.query(`
             ALTER TABLE "securities" DROP CONSTRAINT "FK_3821d01657b92c92d505cfe8ed9"
+        `)
+    await queryRunner.query(`
+            ALTER TABLE "securities_prices" DROP CONSTRAINT "FK_9c46cc850aa6efc1bd1f9ec4699"
         `)
     await queryRunner.query(`
             ALTER TABLE "transactions" DROP CONSTRAINT "FK_9cb5d1be66e92b4763281199d12"
@@ -283,6 +298,9 @@ export class init1607452173971 implements MigrationInterface {
     await queryRunner.query(`
             DROP INDEX "IDX_6a323de73ef7d943df41a4fdd2"
         `)
+    await queryRunner.query(`
+        DROP TABLE "securities_prices"
+    `)
     await queryRunner.query(`
             DROP TABLE "transactions"
         `)
