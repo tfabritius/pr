@@ -35,7 +35,6 @@ import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-import { AccountQuery } from '../accounts/accounts.controller'
 
 export class SecurityQuery {
   @IsOptional()
@@ -82,7 +81,7 @@ export class SecuritiesController {
   })
   async readAll(
     @Param() params: PortfolioParams,
-    @Query() query: AccountQuery,
+    @Query() query: SecurityQuery,
   ): Promise<Security[]> {
     const securities = await this.securitiesService.getAll(params)
     if (query.kpis) {
@@ -99,7 +98,7 @@ export class SecuritiesController {
   @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
   async readOne(
     @Param() params: SecurityParams,
-    @Query() query: AccountQuery,
+    @Query() query: SecurityQuery,
   ): Promise<Security> {
     const security = await this.securitiesService.getOne(params)
     if (query.kpis) {
