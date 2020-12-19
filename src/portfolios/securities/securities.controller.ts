@@ -20,12 +20,9 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiPropertyOptional,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { IsBoolean, IsOptional } from 'class-validator'
-import { Transform } from 'class-transformer'
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
@@ -35,14 +32,7 @@ import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-
-export class SecurityQuery {
-  @IsOptional()
-  @Transform((value) => value === 'true', { toClassOnly: true })
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly kpis?: boolean
-}
+import { KpisQuery } from '../kpis/kpis.query'
 
 @Controller('portfolios/:portfolioId/securities')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -81,12 +71,14 @@ export class SecuritiesController {
   })
   async readAll(
     @Param() params: PortfolioParams,
-    @Query() query: SecurityQuery,
+    @Query() query: KpisQuery,
   ): Promise<Security[]> {
     const securities = await this.securitiesService.getAll(params)
     if (query.kpis) {
       for (const security of securities) {
-        security.kpis = await this.kpisService.getKpis(security)
+        security.kpis = await this.kpisService.getKpis(security, {
+          baseCurrencyCode: query.currencyCode,
+        })
       }
     }
     return securities
@@ -98,11 +90,13 @@ export class SecuritiesController {
   @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
   async readOne(
     @Param() params: SecurityParams,
-    @Query() query: SecurityQuery,
+    @Query() query: KpisQuery,
   ): Promise<Security> {
     const security = await this.securitiesService.getOne(params)
     if (query.kpis) {
-      security.kpis = await this.kpisService.getKpis(security)
+      security.kpis = await this.kpisService.getKpis(security, {
+        baseCurrencyCode: query.currencyCode,
+      })
     }
     return security
   }

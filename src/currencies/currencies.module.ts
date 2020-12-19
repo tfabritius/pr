@@ -14,6 +14,6 @@ import { CurrenciesController } from './currencies.controller'
   ],
   providers: [CurrenciesService, CurrenciesConversionService],
   controllers: [CurrenciesController],
-  exports: [CurrenciesService],
+  exports: [CurrenciesService, CurrenciesConversionService],
 })
 export class CurrenciesModule {}

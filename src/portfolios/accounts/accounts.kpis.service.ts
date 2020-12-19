@@ -5,20 +5,34 @@ import { Repository } from 'typeorm'
 
 import { Account, AccountType } from './account.entity'
 import { AccountKpis } from './account.kpis'
+import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
 
 @Injectable()
 export class AccountsKpisService {
   constructor(
     @InjectRepository(Account)
     private readonly accountsRepository: Repository<Account>,
+
+    private readonly currenciesConversionService: CurrenciesConversionService,
   ) {}
 
-  public async getKpis(account: Account): Promise<AccountKpis> {
+  public async getKpis(
+    account: Account,
+    { baseCurrencyCode }: { baseCurrencyCode: string },
+  ): Promise<AccountKpis> {
     const kpis = new AccountKpis()
 
     if (account.type === AccountType.DEPOSIT) {
       const balance = await this.getDepositBalance(account)
       kpis.balance = balance
+
+      if (baseCurrencyCode) {
+        kpis.valueInBaseCurrency = await this.currenciesConversionService.convertCurrencyAmount(
+          kpis.balance,
+          account.currencyCode,
+          baseCurrencyCode,
+        )
+      }
     }
 
     return kpis

@@ -6,4 +6,8 @@ export class AccountKpis {
   @Transform((value: Big) => value.toString(), { toPlainOnly: true })
   @ApiPropertyOptional({ type: String })
   balance?: Big
+
+  @Transform((value: Big) => value.toString(), { toPlainOnly: true })
+  @ApiPropertyOptional({ type: String })
+  valueInBaseCurrency?: Big
 }

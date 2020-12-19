@@ -8,12 +8,14 @@ import { SecuritiesKpisService } from './securities.kpis.service'
 import { SecuritiesController } from './securities.controller'
 import { PortfoliosModule } from '../portfolios.module'
 import { SecuritiesPricesModule } from './prices/prices.module'
+import { CurrenciesModule } from '../../currencies/currencies.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Security, SecurityPrice]),
     forwardRef(() => PortfoliosModule),
     SecuritiesPricesModule,
+    CurrenciesModule,
   ],
   providers: [SecuritiesService, SecuritiesKpisService],
   controllers: [SecuritiesController],

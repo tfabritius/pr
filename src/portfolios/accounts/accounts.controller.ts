@@ -20,7 +20,6 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiPropertyOptional,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -33,16 +32,7 @@ import { AccountParams } from './account.params'
 import { AccountsService } from './accounts.service'
 import { AccountsKpisService } from './accounts.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-import { IsOptional, IsBoolean } from 'class-validator'
-import { Transform } from 'class-transformer'
-
-export class AccountQuery {
-  @IsOptional()
-  @Transform((value) => value === 'true', { toClassOnly: true })
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly kpis?: boolean
-}
+import { KpisQuery } from '../kpis/kpis.query'
 
 @Controller('portfolios/:portfolioId/accounts')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -81,12 +71,14 @@ export class AccountsController {
   })
   async readAll(
     @Param() params: PortfolioParams,
-    @Query() query: AccountQuery,
+    @Query() query: KpisQuery,
   ): Promise<Account[]> {
     const accounts = await this.service.getAll(params)
     if (query.kpis) {
       for (const account of accounts) {
-        account.kpis = await this.kpisService.getKpis(account)
+        account.kpis = await this.kpisService.getKpis(account, {
+          baseCurrencyCode: query.currencyCode,
+        })
       }
     }
     return accounts
@@ -103,11 +95,13 @@ export class AccountsController {
   })
   async readOne(
     @Param() params: AccountParams,
-    @Query() query: AccountQuery,
+    @Query() query: KpisQuery,
   ): Promise<Account> {
     const account = await this.service.getOne(params)
     if (query.kpis) {
-      account.kpis = await this.kpisService.getKpis(account)
+      account.kpis = await this.kpisService.getKpis(account, {
+        baseCurrencyCode: query.currencyCode,
+      })
     }
     return account
   }
