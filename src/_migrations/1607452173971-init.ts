@@ -90,7 +90,7 @@ export class init1607452173971 implements MigrationInterface {
                 "id" SERIAL NOT NULL,
                 "name" character varying NOT NULL,
                 "note" character varying NOT NULL,
-                "base_currency_code" character varying NOT NULL,
+                "base_currency_code" character(3) NOT NULL,
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 "user_id" integer NOT NULL,
@@ -210,6 +210,11 @@ export class init1607452173971 implements MigrationInterface {
             ALTER TABLE "portfolios"
             ADD CONSTRAINT "FK_57fba72db5ac40768b40f0ecfa1" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
+    await queryRunner.query(`
+        ALTER TABLE "portfolios"
+        ADD CONSTRAINT "FK_de466d1bd96628d0256702568f2" FOREIGN KEY ("base_currency_code") REFERENCES "currencies"("code")
+        ON DELETE RESTRICT ON UPDATE NO ACTION
+    `)
     await queryRunner.query(`
             ALTER TABLE "sessions"
             ADD CONSTRAINT "FK_085d540d9f418cfbdc7bd55bb19" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION

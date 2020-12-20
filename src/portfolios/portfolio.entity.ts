@@ -14,6 +14,7 @@ import { User } from '../auth/users/user.entity'
 import { Security } from './securities/security.entity'
 import { Account } from './accounts/account.entity'
 import { Transaction } from './transactions/transaction.entity'
+import { Currency } from '../currencies/currency.entity'
 
 @Entity('portfolios')
 export class Portfolio {
@@ -29,9 +30,15 @@ export class Portfolio {
   @ApiProperty()
   note: string
 
-  @Column()
+  @Column({ nullable: false, type: 'character', length: 3 })
   @ApiProperty()
   baseCurrencyCode: string
+
+  @ManyToOne(() => Currency, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  baseCurrency: Currency
 
   @Column({
     type: 'timestamp with time zone',
