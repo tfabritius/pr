@@ -35,7 +35,7 @@ describe('Accounts (e2e)', () => {
   const testDepositAccount = {
     type: 'deposit',
     name: 'Test deposit account',
-    uuid: '42',
+    uuid: '11111111-1111-1111-1111-111111111111',
     note: 'comment',
     currencyCode: 'EUR',
   }
@@ -162,7 +162,7 @@ describe('Accounts (e2e)', () => {
           const changedAccount = {
             type: 'deposit',
             name: 'changed name',
-            uuid: '',
+            uuid: '22222222-2222-2222-2222-222222222222',
             note: 'changed comment',
             currencyCode: 'USD',
           }
@@ -223,7 +223,7 @@ describe('Accounts (e2e)', () => {
     const testSecuritiesAccount = {
       type: 'securities',
       name: 'Test securities account',
-      uuid: '42',
+      uuid: '11111111-1111-1111-1111-111111111111',
       note: 'comment',
       referenceAccountId: undefined,
     }
@@ -317,7 +317,7 @@ describe('Accounts (e2e)', () => {
           const changedAccount = {
             type: 'securities',
             name: 'changed name',
-            uuid: '',
+            uuid: '22222222-2222-2222-2222-222222222222',
             note: 'changed comment',
             referenceAccountId: depositAccountId,
           }

@@ -9,8 +9,8 @@ export class init1607452173971 implements MigrationInterface {
                 "id" SERIAL NOT NULL,
                 "type" character varying NOT NULL,
                 "name" character varying NOT NULL,
-                "uuid" character varying NOT NULL,
-                "currency_code" character varying,
+                "uuid" character(36) NOT NULL,
+                "currency_code" character(3),
                 "reference_account_id" integer,
                 "note" character varying NOT NULL,
                 "portfolio_id" integer NOT NULL,
@@ -25,9 +25,9 @@ export class init1607452173971 implements MigrationInterface {
                 "id" SERIAL NOT NULL,
                 "type" character varying NOT NULL,
                 "amount" numeric(10, 2) NOT NULL,
-                "currency_code" character varying NOT NULL,
+                "currency_code" character(3) NOT NULL,
                 "original_amount" numeric(10, 2),
-                "original_currency_code" character varying,
+                "original_currency_code" character(3),
                 "exchange_rate" numeric(10, 4),
                 "transaction_id" integer NOT NULL,
                 CONSTRAINT "PK_b1ec940819a88ccb1c71920a6e3" PRIMARY KEY ("id")
@@ -72,8 +72,8 @@ export class init1607452173971 implements MigrationInterface {
             CREATE TABLE "securities" (
                 "id" SERIAL NOT NULL,
                 "name" character varying NOT NULL,
-                "uuid" character varying NOT NULL,
-                "currency_code" character varying NOT NULL,
+                "uuid" character(36) NOT NULL,
+                "currency_code" character(3) NOT NULL,
                 "isin" character varying NOT NULL,
                 "wkn" character varying NOT NULL,
                 "symbol" character varying NOT NULL,
@@ -116,7 +116,7 @@ export class init1607452173971 implements MigrationInterface {
         `)
     await queryRunner.query(`
             CREATE TABLE "sessions" (
-                "token" uuid NOT NULL,
+                "token" character(36) NOT NULL,
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 "last_activity_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 "user_id" integer NOT NULL,
@@ -137,8 +137,8 @@ export class init1607452173971 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE "exchangerates" (
                 "id" SERIAL NOT NULL,
-                "base_currency_code" character varying NOT NULL,
-                "quote_currency_code" character varying NOT NULL,
+                "base_currency_code" character(3) NOT NULL,
+                "quote_currency_code" character(3) NOT NULL,
                 CONSTRAINT "PK_a8eb1b05080d28879c877d5cd24" PRIMARY KEY ("id")
             )
         `)
@@ -147,7 +147,7 @@ export class init1607452173971 implements MigrationInterface {
         `)
     await queryRunner.query(`
             CREATE TABLE "currencies" (
-                "code" character varying NOT NULL,
+                "code" character(3) NOT NULL,
                 CONSTRAINT "PK_9f8d0972aeeb5a2277e40332d29" PRIMARY KEY ("code")
             )
         `)
@@ -161,8 +161,21 @@ export class init1607452173971 implements MigrationInterface {
             ADD CONSTRAINT "FK_e1a05c56032c1c31d04c4ad93f4" FOREIGN KEY ("portfolio_id") REFERENCES "portfolios"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
     await queryRunner.query(`
+        ALTER TABLE "accounts"
+        ADD CONSTRAINT "FK_a4cafed13e3ede137659efc9f76" FOREIGN KEY ("currency_code") REFERENCES "currencies"("code")
+        ON DELETE RESTRICT ON UPDATE NO ACTION;
+        `)
+    await queryRunner.query(`
             ALTER TABLE "transactions_units"
             ADD CONSTRAINT "FK_142a786906997107d9b0d1258ff" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+        `)
+    await queryRunner.query(`
+            ALTER TABLE "transactions_units"
+            ADD CONSTRAINT "FK_8ad54dc76bca3028cb7c37a1483" FOREIGN KEY ("currency_code") REFERENCES "currencies"("code") ON DELETE RESTRICT ON UPDATE NO ACTION
+        `)
+    await queryRunner.query(`
+            ALTER TABLE "transactions_units"
+            ADD CONSTRAINT "FK_67729497291619609bb83e45140" FOREIGN KEY ("original_currency_code") REFERENCES "currencies"("code") ON DELETE RESTRICT ON UPDATE NO ACTION
         `)
     await queryRunner.query(`
             ALTER TABLE "transactions"
@@ -189,6 +202,11 @@ export class init1607452173971 implements MigrationInterface {
             ADD CONSTRAINT "FK_3821d01657b92c92d505cfe8ed9" FOREIGN KEY ("portfolio_id") REFERENCES "portfolios"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
     await queryRunner.query(`
+        ALTER TABLE "securities"
+        ADD CONSTRAINT "FK_2f5cfc2f2b282ed7d02a7c0fa90" FOREIGN KEY ("currency_code") REFERENCES "currencies"("code")
+        ON DELETE RESTRICT ON UPDATE NO ACTION;
+        `)
+    await queryRunner.query(`
             ALTER TABLE "portfolios"
             ADD CONSTRAINT "FK_57fba72db5ac40768b40f0ecfa1" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
@@ -212,109 +230,37 @@ export class init1607452173971 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE "exchangerates" DROP CONSTRAINT "FK_f2409de5d179af777f642108a59"
+            DROP TABLE "currencies" CASCADE
         `)
     await queryRunner.query(`
-            ALTER TABLE "exchangerates" DROP CONSTRAINT "FK_215d3e767f6be0789819e0d3646"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "exchangerates_prices" DROP CONSTRAINT "FK_23d2485b433791f099c3b4f9548"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "sessions" DROP CONSTRAINT "FK_085d540d9f418cfbdc7bd55bb19"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "portfolios" DROP CONSTRAINT "FK_57fba72db5ac40768b40f0ecfa1"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "securities" DROP CONSTRAINT "FK_3821d01657b92c92d505cfe8ed9"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "securities_prices" DROP CONSTRAINT "FK_9c46cc850aa6efc1bd1f9ec4699"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "transactions" DROP CONSTRAINT "FK_9cb5d1be66e92b4763281199d12"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "transactions" DROP CONSTRAINT "FK_de753ae74e3122a538dbb7a77b3"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "transactions" DROP CONSTRAINT "FK_49c0d6e8ba4bfb5582000d851f0"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "transactions" DROP CONSTRAINT "FK_6a323de73ef7d943df41a4fdd20"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "transactions_units" DROP CONSTRAINT "FK_142a786906997107d9b0d1258ff"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "accounts" DROP CONSTRAINT "FK_e1a05c56032c1c31d04c4ad93f4"
-        `)
-    await queryRunner.query(`
-            ALTER TABLE "accounts" DROP CONSTRAINT "FK_5a58c9139d33597696dd6b3caae"
-        `)
-    await queryRunner.query(`
-            DROP TABLE "currencies"
-        `)
-    await queryRunner.query(`
-            DROP INDEX "IDX_215ebb92677c9c2442e35c74fd"
-        `)
-    await queryRunner.query(`
-            DROP TABLE "exchangerates"
+            DROP TABLE "exchangerates" CASCADE
         `)
     await queryRunner.query(`
             DROP TABLE "exchangerates_prices"
         `)
     await queryRunner.query(`
-            DROP INDEX "IDX_085d540d9f418cfbdc7bd55bb1"
-        `)
-    await queryRunner.query(`
             DROP TABLE "sessions"
         `)
     await queryRunner.query(`
-            DROP INDEX "IDX_fe0bb3f6520ee0469504521e71"
+            DROP TABLE "users" CASCADE
         `)
     await queryRunner.query(`
-            DROP TABLE "users"
+            DROP TABLE "portfolios" CASCADE
         `)
     await queryRunner.query(`
-            DROP INDEX "IDX_57fba72db5ac40768b40f0ecfa"
-        `)
-    await queryRunner.query(`
-            DROP TABLE "portfolios"
-        `)
-    await queryRunner.query(`
-            DROP INDEX "IDX_3821d01657b92c92d505cfe8ed"
-        `)
-    await queryRunner.query(`
-            DROP TABLE "securities"
-        `)
-    await queryRunner.query(`
-            DROP INDEX "IDX_9cb5d1be66e92b4763281199d1"
-        `)
-    await queryRunner.query(`
-            DROP INDEX "IDX_49c0d6e8ba4bfb5582000d851f"
-        `)
-    await queryRunner.query(`
-            DROP INDEX "IDX_6a323de73ef7d943df41a4fdd2"
+            DROP TABLE "securities" CASCADE
         `)
     await queryRunner.query(`
         DROP TABLE "securities_prices"
     `)
     await queryRunner.query(`
-            DROP TABLE "transactions"
-        `)
-    await queryRunner.query(`
-            DROP INDEX "IDX_142a786906997107d9b0d1258f"
+            DROP TABLE "transactions" CASCADE
         `)
     await queryRunner.query(`
             DROP TABLE "transactions_units"
         `)
     await queryRunner.query(`
-            DROP INDEX "IDX_e1a05c56032c1c31d04c4ad93f"
-        `)
-    await queryRunner.query(`
-            DROP TABLE "accounts"
+            DROP TABLE "accounts" CASCADE
         `)
   }
 }

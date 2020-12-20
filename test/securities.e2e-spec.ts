@@ -34,7 +34,7 @@ describe('Securities (e2e)', () => {
 
   const testSecurity = {
     name: 'Test security',
-    uuid: '42',
+    uuid: '11111111-1111-1111-1111-111111111111',
     note: 'comment',
     currencyCode: 'EUR',
     isin: 'some isin',
@@ -157,7 +157,7 @@ describe('Securities (e2e)', () => {
       it('updates the security', async () => {
         const changedSecurity = {
           name: 'changed security',
-          uuid: '',
+          uuid: '22222222-2222-2222-2222-222222222222',
           note: 'different note',
           currencyCode: 'CHF',
           isin: 'another isin',

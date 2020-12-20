@@ -23,14 +23,14 @@ export class ExchangeRate {
   @ManyToOne(() => Currency, { nullable: false })
   baseCurrency: Currency
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'character', length: 3 })
   @ApiProperty()
   baseCurrencyCode: string
 
   @ManyToOne(() => Currency, { nullable: false })
   quoteCurrency: Currency
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'character', length: 3 })
   @ApiProperty()
   quoteCurrencyCode: string
 

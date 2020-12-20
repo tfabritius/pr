@@ -18,6 +18,7 @@ import { Portfolio } from '../portfolio.entity'
 import { SecurityPrice } from './prices/price.entity'
 import { Transaction } from '../transactions/transaction.entity'
 import { SecurityKpis } from './security.kpis'
+import { Currency } from '../../currencies/currency.entity'
 
 @Entity('securities')
 export class Security {
@@ -29,13 +30,19 @@ export class Security {
   @ApiProperty()
   name: string
 
-  @Column()
+  @Column({ type: 'character', length: 36 })
   @ApiProperty()
   uuid: string
 
-  @Column()
+  @Column({ nullable: false, type: 'character', length: 3 })
   @ApiProperty()
   currencyCode: string
+
+  @ManyToOne(() => Currency, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  currency: Currency
 
   @Column()
   @ApiProperty()

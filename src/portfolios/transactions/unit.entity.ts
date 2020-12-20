@@ -11,6 +11,7 @@ import { Transform } from 'class-transformer'
 
 import { Transaction } from './transaction.entity'
 import { DecimalTransformer } from '../../utils/DecimalTransformer'
+import { Currency } from '../../currencies/currency.entity'
 
 /**
  * Enum for unit type
@@ -52,9 +53,15 @@ export class TransactionUnit {
   /**
    * Currency code for amount
    */
-  @Column()
+  @Column({ nullable: false, type: 'character', length: 3 })
   @ApiProperty()
   currencyCode: string
+
+  @ManyToOne(() => Currency, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  currency: Currency
 
   /**
    * Amount in original (foreign) currency
@@ -76,9 +83,15 @@ export class TransactionUnit {
    * Currency code of original (foreign) currency
    * in case of currency conversion
    */
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'character', length: 3 })
   @ApiProperty()
   originalCurrencyCode: string
+
+  @ManyToOne(() => Currency, {
+    nullable: true,
+    onDelete: 'RESTRICT',
+  })
+  originalCurrency: Currency
 
   /**
    * Exchange rate for currency conversion

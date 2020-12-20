@@ -74,9 +74,9 @@ export class ApiClient {
   async createSecurity(portfolioId: number, security?): Promise<number> {
     security = security ?? {
       name: 'Test security',
-      uuid: '',
+      uuid: '11111111-1111-1111-1111-111111111111',
       note: '',
-      currencyCode: '',
+      currencyCode: 'EUR',
       isin: '',
       wkn: '',
       symbol: '',
@@ -115,7 +115,7 @@ export class ApiClient {
     const testDepositAccount = {
       type: 'deposit',
       name: 'Test deposit account',
-      uuid: '',
+      uuid: '11111111-1111-1111-1111-111111111111',
       note: '',
       currencyCode: 'EUR',
     }
@@ -126,7 +126,7 @@ export class ApiClient {
     const testSecuritiesAccount = {
       type: 'securities',
       name: 'Test securities account',
-      uuid: '',
+      uuid: '11111111-1111-1111-1111-111111111111',
       note: '',
       referenceAccountId: testDepositAccountId,
     }

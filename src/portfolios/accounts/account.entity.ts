@@ -16,6 +16,7 @@ import { Exclude } from 'class-transformer'
 import { Portfolio } from '../portfolio.entity'
 import { Transaction } from '../transactions/transaction.entity'
 import { AccountKpis } from './account.kpis'
+import { Currency } from '../../currencies/currency.entity'
 
 export enum AccountType {
   DEPOSIT = 'deposit',
@@ -36,13 +37,19 @@ export class Account {
   @ApiProperty()
   name: string
 
-  @Column()
+  @Column({ type: 'character', length: 36 })
   @ApiProperty()
   uuid: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'character', length: 3 })
   @ApiProperty()
   currencyCode: string
+
+  @ManyToOne(() => Currency, {
+    nullable: true,
+    onDelete: 'RESTRICT',
+  })
+  currency: Currency
 
   @ManyToOne(() => Account, {
     nullable: true,

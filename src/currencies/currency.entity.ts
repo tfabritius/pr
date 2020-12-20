@@ -4,7 +4,7 @@ import { ExchangeRate } from './exchangerate.entity'
 
 @Entity('currencies')
 export class Currency {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'character', length: 3 })
   @ApiProperty()
   code: string
 

@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  IsUUID,
   ValidateIf,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
@@ -21,6 +22,7 @@ export class AccountDto {
 
   @ApiProperty()
   @IsString()
+  @IsUUID()
   readonly uuid: string
 
   @ApiProperty()

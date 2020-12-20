@@ -170,7 +170,7 @@ describe('Portfolio Guards (e2e)', () => {
           {
             type: 'securities',
             name: '...',
-            uuid: '',
+            uuid: '11111111-1111-1111-1111-111111111111',
             note: '',
             referenceAccountId: accountOne,
           },
@@ -185,7 +185,7 @@ describe('Portfolio Guards (e2e)', () => {
           {
             type: 'securities',
             name: '...',
-            uuid: '',
+            uuid: '11111111-1111-1111-1111-111111111111',
             note: '',
             referenceAccountId: accountOne,
           },

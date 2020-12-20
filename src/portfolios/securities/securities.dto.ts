@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class SecurityIdDto {
@@ -15,6 +15,7 @@ export class SecurityDto {
 
   @ApiProperty()
   @IsString()
+  @IsUUID()
   readonly uuid: string
 
   @ApiProperty()

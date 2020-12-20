@@ -6,7 +6,7 @@ import { Exclude } from 'class-transformer'
 
 @Entity('sessions')
 export class Session {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn({ type: 'character', length: 36 })
   @ApiProperty()
   token: string
 
