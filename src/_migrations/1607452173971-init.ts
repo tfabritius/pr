@@ -127,6 +127,9 @@ export class init1607452173971 implements MigrationInterface {
             CREATE INDEX "IDX_085d540d9f418cfbdc7bd55bb1" ON "sessions" ("user_id")
         `)
     await queryRunner.query(`
+            CREATE INDEX "IDX_f77bff4ae7cf7ee7cc7732f8ac" ON "sessions" ("last_activity_at")
+        `)
+    await queryRunner.query(`
             CREATE TABLE "exchangerates_prices" (
                 "exchangerate_id" integer NOT NULL,
                 "date" date NOT NULL,

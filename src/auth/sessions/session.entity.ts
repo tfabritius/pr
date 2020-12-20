@@ -22,6 +22,7 @@ export class Session {
     default: () => 'CURRENT_TIMESTAMP',
   })
   @ApiProperty()
+  @Index()
   lastActivityAt: Date
 
   @ManyToOne(() => User, (user) => user.sessions, {
