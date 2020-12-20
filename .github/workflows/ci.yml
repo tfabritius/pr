@@ -18,7 +18,7 @@ jobs:
       db:
         image: postgres:12
         env:
-          POSTGRES_USER: pr-api
+          POSTGRES_USER: pr
           POSTGRES_PASSWORD: password
         options: >-
           --health-cmd pg_isready
@@ -40,9 +40,5 @@ jobs:
       run: npm run test
     - name: Create DB schema
       run: npm run typeorm -- migration:run --transaction=each
-      env:
-        DB_PASS: password
     - name: Run E2E tests
       run: npm run test:e2e
-      env:
-        DB_PASS: password

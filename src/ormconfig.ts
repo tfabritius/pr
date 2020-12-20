@@ -6,12 +6,7 @@ const ormConfig: ConnectionOptions = {
   namingStrategy: new SnakeNamingStrategy(),
 
   type: 'postgres',
-
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.DB_PORT) || 5432,
-  username: process.env.DB_USER || 'pr-api',
-  password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'pr-api',
+  url: process.env.DATABASE_URL || 'postgresql://pr:password@localhost:5432/pr',
 
   // use .ts in development, compiled .js in production
   entities: [__dirname + '/**/*.entity{.ts,.js}'],

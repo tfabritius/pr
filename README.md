@@ -8,11 +8,7 @@ $ npm install
 
 Postgresql connection
 ```bash
-DB_HOST = localhost
-DB_PORT = 5432
-DB_USER = username
-DB_PASS = password
-DB_NAME = database
+DATABASE_URL = "postgresql://user:password@host:5432/database"
 ```
 
 Serve static files
