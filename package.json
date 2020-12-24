@@ -31,7 +31,7 @@
     "@nestjs/platform-express": "^7.6.4",
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/serve-static": "^2.1.4",
-    "@nestjs/swagger": "^4.7.5",
+    "@nestjs/swagger": "^4.7.8",
     "@nestjs/testing": "^7.5.5",
     "@nestjs/typeorm": "^7.1.5",
     "argon2": "^0.27.0",
