@@ -15,7 +15,7 @@ const fallbackLocale = 'en'
 
 export function getInitialLocale() {
   const lang = localStorage.getItem('language')
-  if (lang && supportedLocales.map(l => l.code).includes(lang)) {
+  if (lang && supportedLocales.map((l) => l.code).includes(lang)) {
     return lang
   }
 
@@ -23,7 +23,7 @@ export function getInitialLocale() {
 
   if (browserLocale) {
     const locale = browserLocale.trim().split(/-|_/)[0]
-    if (supportedLocales.map(l => l.code).includes(locale)) {
+    if (supportedLocales.map((l) => l.code).includes(locale)) {
       return locale
     }
   }
