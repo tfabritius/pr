@@ -35,16 +35,15 @@ jobs:
       uses: actions/setup-node@v2.1.4
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-      working-directory: api
-    - run: npm run build
+    - run: yarn install
+    - run: yarn build
       working-directory: api
     - name: Run unit tests
-      run: npm run test
+      run: yarn test
       working-directory: api
     - name: Create DB schema
-      run: npm run typeorm -- migration:run --transaction=each
+      run: yarn typeorm -- migration:run --transaction=each
       working-directory: api
     - name: Run E2E tests
-      run: npm run test:e2e
+      run: yarn test:e2e
       working-directory: api

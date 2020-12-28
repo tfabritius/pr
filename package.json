@@ -16,7 +16,8 @@
       "web"
     ],
     "nohoist": [
-      "**/@vue/cli-service"
+      "**/@vue/cli-service",
+      "**/typeorm"
     ]
   }
 }
