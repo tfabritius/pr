@@ -1,17 +1,18 @@
 FROM node:14 AS builder
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn install
 
 COPY . .
-RUN npm run build
+RUN yarn build
 
 FROM node:14-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --production
+RUN yarn install --production
 
 COPY --from=builder /app/dist ./dist
 
