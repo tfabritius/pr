@@ -34,5 +34,5 @@ export function getInitialLocale() {
 export default new VueI18n({
   locale: getInitialLocale(),
   fallbackLocale,
-  messages: {de, en},
+  messages: { de, en },
 })
