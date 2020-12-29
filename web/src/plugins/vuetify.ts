@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib/framework'
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { preset } from 'vue-cli-plugin-vuetify-preset-rally/preset'
 
 import en from 'vuetify/src/locale/en'
 import de from 'vuetify/src/locale/de'
@@ -13,4 +16,5 @@ export default new Vuetify({
     current: getInitialLocale(),
     locales: { de, en },
   },
+  preset,
 })

@@ -1508,6 +1508,13 @@
   resolved "https://registry.yarnpkg.com/@vue/web-component-wrapper/-/web-component-wrapper-1.2.0.tgz#bb0e46f1585a7e289b4ee6067dcc5a6ae62f1dd1"
   integrity sha512-Xn/+vdm9CjuC9p3Ae+lTClNutrVhsXpzxvoTXXtoys6kVRX9FkueSUAqSWAyZntmVLlR4DosBV4pH8y5Z/HbUw==
 
+"@vuetify/cli-plugin-utils@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@vuetify/cli-plugin-utils/-/cli-plugin-utils-0.0.7.tgz#103e0ce504253dbe87bc7fe7e096992beac9bf9b"
+  integrity sha512-34INe4rcsus6ByNgrpIPAyJaTRt1j+5YaMWt2Lh3iDZLn9h69tEp83Imqefze7weRbg+qukJYdnaWDFjFUAf2g==
+  dependencies:
+    semver "^7.1.2"
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
@@ -10708,6 +10715,13 @@ vue-cli-plugin-i18n@~1.0.1:
     vue "^2.6.11"
     vue-i18n "^8.17.0"
     vue-i18n-extract "1.0.2"
+
+vue-cli-plugin-vuetify-preset-rally@~1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-vuetify-preset-rally/-/vue-cli-plugin-vuetify-preset-rally-1.0.4.tgz#d2dc553f11391e4f59cab9460a4cd42a8d0b733c"
+  integrity sha512-0l+8Nokn1TgBgw4MYwfwDj9D1ZSEWIC5RkZahCWikRANwt3mxP5RwOBfGF/e8QL8CZQigx6Qf6VqWlmu1AufVg==
+  dependencies:
+    "@vuetify/cli-plugin-utils" "^0.0.7"
 
 vue-cli-plugin-vuetify@~2.0.8:
   version "2.0.8"
