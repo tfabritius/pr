@@ -7,5 +7,5 @@ module.exports = {
       enableInSFC: false,
     },
   },
-  transpileDependencies: ["vuetify"]
+  transpileDependencies: ['vuetify'],
 }
