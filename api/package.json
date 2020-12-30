@@ -22,7 +22,7 @@
     "test:e2e:cov": "jest --config ./test/jest-e2e.json --coverage"
   },
   "dependencies": {
-    "@nestjs/common": "^7.6.4",
+    "@nestjs/common": "^7.6.5",
     "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.6.4",
     "@nestjs/passport": "^7.1.5",
