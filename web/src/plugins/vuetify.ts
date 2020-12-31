@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib/framework'
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { preset } from 'vue-cli-plugin-vuetify-preset-rally/preset'
 
