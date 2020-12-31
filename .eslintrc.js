@@ -13,4 +13,8 @@ module.exports = {
   env: {
     node: true,
   },
+  rules: {
+    'no-console': 'warn',
+    'no-debugger': 'warn',
+  },
 }
