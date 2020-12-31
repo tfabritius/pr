@@ -17,6 +17,8 @@ export class AuthService {
       if (await this.usersService.verifyPassword(user, password)) {
         return user
       }
-    } catch {}
+    } catch {
+      // do nothing -> return nothing
+    }
   }
 }

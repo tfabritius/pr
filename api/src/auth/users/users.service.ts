@@ -26,7 +26,9 @@ export class UsersService {
     let existingUser: User
     try {
       existingUser = await this.getOneByUsername(username)
-    } catch {}
+    } catch {
+      // keep existingUser undefined
+    }
 
     if (existingUser) {
       throw new BadRequestException('Username is already in use.')
