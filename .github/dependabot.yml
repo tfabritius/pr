@@ -8,10 +8,6 @@ updates:
     directory: "/api"
     schedule:
       interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "/web"
-    schedule:
-      interval: "monthly"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
