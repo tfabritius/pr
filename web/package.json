@@ -27,7 +27,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-vue": "^7.4.0",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
     "typescript": "~3.9.3",
