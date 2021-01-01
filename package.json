@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "api": "yarn workspace pr-api",
+    "web": "yarn workspace pr-web",
     "lint": "eslint \"*/{src,test}/**/*.{ts,tsx,js,jsx,vue}\"",
     "lintfix": "eslint \"*/{src,test}/**/*.{ts,tsx,js,jsx,vue}\" --fix"
   },
