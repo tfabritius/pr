@@ -43,3 +43,4 @@ jobs:
       run: yarn api typeorm -- migration:run --transaction=each
     - name: Run E2E tests
       run: yarn api test:e2e
+    - run: yarn web build
