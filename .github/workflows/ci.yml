@@ -36,14 +36,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn install
-    - run: yarn build
-      working-directory: api
+    - run: yarn api build
     - name: Run unit tests
-      run: yarn test
-      working-directory: api
+      run: yarn api test
     - name: Create DB schema
-      run: yarn typeorm -- migration:run --transaction=each
-      working-directory: api
+      run: yarn api typeorm -- migration:run --transaction=each
     - name: Run E2E tests
-      run: yarn test:e2e
-      working-directory: api
+      run: yarn api test:e2e
