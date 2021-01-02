@@ -13,7 +13,7 @@ export const supportedLocales = [
 
 const fallbackLocale = 'en'
 
-export function getInitialLocale() {
+export function getInitialLocale(): string {
   const lang = localStorage.getItem('language')
   if (lang && supportedLocales.map((l) => l.code).includes(lang)) {
     return lang
