@@ -1,1 +1,22 @@
-{}
+{
+  "common": {
+    "log-out": "Log out",
+    "password": "Password",
+    "too-short": "Too short",
+    "username": "Username"
+  },
+  "login": {
+    "sign-in": "Sign in",
+    "not-registered": "Not registered?",
+    "create-account": "Create an account",
+    "invalid-credentials": "Invalid username/password"
+  },
+  "register": {
+    "confirm-password": "Confirm password",
+    "register": "Register",
+    "have-account": "Already have an account?",
+    "sign-in": "Sign in",
+    "invalid-chars": "Invalid characters",
+    "confirm-password-mismatch": "Passwords don't match"
+  }
+}

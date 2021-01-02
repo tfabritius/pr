@@ -1,1 +1,22 @@
-{}
+{
+  "common": {
+    "log-out": "Abmelden",
+    "password": "Passwort",
+    "too-short": "Zu kurz",
+    "username": "Benutzername"
+  },
+  "login": {
+    "sign-in": "Anmelden",
+    "not-registered": "Keine Zugangsdaten?",
+    "create-account": "Jetzt Konto anlegen",
+    "invalid-credentials": "Benutzername/Passwort ungültig"
+  },
+  "register": {
+    "confirm-password": "Bestätige Passwort",
+    "register": "Konto anlegen",
+    "have-account": "Konto schon vorhanden?",
+    "sign-in": "Anmelden",
+    "invalid-chars": "Ungültige Zeichen",
+    "confirm-password-mismatch": "Passwörter stimmen nicht überein"
+  }
+}
