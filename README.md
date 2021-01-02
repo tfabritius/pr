@@ -15,6 +15,15 @@ SERVE_STATIC = false
 SESSION_TIMEOUT = 86400
 ```
 
+### Configure frontend
+
+```ini
+# web/.env
+
+# URL to API
+VUE_APP_API_URL = http://localhost:3000/
+```
+
 ### Installation
 
 ```bash
