@@ -6,7 +6,7 @@
 # api/.env
 
 # Postgres database
-DATABASE_URL="postgresql://user:password@host:5432/database"
+DATABASE_URL = "postgresql://user:password@host:5432/database"
 
 # Serve static files under / and move api endpoints to /api
 SERVE_STATIC = false
@@ -31,7 +31,7 @@ VUE_APP_API_URL = http://localhost:3000/
 $ yarn install --frozen-lockfile
 
 # Run pending database migrations
-$ yarn api typeorm -- migration:run --transaction=each
+$ yarn api typeorm migration:run --transaction=each
 
 # Start backend in watch mode
 $ yarn api start:dev
