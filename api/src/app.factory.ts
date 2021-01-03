@@ -17,7 +17,7 @@ export async function createApp(
 
   if (environment === 'prod') {
     app = await NestFactory.create(AppModule)
-    if (process.env.SERVE_STATIC === 'true') {
+    if (process.env.SERVE_STATIC_PATH) {
       app.setGlobalPrefix('api')
     }
   } else {

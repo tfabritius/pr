@@ -8,8 +8,8 @@
 # Postgres database
 DATABASE_URL = "postgresql://user:password@host:5432/database"
 
-# Serve static files under / and move api endpoints to /api
-SERVE_STATIC = false
+# Serve static files from this path under / and move api endpoints to /api
+SERVE_STATIC_PATH = "../web/dist"
 
 # Allowed period of inactivity for sessions in seconds
 SESSION_TIMEOUT = 86400

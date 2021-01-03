@@ -19,8 +19,8 @@ import { PortfoliosModule } from './portfolios/portfolios.module'
     TypeOrmModule.forRoot(ormconfig),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'static'),
-      exclude: process.env.SERVE_STATIC === 'true' ? ['/api/*'] : ['*'],
+      rootPath: join(__dirname, '..', process.env.SERVE_STATIC_PATH || ''),
+      exclude: process.env.SERVE_STATIC_PATH ? ['/api/*'] : ['*'],
       serveStaticOptions: { fallthrough: true },
     }),
     AuthModule,
