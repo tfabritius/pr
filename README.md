@@ -58,4 +58,7 @@ $ yarn api test:e2e
 ```bash
 # Build docker image (backend)
 docker build . -f api/Dockerfile
+
+# Build docker image (backend + frontend)
+docker build . -f Dockerfile
 ```
