@@ -49,7 +49,8 @@ export async function createApp(
     .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, options)
-  SwaggerModule.setup('doc', app, document)
+  const swaggerPath = process.env.SERVE_STATIC_PATH ? 'api/doc' : 'doc'
+  SwaggerModule.setup(swaggerPath, app, document)
 
   /* Allow cross-origin requests */
   app.enableCors()
