@@ -52,3 +52,10 @@ $ yarn api test
 # e2e tests
 $ yarn api test:e2e
 ```
+
+## Production
+
+```bash
+# Build docker image (backend)
+docker build . -f api/Dockerfile
+```
