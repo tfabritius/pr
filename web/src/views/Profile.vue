@@ -69,9 +69,7 @@ export default class ProfilePage extends Vue {
 
   async deleteAccount(): Promise<void> {
     try {
-      await axios.delete('/auth/users/me')
-
-      this.$store.commit('setSessionToken', '')
+      await this.$store.dispatch('deleteAccount')
     } catch (err) {
       this.snackbarMessage = err
       this.showSnackbar = true

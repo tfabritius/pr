@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios'
 
 import i18n, { getInitialLocale } from '@/plugins/i18n'
-import router from '@/router'
+import router from '../router'
 
 Vue.use(Vuex)
 
@@ -76,8 +76,38 @@ export default new Vuex.Store({
       commit('setUser', response.data)
     },
 
+    // async getPortfolios({ commit }) {
+    //   const response = await axios.get('/portfolios')
+    //   commit('setPortfolios', response.data)
+    // },
+
+    // async addPortfolio({ commit }, portfolio) {
+    //   const response = await axios.post('/portfolios', portfolio)
+    //   commit('addPortfolio', response.data)
+    // },
+
+    // async updatePortfolio({ commit }, portfolio) {
+    //   const response = await axios.put(`/portfolios/${portfolio.id}`, portfolio)
+    //   commit('setPortfolio', response.data)
+    // },
+
+    // async deletePortfolio({ commit, state }, portfolio) {
+    //   await axios.delete(`/portfolios/${portfolio.id}`)
+    //   commit('removePortfolio', portfolio)
+    //   if (state.portfolio === portfolio) {
+    //     commit('selectPortfolio', null)
+    //   }
+    // },
+
     async logout({ commit }) {
       await axios.post('/auth/logout')
+      commit('setUser', {})
+      commit('setSessionToken', '')
+      router.push('/login')
+    },
+
+    async deleteAccount({ commit }) {
+      await axios.delete('/auth/users/me')
       commit('setUser', {})
       commit('setSessionToken', '')
       router.push('/login')
