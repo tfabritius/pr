@@ -111,8 +111,3 @@ export default class App extends Mixins(Vue, IconsMixin) {
   background: var(--v-primary-base);
 }
 </style>
-
-<style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Eczar');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed');
-</style>

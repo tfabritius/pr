@@ -347,6 +347,16 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fontsource/eczar@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.1.0.tgz#76c4082568e0b5bfbd0034a7bb0fd07f84342704"
+  integrity sha512-VMp/YwmeSYLaGhWUb/ui3o4X/Y3JDNLnqOQ7nONOUbNDzCJ4NfwVfTSOCPCiJWw0F8nd/RYvDvdoKGvP2MkVeg==
+
+"@fontsource/roboto-condensed@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.1.0.tgz#a18f087efd33d4f660d0e506cd3afd823fdfcb09"
+  integrity sha512-ZTiDr6ukblzIWXnlu8dhPVsCAiy1noIdJFZis9h2bx0wNzHes5XmentfR3r/zmROoH4jur9Fjaot0FME5t0pxg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -9005,11 +9015,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
-
-roboto-fontface@*:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/roboto-fontface/-/roboto-fontface-0.10.0.tgz#7eee40cfa18b1f7e4e605eaf1a2740afb6fd71b0"
-  integrity sha512-OlwfYEgA2RdboZohpldlvJ1xngOins5d7ejqnIBWr9KaMxsnBqotpptRXTyfNRLnFpqzX6sTDt+X+a+6udnU8g==
 
 rsvp@^4.8.4:
   version "4.8.5"

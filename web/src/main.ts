@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import 'roboto-fontface/css/roboto/roboto-fontface.css'
+import '@fontsource/eczar'
+import '@fontsource/roboto-condensed'
 
 import App from './App.vue'
 import router from './router'
