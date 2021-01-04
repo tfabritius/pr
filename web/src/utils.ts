@@ -11,7 +11,6 @@ export function ruleMinLength(min: number) {
     value.length >= min || i18n.tc('common.too-short')
 }
 
-export function ruleMatchString(str: string) {
-  return (value: string): true | string =>
-    value === str || i18n.tc('register.confirm-password-mismatch')
+export function ruleMatchString(str: string, errorMsg: string) {
+  return (value: string): true | string => value === str || errorMsg
 }

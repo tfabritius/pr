@@ -28,7 +28,13 @@
               :placeholder="$t('register.confirm-password')"
               outlined
               dense
-              :rules="[ruleMatchString(password), ruleMinLength(8)]"
+              :rules="[
+                ruleMatchString(
+                  password,
+                  $tc('register.confirm-password-mismatch'),
+                ),
+                ruleMinLength(8),
+              ]"
             />
 
             <v-btn type="submit" color="primary" block :disabled="!validForm">
