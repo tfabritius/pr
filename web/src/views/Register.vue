@@ -110,6 +110,8 @@ export default class RegisterPage extends Vue {
 
       this.$store.commit('setSessionToken', response.data.token)
       this.$router.push('/')
+
+      this.$store.dispatch('getUser')
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 400) {
         this.snackbarMessage = err.response.data.message
