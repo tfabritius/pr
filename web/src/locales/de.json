@@ -1,5 +1,6 @@
 {
   "common": {
+    "delete": "Löschen",
     "log-out": "Abmelden",
     "password": "Passwort",
     "too-short": "Zu kurz",
@@ -18,5 +19,17 @@
     "sign-in": "Anmelden",
     "invalid-chars": "Ungültige Zeichen",
     "confirm-password-mismatch": "Passwörter stimmen nicht überein"
+  },
+  "profile": {
+    "username-change-text": "Der Benutzername kann nicht geändert werden.",
+    "change-password": "Passwort ändern",
+    "old-password": "Aktuelles Passwort",
+    "invalid-old-password": "Aktuelles Passwort ist ungültig",
+    "new-password": "Neues Passwort",
+    "confirm-password": "Bestätige neues Passwort",
+    "confirm-password-mismatch": "Passwörter stimmen nicht überein",
+    "delete-account": "Benutzerkonto löschen",
+    "delete-account-text": "Das Benutzerkonto wird sofort und dauerhaft gelöscht. Die Daten können nicht wiederhergestellt werden.",
+    "im-sure": "Ich bin mir sicher"
   }
 }

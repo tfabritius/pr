@@ -1,5 +1,6 @@
 {
   "common": {
+    "delete": "Delete",
     "log-out": "Log out",
     "password": "Password",
     "too-short": "Too short",
@@ -18,5 +19,17 @@
     "sign-in": "Sign in",
     "invalid-chars": "Invalid characters",
     "confirm-password-mismatch": "Passwords don't match"
+  },
+  "profile": {
+    "username-change-text": "Username cannot be changed.",
+    "change-password": "Change password",
+    "old-password": "Current password",
+    "invalid-old-password": "Invalid current password",
+    "new-password": "New password",
+    "confirm-password": "Confirm new password",
+    "confirm-password-mismatch": "Passwords don't match",
+    "delete-account": "Delete account",
+    "delete-account-text": "Your account will be deleted immediately and permanently! There will be no chance to recover any data.",
+    "im-sure": "I'm sure"
   }
 }

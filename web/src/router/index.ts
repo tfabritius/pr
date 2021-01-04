@@ -26,6 +26,12 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "register" */ '../views/Register.vue'),
     meta: { public: true },
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () =>
+      import(/* webpackChunkName: "loggedIn" */ '../views/Profile.vue'),
+  },
 ]
 
 const router = new VueRouter({
