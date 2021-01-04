@@ -34,6 +34,14 @@
           </v-btn>
         </template>
         <v-list nav>
+          <v-list-item link to="/profile">
+            <v-list-item-icon>
+              <v-icon>{{ mdiAccount }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ $t('common.profile') }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item link @click="logout">
             <v-list-item-icon>
               <v-icon>{{ mdiLogoutVariant }}</v-icon>
