@@ -17,6 +17,9 @@
     "username": "Benutzername",
     "yes": "Ja"
   },
+  "home": {
+    "no portfolio": "Aktuell ist kein Portfolio ausgewählt. Bitte wähle im Menü auf der linken Seite ein Portfolio aus bzw. lege ein Portfolio an."
+  },
   "login": {
     "sign-in": "Anmelden",
     "not-registered": "Keine Zugangsdaten?",

@@ -17,6 +17,9 @@
     "username": "Username",
     "yes": "Yes"
   },
+  "home": {
+    "no portfolio": "There is no portfolio selected for display. Please use the menu on the left to select or create a portfolio."
+  },
   "login": {
     "sign-in": "Sign in",
     "not-registered": "Not registered?",
