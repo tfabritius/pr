@@ -45,6 +45,7 @@
               <select-currency
                 v-model="selectedPortfolio.baseCurrencyCode"
                 :label="$tc('common.currency', 1)"
+                :rules="[ruleMinLength(1, $tc('common.required'))]"
               />
             </v-card-text>
 

@@ -9,6 +9,7 @@
       @input="update"
       outlined
       dense
+      :rules="rules"
     />
   </div>
 </template>
@@ -23,6 +24,9 @@ export default class SelectCurrency extends Vue {
 
   @Prop({ default: '' })
   label!: string
+
+  @Prop({ default: '' })
+  rules!: string
 
   update(event: string): void {
     this.$emit('input', event)

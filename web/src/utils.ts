@@ -6,9 +6,9 @@ export function isAxiosError(error: unknown): error is AxiosError {
   return (error as AxiosError).isAxiosError !== undefined
 }
 
-export function ruleMinLength(min: number) {
+export function ruleMinLength(min: number, errorMsg?: string) {
   return (value: string): true | string =>
-    value.length >= min || i18n.tc('common.too-short')
+    value.length >= min || errorMsg || i18n.tc('common.too-short')
 }
 
 export function ruleMatchString(str: string, errorMsg: string) {
