@@ -42,11 +42,9 @@
                 outlined
                 dense
               />
-              <v-text-field
+              <select-currency
                 v-model="selectedPortfolio.baseCurrencyCode"
                 :label="$tc('common.currency', 1)"
-                outlined
-                dense
               />
             </v-card-text>
 
@@ -100,9 +98,10 @@ import { Component, Mixins, Vue } from 'vue-property-decorator'
 import { ruleMinLength } from '@/utils'
 import { Portfolio } from '@/store/portfolio.model'
 import { IconsMixin } from '@/components/icons-mixin'
+import SelectCurrency from '@/components/SelectCurrency.vue'
 
 @Component({
-  components: {},
+  components: { SelectCurrency },
 })
 export default class PortfoliosPage extends Mixins(Vue, IconsMixin) {
   $refs!: {
