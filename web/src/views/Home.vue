@@ -24,6 +24,5 @@ import PortfoliosList from '@/components/PortfoliosList.vue'
     PortfoliosList,
   },
 })
-@Component
 export default class HomePage extends Mixins(Vue, IconsMixin) {}
 </script>
