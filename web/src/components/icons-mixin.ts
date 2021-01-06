@@ -4,6 +4,7 @@ import {
   mdiCheck,
   mdiClose,
   mdiDelete,
+  mdiInformation,
   mdiLogoutVariant,
   mdiMenu,
   mdiMenuOpen,
@@ -19,6 +20,7 @@ export class IconsMixin extends Vue {
   mdiCheck = mdiCheck
   mdiClose = mdiClose
   mdiDelete = mdiDelete
+  mdiInformation = mdiInformation
   mdiLogoutVariant = mdiLogoutVariant
   mdiMenu = mdiMenu
   mdiMenuOpen = mdiMenuOpen
