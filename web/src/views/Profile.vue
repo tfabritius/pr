@@ -50,7 +50,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import axios from 'axios'
 
 import ChangePassword from '@/components/ChangePassword.vue'
 
