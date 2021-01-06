@@ -129,6 +129,10 @@ export default class PortfoliosPage extends Mixins(Vue, IconsMixin) {
   }
 
   async savePortfolio(): Promise<void> {
+    if (!this.$refs.form.validate()) {
+      return
+    }
+
     try {
       if (this.selectedPortfolio.id) {
         await this.$store.dispatch('updatePortfolio', this.selectedPortfolio)
