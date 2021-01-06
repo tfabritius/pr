@@ -3,13 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --host localhost",
+    "dev": "cross-env VUE_APP_API_URL=http://localhost:3000/ vue-cli-service serve --host localhost",
     "build": "vue-cli-service build",
+    "serve": "serve -s dist",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(ts|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
     "@mdi/js": "^5.8.55",
     "axios": "^0.21.1",
+    "serve": "^11.3.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-i18n": "^8.17.3",
@@ -28,6 +30,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
+    "cross-env": "^7.0.3",
     "eslint-plugin-vue": "^7.4.0",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.2",
