@@ -83,6 +83,7 @@ export default class LoginPage extends Vue {
       this.$router.push('/')
 
       this.$store.dispatch('getUser')
+      this.$store.dispatch('getCurrencies')
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 401) {
         this.snackbarMessage = this.$tc('login.invalid-credentials')

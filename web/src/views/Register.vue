@@ -112,6 +112,7 @@ export default class RegisterPage extends Vue {
       this.$router.push('/')
 
       this.$store.dispatch('getUser')
+      this.$store.dispatch('getCurrencies')
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 400) {
         this.snackbarMessage = err.response.data.message

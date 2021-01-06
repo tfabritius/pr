@@ -5,12 +5,14 @@ import axios from 'axios'
 import i18n, { getInitialLocale } from '@/plugins/i18n'
 import router from '../router'
 import { Portfolio } from './portfolio.model'
+import { Currency } from './currency.model'
 
 Vue.use(Vuex)
 
 interface State {
   vm: Vue | null
   language: string
+  currencies: Currency[]
   portfolio: Portfolio | null
   portfolios: Portfolio[]
   sessionToken: string
@@ -20,6 +22,7 @@ interface State {
 const state: State = {
   vm: null,
   language: 'en',
+  currencies: [],
   portfolio: null,
   portfolios: [],
   sessionToken: '',
@@ -46,6 +49,9 @@ export default new Vuex.Store({
           authorization: 'bearer ' + value,
         }
       }
+    },
+    setCurrencies(state, value) {
+      state.currencies = value
     },
     addPortfolio(state, value) {
       state.portfolios.push(value)
@@ -95,6 +101,10 @@ export default new Vuex.Store({
     async getUser({ commit }) {
       const response = await axios.get('/auth/users/me')
       commit('setUser', response.data)
+    },
+    async getCurrencies({ commit }) {
+      const response = await axios.get('/currencies')
+      commit('setCurrencies', response.data)
     },
     async getPortfolios({ commit }) {
       const response = await axios.get('/portfolios')
