@@ -4,6 +4,7 @@
     "currency": "Währung | Währungen",
     "delete": "Löschen",
     "log-out": "Abmelden",
+    "manage portfolios": "Portfolios verwalten",
     "name": "Name",
     "new": "Neu",
     "no": "Nein",
@@ -11,6 +12,7 @@
     "password": "Passwort",
     "profile": "Profil",
     "save": "Speichern",
+    "select portfolio": "Portfolio auswählen",
     "too-short": "Zu kurz",
     "username": "Benutzername",
     "yes": "Ja"

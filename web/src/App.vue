@@ -65,7 +65,23 @@
       :mini-variant.sync="miniNavigationDrawer"
     >
       <v-list dense nav class="py-0">
-        <v-menu> </v-menu>
+        <v-menu>
+          <template #activator="{ on }">
+            <v-list-item two-line v-on="on">
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span v-if="$store.state.portfolio">
+                    {{ $store.state.portfolio.name }}
+                  </span>
+                  <i v-else>{{ $t('common.select portfolio') }}</i>
+                </v-list-item-title>
+                <v-list-item-subtitle></v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+
+          <PortfoliosList />
+        </v-menu>
 
         <v-divider />
       </v-list>
@@ -82,10 +98,12 @@ import { Component, Mixins, Vue } from 'vue-property-decorator'
 
 import { IconsMixin } from '@/components/icons-mixin'
 import LanguageSelector from '@/components/LanguageSelector.vue'
+import PortfoliosList from '@/components/PortfoliosList.vue'
 
 @Component({
   components: {
     LanguageSelector,
+    PortfoliosList,
   },
 })
 export default class App extends Mixins(Vue, IconsMixin) {

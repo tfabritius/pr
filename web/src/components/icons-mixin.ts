@@ -8,6 +8,7 @@ import {
   mdiMenu,
   mdiMenuOpen,
   mdiPencil,
+  mdiPlaylistEdit,
   mdiPlus,
   mdiTranslate,
 } from '@mdi/js'
@@ -22,6 +23,7 @@ export class IconsMixin extends Vue {
   mdiMenu = mdiMenu
   mdiMenuOpen = mdiMenuOpen
   mdiPencil = mdiPencil
+  mdiPlaylistEdit = mdiPlaylistEdit
   mdiPlus = mdiPlus
   mdiTranslate = mdiTranslate
 }
