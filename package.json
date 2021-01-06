@@ -5,7 +5,7 @@
   "scripts": {
     "api": "yarn workspace pr-api",
     "web": "yarn workspace pr-web",
-    "lint": "eslint \"*/{src,test}/**/*.{ts,tsx,js,jsx,vue}\"",
+    "lint": "eslint \"*/{src,test}/**/*.{ts,tsx,js,jsx,vue}\" --max-warnings=0",
     "lintfix": "eslint \"*/{src,test}/**/*.{ts,tsx,js,jsx,vue}\" --fix"
   },
   "devDependencies": {
@@ -14,6 +14,8 @@
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
     "prettier": "^2.2.1"
   },
   "workspaces": {
@@ -25,5 +27,13 @@
       "**/@vue/cli-service",
       "**/typeorm"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,vue}": "yarn lint"
   }
 }
