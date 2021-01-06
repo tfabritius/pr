@@ -1,17 +1,28 @@
 {
   "common": {
+    "cancel": "Cancel",
+    "currency": "Currency | Currencies",
     "delete": "Delete",
     "log-out": "Log out",
+    "name": "Name",
+    "new": "New",
+    "no": "No",
+    "note": "Note",
     "password": "Password",
     "profile": "Profile",
+    "save": "Save",
     "too-short": "Too short",
-    "username": "Username"
+    "username": "Username",
+    "yes": "Yes"
   },
   "login": {
     "sign-in": "Sign in",
     "not-registered": "Not registered?",
     "create-account": "Create an account",
     "invalid-credentials": "Invalid username/password"
+  },
+  "portfolios": {
+    "confirm-delete-msg": "Are you sure you want to delete portfolio \"{name}\"?"
   },
   "register": {
     "confirm-password": "Confirm password",

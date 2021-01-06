@@ -1,17 +1,28 @@
 {
   "common": {
+    "cancel": "Abbrechen",
+    "currency": "Währung | Währungen",
     "delete": "Löschen",
     "log-out": "Abmelden",
+    "name": "Name",
+    "new": "Neu",
+    "no": "Nein",
+    "note": "Notiz",
     "password": "Passwort",
     "profile": "Profil",
+    "save": "Speichern",
     "too-short": "Zu kurz",
-    "username": "Benutzername"
+    "username": "Benutzername",
+    "yes": "Ja"
   },
   "login": {
     "sign-in": "Anmelden",
     "not-registered": "Keine Zugangsdaten?",
     "create-account": "Jetzt Konto anlegen",
     "invalid-credentials": "Benutzername/Passwort ungültig"
+  },
+  "portfolios": {
+    "confirm-delete-msg": "Soll das Portfolio \"{name}\" wirklich gelöscht werden?"
   },
   "register": {
     "confirm-password": "Bestätige Passwort",
