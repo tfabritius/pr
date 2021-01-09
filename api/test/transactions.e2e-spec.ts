@@ -57,6 +57,7 @@ describe('Transactions (e2e)', () => {
   beforeAll(async () => {
     portfolioId = await api.createPortfolio()
     const ids = await api.createTestDepositSecuritiesAccounts(portfolioId)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ;[depositAccountId, securitiesAccountId] = ids
     securityId = await api.createSecurity(portfolioId)
 
