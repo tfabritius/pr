@@ -38,6 +38,12 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "loggedIn" */ '../views/Profile.vue'),
   },
+  {
+    path: '/sync',
+    name: 'Sync',
+    component: () =>
+      import(/* webpackChunkName: "loggedIn" */ '../views/Sync.vue'),
+  },
 ]
 
 const router = new VueRouter({

@@ -26,6 +26,12 @@
         </template>
       </v-data-table>
 
+      <i18n path="portfolios.sync-client-msg" tag="p" class="mt-4">
+        <template v-slot:link>
+          <router-link to="/sync">{{ $t('common.sync client') }}</router-link>
+        </template>
+      </i18n>
+
       <v-dialog v-model="portfolioDialog" width="500">
         <v-form ref="form" @submit="savePortfolio">
           <v-card>

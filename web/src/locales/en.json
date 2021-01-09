@@ -11,10 +11,12 @@
     "no": "No",
     "note": "Note",
     "password": "Password",
+    "portfolio": "Portfolio | Portfolios",
     "profile": "Profile",
     "required": "Required",
     "save": "Save",
     "select portfolio": "Select portfolio",
+    "sync client": "sync client",
     "too-short": "Too short",
     "username": "Username",
     "yes": "Yes"
@@ -29,7 +31,8 @@
     "invalid-credentials": "Invalid username/password"
   },
   "portfolios": {
-    "confirm-delete-msg": "Are you sure you want to delete portfolio \"{name}\"?"
+    "confirm-delete-msg": "Are you sure you want to delete portfolio \"{name}\"?",
+    "sync-client-msg": "Use the {link} to upload your portfolio."
   },
   "register": {
     "confirm-password": "Confirm password",
@@ -50,5 +53,15 @@
     "delete-account": "Delete account",
     "delete-account-text": "Your account will be deleted immediately and permanently! There will be no chance to recover any data.",
     "im-sure": "I'm sure"
+  },
+  "sync": {
+    "download sync client": "Download sync client",
+    "download-sync-client-msg": "Download the sync client from this address:",
+    "latest version": "Latest version",
+    "replace-portfolio-msg": "Replace {id} with the ID of the {portfolio} you want to update.",
+    "replace-portfolio-hint-msg": "Your currently selected portfolio has ID {id}.",
+    "select os": "Select your operating system",
+    "upload portfolio": "Upload portfolio",
+    "upload-portfolio-msg": "Run the sync client on the command line."
   }
 }
