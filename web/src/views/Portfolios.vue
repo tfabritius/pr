@@ -8,6 +8,7 @@
       <v-data-table
         :items="$store.state.portfolios"
         :headers="[
+          { text: $t('common.id'), value: 'id' },
           { text: $t('common.name'), value: 'name' },
           { text: $t('common.note'), value: 'note' },
           { text: $tc('common.currency', 1), value: 'baseCurrencyCode' },
