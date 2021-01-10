@@ -84,6 +84,22 @@
         </v-menu>
 
         <v-divider />
+
+        <v-list-item
+          v-for="nav in navigation"
+          :key="nav.title"
+          link
+          :to="nav.to"
+        >
+          <v-list-item-icon>
+            <v-icon>
+              {{ nav.icon }}
+            </v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>{{ nav.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -109,6 +125,35 @@ import PortfoliosList from '@/components/PortfoliosList.vue'
 export default class App extends Mixins(Vue, IconsMixin) {
   miniNavigationDrawer = false
   toggleNavigationDrawer = false
+
+  get navigation(): Array<{
+    icon: string
+    title: string
+    to: { path: string }
+  }> {
+    return [
+      {
+        icon: this.mdiViewDashboard,
+        title: this.$tc('common.portfolio', 1),
+        to: { path: '/' },
+      },
+      {
+        icon: this.mdiBookMultiple,
+        title: this.$tc('common.security', 2),
+        to: { path: '/securities' },
+      },
+      {
+        icon: this.mdiBank,
+        title: this.$tc('common.securities account', 2),
+        to: { path: '/securities-accounts' },
+      },
+      {
+        icon: this.mdiCashMultiple,
+        title: this.$tc('common.deposit account', 2),
+        to: { path: '/deposit-accounts' },
+      },
+    ]
+  }
 
   get isDesktop(): boolean {
     return this.$vuetify.breakpoint.mdAndUp
