@@ -10,7 +10,6 @@ import { Currency } from './currency.model'
 Vue.use(Vuex)
 
 interface State {
-  vm: Vue | null
   language: string
   currencies: Currency[]
   portfolio: Portfolio | null
@@ -20,7 +19,6 @@ interface State {
 }
 
 const state: State = {
-  vm: null,
   language: 'en',
   currencies: [],
   portfolio: null,
@@ -72,18 +70,15 @@ export default new Vuex.Store({
     setUser(state, value) {
       state.user = value
     },
-    setVm(state, value) {
-      state.vm = value
-    },
-    setLanguage(state, lang) {
+    setLanguage(state, { lang, vm }) {
       state.language = lang
 
       // VueI18n
       i18n.locale = lang
 
       // Vuetify
-      if (state.vm) {
-        state.vm.$vuetify.lang.current = lang
+      if (vm) {
+        vm.$vuetify.lang.current = lang
       }
 
       // HTML element
@@ -96,7 +91,7 @@ export default new Vuex.Store({
 
   actions: {
     initializeLanguage({ commit }) {
-      commit('setLanguage', getInitialLocale())
+      commit('setLanguage', { lang: getInitialLocale() })
     },
     async getUser({ commit }) {
       const response = await axios.get('/auth/users/me')

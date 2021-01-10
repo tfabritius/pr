@@ -125,10 +125,6 @@ export default class App extends Mixins(Vue, IconsMixin) {
   async logout(): Promise<void> {
     this.$store.dispatch('logout')
   }
-
-  created(): void {
-    this.$store.commit('setVm', this)
-  }
 }
 </script>
 

@@ -14,7 +14,7 @@
       <v-list-item
         v-for="l of languages"
         :key="l.code"
-        @click="$store.commit('setLanguage', l.code)"
+        @click="setLanguage(l.code)"
       >
         {{ l.name }}
       </v-list-item>
@@ -33,12 +33,8 @@ export default class LanguageSelector extends Mixins(Vue, IconsMixin) {
     return supportedLocales
   }
 
-  get language(): string {
-    return this.$store.state.language
-  }
-
-  set language(language: string) {
-    this.$store.commit('setLanguage', language)
+  setLanguage(lang: string): void {
+    this.$store.commit('setLanguage', { lang, vm: this })
   }
 }
 </script>
