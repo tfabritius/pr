@@ -33,7 +33,7 @@
       </i18n>
 
       <v-dialog v-model="portfolioDialog" width="500">
-        <v-form ref="form" @submit="savePortfolio">
+        <v-form ref="form" @submit.prevent="savePortfolio">
           <v-card>
             <v-card-text>
               <v-text-field
@@ -70,7 +70,7 @@
       </v-dialog>
 
       <v-dialog v-model="deleteDialog" width="500">
-        <v-form ref="form" @submit="deletePortfolio">
+        <v-form ref="form" @submit.prevent="deletePortfolio">
           <v-card>
             <v-card-text>
               {{

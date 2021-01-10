@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>{{ $t('profile.change-password') }}</v-card-title>
     <v-card-text class="pt-4">
-      <v-form ref="form" v-model="validForm" @submit="changePassword">
+      <v-form ref="form" v-model="validForm" @submit.prevent="changePassword">
         <v-text-field
           v-model="oldPassword"
           type="password"

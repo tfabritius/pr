@@ -3,7 +3,7 @@
     <div style="width: 300px">
       <v-card elevation="6">
         <v-card-text class="pt-4">
-          <v-form ref="form" v-model="validForm" @submit="register">
+          <v-form ref="form" v-model="validForm" @submit.prevent="register">
             <v-text-field
               ref="username"
               v-model="username"
