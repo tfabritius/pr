@@ -8,12 +8,12 @@
     "serve": "serve -s dist",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(ts|vue)\" --locales \"./src/locales/**/*.json\""
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@fontsource/eczar": "^4.1.0",
     "@fontsource/roboto-condensed": "^4.1.0",
     "@mdi/js": "^5.8.55",
+    "@types/big.js": "^6.0.2",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
@@ -22,6 +22,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "axios": "^0.21.1",
+    "big.js": "^6.0.3",
     "cross-env": "^7.0.3",
     "eslint-plugin-vue": "^7.4.0",
     "sass": "^1.19.0",
