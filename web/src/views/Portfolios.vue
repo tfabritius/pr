@@ -7,6 +7,7 @@
 
       <v-data-table
         :items="$store.state.portfolios"
+        :items-per-page="-1"
         :headers="[
           { text: $t('common.id'), value: 'id' },
           { text: $t('common.name'), value: 'name' },

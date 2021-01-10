@@ -3,6 +3,7 @@
     <div style="width: 800px">
       <v-data-table
         :items="accounts"
+        :items-per-page="-1"
         :headers="[
           { text: $t('common.name'), value: 'name' },
           { text: $t('common.balance'), value: 'kpis.balance' },
