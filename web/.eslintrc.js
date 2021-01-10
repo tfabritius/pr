@@ -8,5 +8,13 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2020,
   },
-  rules: {},
+  rules: {
+    // Allow <template v-slot:foo.bar> or <template #foo.bar>
+    'vue/valid-v-slot': [
+      'error',
+      {
+        allowModifiers: true,
+      },
+    ],
+  },
 }
