@@ -68,10 +68,10 @@ $ yarn web serve
 
 ```bash
 # Build docker image (backend)
-docker build . -f api/Dockerfile
+$ docker build . -f api/Dockerfile
 
 # Build docker image (backend + frontend)
-docker build . -f Dockerfile
+$ docker build . -f Dockerfile
 ```
 
 ## Configuration parameters

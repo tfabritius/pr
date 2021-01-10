@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
+import store from '@/store'
 import de from '@/locales/de.json'
 import en from '@/locales/en.json'
 
@@ -14,7 +15,8 @@ export const supportedLocales = [
 const fallbackLocale = 'en'
 
 export function getInitialLocale(): string {
-  const lang = localStorage.getItem('language')
+  const lang = store.state.language
+
   if (lang && supportedLocales.map((l) => l.code).includes(lang)) {
     return lang
   }

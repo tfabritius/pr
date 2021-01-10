@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 
 import i18n, { getInitialLocale } from '@/plugins/i18n'
@@ -27,8 +28,20 @@ const state: State = {
   user: {},
 }
 
-export default new Vuex.Store({
+function updateAxios(sessionToken: string) {
+  if (sessionToken === '') {
+    axios.defaults.headers = {}
+  } else {
+    axios.defaults.headers = {
+      authorization: 'bearer ' + sessionToken,
+    }
+  }
+}
+
+const store = new Vuex.Store<State>({
   strict: false,
+
+  plugins: [createPersistedState()],
 
   state,
 
@@ -39,14 +52,7 @@ export default new Vuex.Store({
   mutations: {
     setSessionToken(state, value) {
       state.sessionToken = value
-
-      if (value === '') {
-        axios.defaults.headers = {}
-      } else {
-        axios.defaults.headers = {
-          authorization: 'bearer ' + value,
-        }
-      }
+      updateAxios(value)
     },
     setCurrencies(state, value) {
       state.currencies = value
@@ -83,9 +89,6 @@ export default new Vuex.Store({
 
       // HTML element
       document.documentElement.setAttribute('lang', lang)
-
-      // LocalStorage
-      localStorage.setItem('language', lang)
     },
   },
 
@@ -140,3 +143,7 @@ export default new Vuex.Store({
   },
   modules: {},
 })
+
+updateAxios(store.state.sessionToken)
+
+export default store
