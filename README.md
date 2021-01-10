@@ -17,6 +17,8 @@ $ yarn api dev
 $ yarn web dev
 ```
 
+The backend provies a SwaggerUI for the REST API on `/doc`.
+
 ## Executing tests
 
 ```bash
