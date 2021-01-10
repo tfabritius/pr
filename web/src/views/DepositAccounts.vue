@@ -28,15 +28,16 @@ import axios from 'axios'
 
 import FormattedNumber from '@/components/FormattedNumber.vue'
 import { IconsMixin } from '@/components/icons-mixin'
+import { Account } from '@/store/account.model'
 
 @Component({
   components: { N: FormattedNumber },
 })
 export default class PortfoliosPage extends Mixins(Vue, IconsMixin) {
-  accounts = []
+  accounts: Account[] = []
 
   async mounted(): Promise<void> {
-    const response = await axios.get(
+    const response = await axios.get<Account[]>(
       `/portfolios/${this.$store.state.portfolio.id}/accounts?kpis=true`,
     )
     this.accounts = response.data.filter((a) => a.type === 'deposit')
