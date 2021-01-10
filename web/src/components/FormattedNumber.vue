@@ -19,7 +19,7 @@ import { NumberFormatOptions } from 'vue-i18n'
 @Component
 export default class FormattedNumber extends Vue {
   @Prop({ required: true })
-  value!: Big | number
+  value!: Big | number | string
 
   @Prop()
   currency?: string
@@ -32,7 +32,8 @@ export default class FormattedNumber extends Vue {
 
   get valueAsNumber(): number {
     if (typeof this.value == 'number') return this.value
-    else return this.value.toNumber()
+    else if (typeof this.value === 'string') return parseFloat(this.value)
+    return this.value.toNumber()
   }
 
   get formatOptions(): NumberFormatOptions {

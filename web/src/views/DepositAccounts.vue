@@ -13,7 +13,7 @@
       >
         <template #item.kpis.balance="{ item: depositAccount }">
           <n
-            :value="Big(depositAccount.kpis.balance)"
+            :value="depositAccount.kpis.balance"
             :currency="depositAccount.currencyCode"
           />
         </template>
@@ -25,7 +25,6 @@
 <script lang="ts">
 import { Component, Mixins, Vue } from 'vue-property-decorator'
 import axios from 'axios'
-import Big from 'big.js'
 
 import FormattedNumber from '@/components/FormattedNumber.vue'
 import { IconsMixin } from '@/components/icons-mixin'
@@ -35,8 +34,6 @@ import { IconsMixin } from '@/components/icons-mixin'
 })
 export default class PortfoliosPage extends Mixins(Vue, IconsMixin) {
   accounts = []
-
-  Big = Big
 
   async mounted(): Promise<void> {
     const response = await axios.get(
