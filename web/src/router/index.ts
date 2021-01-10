@@ -14,6 +14,12 @@ const routes: Array<RouteConfig> = [
     component: HomePage,
   },
   {
+    path: '/deposit-accounts',
+    name: 'DepositAccounts',
+    component: () =>
+      import(/* webpackChunkName: "loggedIn" */ '../views/DepositAccounts.vue'),
+  },
+  {
     path: '/login',
     name: 'Login',
     component: LoginPage,

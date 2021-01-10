@@ -1,5 +1,6 @@
 {
   "common": {
+    "balance": "Kontostand",
     "cancel": "Abbrechen",
     "currency": "Währung | Währungen",
     "delete": "Löschen",

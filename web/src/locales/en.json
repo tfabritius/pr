@@ -1,5 +1,6 @@
 {
   "common": {
+    "balance": "Balance",
     "cancel": "Cancel",
     "currency": "Currency | Currencies",
     "delete": "Delete",
