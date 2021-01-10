@@ -1,10 +1,5 @@
 <template>
-  <v-menu
-    open-on-hover
-    open-delay="60"
-    close-delay="500"
-    transition="slide-y-transition"
-  >
+  <v-menu open-on-click offset-y transition="slide-y-transition">
     <template #activator="{ on }">
       <v-btn text icon v-on="on">
         <v-icon>{{ mdiTranslate }}</v-icon>

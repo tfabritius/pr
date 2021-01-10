@@ -20,12 +20,8 @@
 
       <v-menu
         v-if="$store.getters.loggedIn"
-        bottom
-        left
-        open-on-hover
+        open-on-click
         offset-y
-        open-delay="60"
-        close-delay="500"
         transition="slide-y-transition"
       >
         <template #activator="{ on }">
