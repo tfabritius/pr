@@ -15,14 +15,17 @@
     "password": "Passwort",
     "portfolio": "Portfolio | Portfolios",
     "profile": "Profil",
+    "quote": "Kurs | Kurse",
     "required": "Erforderlich",
     "save": "Speichern",
     "securities account": "Depot | Depots",
     "security": "Wertpapier | Wertpapiere",
     "select portfolio": "Portfolio auswählen",
+    "share": "Anteil | Anteile",
     "sync client": "Synchronisierungstool",
     "too-short": "Zu kurz",
     "username": "Benutzername",
+    "value": "Wert",
     "yes": "Ja"
   },
   "home": {

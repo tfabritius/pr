@@ -15,14 +15,17 @@
     "password": "Password",
     "portfolio": "Portfolio | Portfolios",
     "profile": "Profile",
+    "quote": "Quote | Quotes",
     "required": "Required",
     "save": "Save",
     "securities account": "Securities account | Securities accounts",
     "security": "Security | Securities",
     "select portfolio": "Select portfolio",
+    "share": "Share | Shares",
     "sync client": "sync client",
     "too-short": "Too short",
     "username": "Username",
+    "value": "Value",
     "yes": "Yes"
   },
   "home": {

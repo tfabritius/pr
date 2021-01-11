@@ -33,6 +33,12 @@ const routes: Array<RouteConfig> = [
     meta: { public: true },
   },
   {
+    path: '/securities',
+    name: 'Securities',
+    component: () =>
+      import(/* webpackChunkName: "loggedIn" */ '../views/Securities.vue'),
+  },
+  {
     path: '/portfolios',
     name: 'Portfolios',
     component: () =>
