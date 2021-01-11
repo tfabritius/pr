@@ -34,7 +34,7 @@ import { Account } from '@/store/account.model'
 @Component({
   components: { N: FormattedNumber },
 })
-export default class PortfoliosPage extends Mixins(Vue, IconsMixin) {
+export default class DepositAccountsPage extends Mixins(Vue, IconsMixin) {
   accounts: Account[] = []
 
   async mounted(): Promise<void> {
