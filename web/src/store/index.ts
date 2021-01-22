@@ -7,6 +7,7 @@ import i18n, { getInitialLocale } from '@/plugins/i18n'
 import router from '../router'
 import { Portfolio } from './portfolio.model'
 import { Currency } from './currency.model'
+import { isAxiosError } from '../utils'
 
 Vue.use(Vuex)
 
@@ -124,7 +125,16 @@ const store = new Vuex.Store<State>({
       }
     },
     async logout({ commit }) {
-      await axios.post('/auth/logout')
+      try {
+        await axios.post('/auth/logout')
+      } catch (err) {
+        if (isAxiosError(err) && err.response?.status === 401) {
+          // ignore 401 during logout. This might happen because of an invalid session.
+          // maybe ignore all other errors here, too?
+        } else {
+          throw err
+        }
+      }
       commit('setUser', {})
       commit('setPortfolios', [])
       commit('selectPortfolio', null)
