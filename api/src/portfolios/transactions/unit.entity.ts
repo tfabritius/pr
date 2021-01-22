@@ -97,14 +97,14 @@ export class TransactionUnit {
    * Exchange rate for currency conversion
    */
   @Column('decimal', {
-    precision: 10,
-    scale: 4,
+    precision: 16,
+    scale: 8,
     nullable: true,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big | null) => (value ? value.toFixed(4) : null), {
+  @Transform((value: Big | null) => (value ? value.toFixed(8) : null), {
     toPlainOnly: true,
   })
-  @ApiProperty({ type: String, example: '0.0000', nullable: true })
+  @ApiProperty({ type: String, example: '0.00000000', nullable: true })
   exchangeRate: Big | null
 }

@@ -71,11 +71,11 @@ describe('Securities (e2e)', () => {
       expect(response.body).toHaveLength(2)
       expect(response.body).toContainEqual({
         date: '2020-12-01',
-        value: '100.0000',
+        value: '100.00000000',
       })
       expect(response.body).toContainEqual({
         date: '2020-12-02',
-        value: '101.0100',
+        value: '101.01000000',
       })
     })
 
@@ -102,15 +102,15 @@ describe('Securities (e2e)', () => {
         expect(response.body).toHaveLength(3)
         expect(response.body).toContainEqual({
           date: '2020-12-01',
-          value: '100.0000',
+          value: '100.00000000',
         })
         expect(response.body).toContainEqual({
           date: '2020-12-02',
-          value: '101.0100',
+          value: '101.01000000',
         })
         expect(response.body).toContainEqual({
           date: '2020-12-03',
-          value: '102.0200',
+          value: '102.02000000',
         })
       })
 
@@ -177,11 +177,11 @@ describe('Securities (e2e)', () => {
         expect(response.body).toHaveLength(2)
         expect(response.body).toContainEqual({
           date: '2020-12-03',
-          value: '103.0300',
+          value: '103.03000000',
         })
         expect(response.body).toContainEqual({
           date: '2020-12-04',
-          value: '104.0400',
+          value: '104.04000000',
         })
       })
     })

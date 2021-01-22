@@ -53,11 +53,11 @@ describe('Currencies (e2e)', () => {
         prices: expect.arrayContaining([
           {
             date: '1999-01-04',
-            value: '1.178900',
+            value: '1.17890000',
           },
           {
             date: '1999-01-05',
-            value: '1.179000',
+            value: '1.17900000',
           },
         ]),
       })
@@ -70,7 +70,7 @@ describe('Currencies (e2e)', () => {
         prices: expect.not.arrayContaining([
           {
             date: '1999-01-04',
-            value: '1.178900',
+            value: '1.17890000',
           },
         ]),
       })

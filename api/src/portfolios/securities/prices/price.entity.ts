@@ -27,11 +27,11 @@ export class SecurityPrice {
 
   @Column('decimal', {
     nullable: false,
-    precision: 10,
-    scale: 4,
+    precision: 16,
+    scale: 8,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big) => value.toFixed(4), { toPlainOnly: true })
-  @ApiProperty({ type: String, example: '1.0000' })
+  @Transform((value: Big) => value.toFixed(8), { toPlainOnly: true })
+  @ApiProperty({ type: String, example: '1.00000000' })
   value: Big
 }

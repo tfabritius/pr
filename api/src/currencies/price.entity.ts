@@ -27,11 +27,11 @@ export class ExchangeRatePrice {
 
   @Column('decimal', {
     nullable: false,
-    precision: 12,
-    scale: 6,
+    precision: 16,
+    scale: 8,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big) => value.toFixed(6), { toPlainOnly: true })
-  @ApiProperty({ type: String, example: '1.000000' })
+  @Transform((value: Big) => value.toFixed(8), { toPlainOnly: true })
+  @ApiProperty({ type: String, example: '1.00000000' })
   value: Big
 }

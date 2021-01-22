@@ -181,8 +181,8 @@ export class Transaction {
    * Number of shares
    * (only if transaction belongs to securities account)
    */
-  @Column('decimal', { precision: 12, scale: 6, nullable: true })
-  @ApiProperty({ example: '0.000000' })
+  @Column('decimal', { precision: 16, scale: 8, nullable: true })
+  @ApiProperty({ example: '0.00000000' })
   shares: string
 
   /**
