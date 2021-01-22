@@ -28,8 +28,16 @@ export async function createApp(
     app = moduleFixture.createNestApplication()
   }
 
-  /* Activate security measures */
-  app.use(helmet())
+  /**
+   * Activate security measures
+   * - disable CSP during development for GraphQL playground
+   */
+  app.use(
+    helmet({
+      contentSecurityPolicy:
+        process.env.NODE_ENV === 'development' ? false : undefined,
+    }),
+  )
 
   /* Validate input and remove unknown properties */
   app.useGlobalPipes(
