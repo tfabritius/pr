@@ -14,6 +14,6 @@ export class SecurityPriceDto {
 
   @ApiProperty()
   @IsString()
-  @IsDecimal()
+  @IsDecimal({ decimal_digits: '0,8' })
   readonly value: string
 }

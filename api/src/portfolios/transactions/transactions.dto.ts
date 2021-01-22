@@ -42,9 +42,9 @@ export class TransactionUnitDto {
   @IsString()
   readonly originalCurrencyCode: string
 
-  @ApiPropertyOptional({ example: '0.0000' })
+  @ApiPropertyOptional({ example: '0.00000000' })
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,4' })
+  @IsDecimal({ decimal_digits: '0,8' })
   readonly exchangeRate: string
 }
 
@@ -59,9 +59,9 @@ class PartnerTransactionDto {
   @Type(() => TransactionUnitDto)
   readonly units: TransactionUnitDto[]
 
-  @ApiPropertyOptional({ example: '0.000000' })
+  @ApiPropertyOptional({ example: '0.00000000' })
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,6' })
+  @IsDecimal({ decimal_digits: '0,8' })
   readonly shares: string
 
   @ApiPropertyOptional()
@@ -95,9 +95,9 @@ export class TransactionDto {
   @Type(() => TransactionUnitDto)
   readonly units: TransactionUnitDto[]
 
-  @ApiPropertyOptional({ example: '0.000000' })
+  @ApiPropertyOptional({ example: '0.00000000' })
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,6' })
+  @IsDecimal({ decimal_digits: '0,8' })
   readonly shares: string
 
   @ApiPropertyOptional()

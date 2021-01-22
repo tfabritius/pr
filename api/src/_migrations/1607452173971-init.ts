@@ -28,7 +28,7 @@ export class init1607452173971 implements MigrationInterface {
                 "currency_code" character(3) NOT NULL,
                 "original_amount" numeric(10, 2),
                 "original_currency_code" character(3),
-                "exchange_rate" numeric(10, 4),
+                "exchange_rate" numeric(16, 8),
                 "transaction_id" integer NOT NULL,
                 CONSTRAINT "PK_b1ec940819a88ccb1c71920a6e3" PRIMARY KEY ("id")
             )
@@ -43,7 +43,7 @@ export class init1607452173971 implements MigrationInterface {
                 "type" character varying NOT NULL,
                 "datetime" TIMESTAMP WITH TIME ZONE NOT NULL,
                 "partner_transaction_id" integer,
-                "shares" numeric(12, 6),
+                "shares" numeric(16, 8),
                 "security_id" integer,
                 "note" character varying NOT NULL,
                 "portfolio_id" integer NOT NULL,
@@ -64,7 +64,7 @@ export class init1607452173971 implements MigrationInterface {
         CREATE TABLE "securities_prices" (
             "security_id" integer NOT NULL,
             "date" date NOT NULL,
-            "value" numeric(10, 4) NOT NULL,
+            "value" numeric(16, 8) NOT NULL,
             CONSTRAINT "PK_ac8f071a70248346145c07ad9bf" PRIMARY KEY ("security_id", "date")
         )
     `)
@@ -133,7 +133,7 @@ export class init1607452173971 implements MigrationInterface {
             CREATE TABLE "exchangerates_prices" (
                 "exchangerate_id" integer NOT NULL,
                 "date" date NOT NULL,
-                "value" numeric(12, 6) NOT NULL,
+                "value" numeric(16, 8) NOT NULL,
                 CONSTRAINT "PK_3b99777b6b91a9986b86f57bfb6" PRIMARY KEY ("exchangerate_id", "date")
             )
         `)
