@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { GraphQLModule } from '@nestjs/graphql'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ServeStaticModule } from '@nestjs/serve-static'
@@ -17,6 +18,7 @@ import { StatsModule } from './stats/stats.module'
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    GraphQLModule.forRoot({ autoSchemaFile: true, sortSchema: true }),
     TypeOrmModule.forRoot(ormconfig),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({

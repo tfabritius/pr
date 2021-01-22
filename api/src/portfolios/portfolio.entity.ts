@@ -6,6 +6,7 @@ import {
   BeforeUpdate,
   OneToMany,
 } from 'typeorm'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
@@ -16,17 +17,22 @@ import { Transaction } from './transactions/transaction.entity'
 import { Currency } from '../currencies/currency.entity'
 
 @Entity('portfolios')
+@ObjectType()
 export class Portfolio {
   @PrimaryGeneratedColumn()
+  @Field(() => Int)
   id: number
 
   @Column()
+  @Field()
   name: string
 
   @Column()
+  @Field()
   note: string
 
   @Column({ nullable: false, type: 'character', length: 3 })
+  @Field()
   baseCurrencyCode: string
 
   @ManyToOne(() => Currency, {
