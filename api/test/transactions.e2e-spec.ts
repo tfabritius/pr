@@ -36,7 +36,7 @@ describe('Transactions (e2e)', () => {
 
   const testTransactionFull = {
     ...testTransactionMinimal,
-    shares: '1.230000',
+    shares: '1.23000000',
     securityId: undefined,
     units: [
       {
@@ -287,7 +287,7 @@ describe('Transactions (e2e)', () => {
       it('adds optional attributes to transaction', async () => {
         const changedTransaction = {
           ...testTransactionMinimal,
-          shares: '5.550000',
+          shares: '5.55000000',
           securityId: otherSecurityId,
         }
 
@@ -310,7 +310,7 @@ describe('Transactions (e2e)', () => {
       it('updates optional attributes of transaction', async () => {
         const changedTransaction = {
           ...testTransactionFull,
-          shares: '11.220000',
+          shares: '11.22000000',
           securityId: otherSecurityId,
         }
 
