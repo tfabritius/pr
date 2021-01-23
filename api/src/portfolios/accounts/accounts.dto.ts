@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -34,6 +35,10 @@ export class AccountDto {
   @ValidateIf((o) => o.type === AccountType.SECURITIES)
   @IsNumber()
   readonly referenceAccountId: number
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly active: boolean = true
 
   @ApiProperty()
   @IsString()

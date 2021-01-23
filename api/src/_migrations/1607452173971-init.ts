@@ -12,6 +12,7 @@ export class init1607452173971 implements MigrationInterface {
                 "uuid" character(36) NOT NULL,
                 "currency_code" character(3),
                 "reference_account_id" integer,
+                "active" BOOLEAN NOT NULL,
                 "note" character varying NOT NULL,
                 "portfolio_id" integer NOT NULL,
                 CONSTRAINT "PK_5a7a02c20412299d198e097a8fe" PRIMARY KEY ("id")
@@ -77,6 +78,7 @@ export class init1607452173971 implements MigrationInterface {
                 "isin" character varying NOT NULL,
                 "wkn" character varying NOT NULL,
                 "symbol" character varying NOT NULL,
+                "active" BOOLEAN NOT NULL,
                 "note" character varying NOT NULL,
                 "portfolio_id" integer NOT NULL,
                 CONSTRAINT "PK_2f2a80064c5bce5a8ff134a38a8" PRIMARY KEY ("id")

@@ -58,6 +58,10 @@ export class Security {
 
   @Column()
   @ApiProperty()
+  active: boolean
+
+  @Column()
+  @ApiProperty()
   note: string
 
   @ManyToOne(() => Portfolio, (p) => p.securities, {

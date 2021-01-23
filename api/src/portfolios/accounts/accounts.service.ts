@@ -27,6 +27,7 @@ export class AccountsService {
     dto: AccountDto,
     account: Account,
   ) {
+    account.active = dto.active
     account.name = dto.name
     account.note = dto.note
     account.type = dto.type

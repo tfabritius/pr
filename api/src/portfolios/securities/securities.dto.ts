@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator'
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUUID,
+} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class SecurityIdDto {
@@ -33,6 +39,10 @@ export class SecurityDto {
   @ApiProperty()
   @IsString()
   readonly symbol: string
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly active: boolean = true
 
   @ApiProperty()
   @IsString()
