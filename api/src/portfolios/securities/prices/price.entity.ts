@@ -7,7 +7,7 @@ import * as dayjs from 'dayjs'
 import { Security } from '../security.entity'
 import { DecimalTransformer } from '../../../utils/DecimalTransformer'
 
-@Entity('securities_prices')
+@Entity('portfolios_securities_prices')
 export class SecurityPrice {
   @ManyToOne(() => Security, (s: Security) => s.prices, {
     nullable: false,

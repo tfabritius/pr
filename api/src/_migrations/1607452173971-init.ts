@@ -62,7 +62,7 @@ export class init1607452173971 implements MigrationInterface {
             CREATE INDEX "IDX_9cb5d1be66e92b4763281199d1" ON "transactions" ("security_id")
         `)
     await queryRunner.query(`
-        CREATE TABLE "securities_prices" (
+        CREATE TABLE "portfolios_securities_prices" (
             "security_id" integer NOT NULL,
             "date" date NOT NULL,
             "value" numeric(16, 8) NOT NULL,
@@ -70,7 +70,7 @@ export class init1607452173971 implements MigrationInterface {
         )
     `)
     await queryRunner.query(`
-            CREATE TABLE "securities" (
+            CREATE TABLE "portfolios_securities" (
                 "id" SERIAL NOT NULL,
                 "name" character varying NOT NULL,
                 "uuid" character(36) NOT NULL,
@@ -85,7 +85,7 @@ export class init1607452173971 implements MigrationInterface {
             )
         `)
     await queryRunner.query(`
-            CREATE INDEX "IDX_3821d01657b92c92d505cfe8ed" ON "securities" ("portfolio_id")
+            CREATE INDEX "IDX_3821d01657b92c92d505cfe8ed" ON "portfolios_securities" ("portfolio_id")
         `)
     await queryRunner.query(`
             CREATE TABLE "portfolios" (
@@ -196,18 +196,18 @@ export class init1607452173971 implements MigrationInterface {
         `)
     await queryRunner.query(`
             ALTER TABLE "transactions"
-            ADD CONSTRAINT "FK_9cb5d1be66e92b4763281199d12" FOREIGN KEY ("security_id") REFERENCES "securities"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_9cb5d1be66e92b4763281199d12" FOREIGN KEY ("security_id") REFERENCES "portfolios_securities"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
     await queryRunner.query(`
-        ALTER TABLE "securities_prices"
-        ADD CONSTRAINT "FK_9c46cc850aa6efc1bd1f9ec4699" FOREIGN KEY ("security_id") REFERENCES "securities"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+        ALTER TABLE "portfolios_securities_prices"
+        ADD CONSTRAINT "FK_9c46cc850aa6efc1bd1f9ec4699" FOREIGN KEY ("security_id") REFERENCES "portfolios_securities"("id") ON DELETE CASCADE ON UPDATE NO ACTION
     `)
     await queryRunner.query(`
-            ALTER TABLE "securities"
+            ALTER TABLE "portfolios_securities"
             ADD CONSTRAINT "FK_3821d01657b92c92d505cfe8ed9" FOREIGN KEY ("portfolio_id") REFERENCES "portfolios"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `)
     await queryRunner.query(`
-        ALTER TABLE "securities"
+        ALTER TABLE "portfolios_securities"
         ADD CONSTRAINT "FK_2f5cfc2f2b282ed7d02a7c0fa90" FOREIGN KEY ("currency_code") REFERENCES "currencies"("code")
         ON DELETE RESTRICT ON UPDATE NO ACTION;
         `)
@@ -258,10 +258,10 @@ export class init1607452173971 implements MigrationInterface {
             DROP TABLE "portfolios" CASCADE
         `)
     await queryRunner.query(`
-            DROP TABLE "securities" CASCADE
-        `)
+      DROP TABLE "portfolios_securities" CASCADE
+    `)
     await queryRunner.query(`
-        DROP TABLE "securities_prices"
+      DROP TABLE "portfolios_securities_prices"
     `)
     await queryRunner.query(`
             DROP TABLE "transactions" CASCADE

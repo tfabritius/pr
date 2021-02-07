@@ -20,7 +20,7 @@ import { Transaction } from '../transactions/transaction.entity'
 import { SecurityKpis } from './security.kpis'
 import { Currency } from '../../currencies/currency.entity'
 
-@Entity('securities')
+@Entity('portfolios_securities')
 export class Security {
   @PrimaryGeneratedColumn()
   @ApiProperty()
