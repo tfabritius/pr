@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Currency {
+  code               String         @id
+  exchangeratesBase  Exchangerate[] @relation("currenciesToexchangerates_base_currency_code")
+  exchangeratesQuote Exchangerate[] @relation("currenciesToexchangerates_quote_currency_code")
+
+  @@map("currencies")
+}
+
+model Exchangerate {
+  id                Int                 @id @default(autoincrement())
+  baseCurrencyCode  String              @map("base_currency_code")
+  quoteCurrencyCode String              @map("quote_currency_code")
+  baseCurrency      Currency            @relation("currenciesToexchangerates_base_currency_code", fields: [baseCurrencyCode], references: [code])
+  quoteCurrency     Currency            @relation("currenciesToexchangerates_quote_currency_code", fields: [quoteCurrencyCode], references: [code])
+  prices            ExchangeratePrice[]
+
+  @@unique([baseCurrencyCode, quoteCurrencyCode], name: "IDX_215ebb92677c9c2442e35c74fd")
+  @@map("exchangerates")
+}
+
+model ExchangeratePrice {
+  exchangerateId Int          @map("exchangerate_id")
+  date           DateTime
+  value          Float
+  exchangerates  Exchangerate @relation(fields: [exchangerateId], references: [id])
+
+  @@id([exchangerateId, date])
+  @@map("exchangerates_prices")
+}
+
+model Session {
+  token          String   @id
+  createdAt      DateTime @default(now()) @map("created_at")
+  lastActivityAt DateTime @default(now()) @map("last_activity_at")
+  userId         Int      @map("user_id")
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], name: "IDX_085d540d9f418cfbdc7bd55bb1")
+  @@index([lastActivityAt], name: "IDX_f77bff4ae7cf7ee7cc7732f8ac")
+  @@map("sessions")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  password   String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  lastSeenAt DateTime  @default(dbgenerated("CURRENT_DATE")) @map("last_seen_at")
+  sessions   Session[]
+
+  @@index([username], name: "IDX_fe0bb3f6520ee0469504521e71")
+  @@map("users")
+}
