@@ -6,8 +6,6 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "typeorm": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli --config src/ormconfig.ts",
-    "typeorm:prod": "typeorm --config dist/ormconfig.js",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "nest start",

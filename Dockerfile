@@ -25,4 +25,4 @@ COPY --from=builder /app/web/dist ./web/dist
 EXPOSE 3000
 ENV SERVE_STATIC_PATH "../web/dist"
 
-CMD yarn api typeorm:prod migration:run --transaction=each && yarn api start:prod
+CMD yarn api start:prod

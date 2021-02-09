@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["nativeTypes"]
 }
 
 datasource db {
@@ -7,56 +8,170 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id                  Int           @id @default(autoincrement())
+  type                String        @db.VarChar
+  name                String        @db.VarChar
+  uuid                String        @db.Char(36)
+  currencyCode        String?       @map("currency_code") @db.Char(3)
+  referenceAccountId  Int?          @map("reference_account_id")
+  active              Boolean
+  note                String        @db.VarChar
+  portfolioId         Int           @map("portfolio_id")
+  currency            Currency?     @relation("accounts_currency", fields: [currencyCode], references: [code])
+  portfolios          Portfolio     @relation(fields: [portfolioId], references: [id])
+  referenceAccount    Account?      @relation("accounts_reference_accounts", fields: [referenceAccountId], references: [id])
+  referencingAccounts Account[]     @relation("accounts_reference_accounts")
+  transactions        Transaction[]
+
+  @@index([portfolioId])
+  @@map("accounts")
+}
+
 model Currency {
-  code               String         @id
-  exchangeratesBase  Exchangerate[] @relation("currenciesToexchangerates_base_currency_code")
-  exchangeratesQuote Exchangerate[] @relation("currenciesToexchangerates_quote_currency_code")
+  code                     String            @id @db.Char(3)
+  accounts                 Account[]         @relation("accounts_currency")
+  exchangeratesBase        Exchangerate[]    @relation("exchangerates_base_currency")
+  exchangeratesQuote       Exchangerate[]    @relation("exchangerates_quote_currency")
+  transactionUnits         TransactionUnit[] @relation("transactions_units_currency")
+  transactionUnitsOriginal TransactionUnit[] @relation("transactions_units_original_currency")
+
+  portfolios          Portfolio[]
+  portfolioSecurities PortfolioSecurity[]
 
   @@map("currencies")
 }
 
 model Exchangerate {
   id                Int                 @id @default(autoincrement())
-  baseCurrencyCode  String              @map("base_currency_code")
-  quoteCurrencyCode String              @map("quote_currency_code")
-  baseCurrency      Currency            @relation("currenciesToexchangerates_base_currency_code", fields: [baseCurrencyCode], references: [code])
-  quoteCurrency     Currency            @relation("currenciesToexchangerates_quote_currency_code", fields: [quoteCurrencyCode], references: [code])
+  baseCurrencyCode  String              @map("base_currency_code") @db.Char(3)
+  quoteCurrencyCode String              @map("quote_currency_code") @db.Char(3)
+  baseCurrency      Currency            @relation("exchangerates_base_currency", fields: [baseCurrencyCode], references: [code])
+  quoteCurrency     Currency            @relation("exchangerates_quote_currency", fields: [quoteCurrencyCode], references: [code])
   prices            ExchangeratePrice[]
 
-  @@unique([baseCurrencyCode, quoteCurrencyCode], name: "IDX_215ebb92677c9c2442e35c74fd")
+  @@unique([baseCurrencyCode, quoteCurrencyCode])
   @@map("exchangerates")
 }
 
 model ExchangeratePrice {
   exchangerateId Int          @map("exchangerate_id")
-  date           DateTime
-  value          Float
+  date           DateTime     @db.Date
+  value          Decimal      @db.Decimal(16, 8)
   exchangerates  Exchangerate @relation(fields: [exchangerateId], references: [id])
 
   @@id([exchangerateId, date])
   @@map("exchangerates_prices")
 }
 
+model Portfolio {
+  id                  Int                 @id @default(autoincrement())
+  name                String              @db.VarChar
+  note                String              @db.VarChar
+  baseCurrencyCode    String              @map("base_currency_code") @db.Char(3)
+  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime            @default(now()) @map("updated_at") @db.Timestamptz
+  userId              Int                 @map("user_id")
+  baseCurrency        Currency            @relation(fields: [baseCurrencyCode], references: [code])
+  user                User                @relation("portfolios_user", fields: [userId], references: [id])
+  accounts            Account[]
+  portfolioSecurities PortfolioSecurity[]
+  transactions        Transaction[]
+
+  @@index([userId])
+  @@map("portfolios")
+}
+
+model PortfolioSecurity {
+  id           Int                      @id @default(autoincrement())
+  name         String                   @db.VarChar
+  uuid         String                   @db.Char(36)
+  currencyCode String                   @map("currency_code") @db.Char(3)
+  isin         String                   @db.VarChar
+  wkn          String                   @db.VarChar
+  symbol       String                   @db.VarChar
+  active       Boolean
+  note         String                   @db.VarChar
+  portfolioId  Int                      @map("portfolio_id")
+  currency     Currency                 @relation(fields: [currencyCode], references: [code])
+  portfolio    Portfolio                @relation(fields: [portfolioId], references: [id])
+  prices       PortfolioSecurityPrice[]
+  transactions Transaction[]
+
+  @@index([portfolioId])
+  @@map("portfolios_securities")
+}
+
+model PortfolioSecurityPrice {
+  securityId        Int               @map("security_id")
+  date              DateTime          @db.Date
+  value             Decimal           @db.Decimal(16, 8)
+  portfolioSecurity PortfolioSecurity @relation(fields: [securityId], references: [id])
+
+  @@id([securityId, date])
+  @@map("portfolios_securities_prices")
+}
+
 model Session {
-  token          String   @id
-  createdAt      DateTime @default(now()) @map("created_at")
-  lastActivityAt DateTime @default(now()) @map("last_activity_at")
+  token          String   @id @db.Char(36)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  lastActivityAt DateTime @default(now()) @map("last_activity_at") @db.Timestamptz
   userId         Int      @map("user_id")
   user           User     @relation(fields: [userId], references: [id])
 
-  @@index([userId], name: "IDX_085d540d9f418cfbdc7bd55bb1")
-  @@index([lastActivityAt], name: "IDX_f77bff4ae7cf7ee7cc7732f8ac")
+  @@index([userId])
+  @@index([lastActivityAt])
   @@map("sessions")
 }
 
+model Transaction {
+  id                        Int                @id @default(autoincrement())
+  accountId                 Int                @map("account_id")
+  type                      String             @db.VarChar
+  datetime                  DateTime           @db.Timestamptz
+  partnerTransactionId      Int?               @unique @map("partner_transaction_id")
+  shares                    Decimal?           @db.Decimal(16, 8)
+  securityId                Int?               @map("security_id")
+  note                      String             @db.VarChar
+  portfolioId               Int                @map("portfolio_id")
+  account                   Account            @relation(fields: [accountId], references: [id])
+  partnerTransaction        Transaction?       @relation("transactions_partner_transaction", fields: [partnerTransactionId], references: [id])
+  partnerTransactionReverse Transaction?       @relation("transactions_partner_transaction")
+  portfolio                 Portfolio          @relation(fields: [portfolioId], references: [id])
+  portfolioSecurity         PortfolioSecurity? @relation(fields: [securityId], references: [id])
+  units                     TransactionUnit[]
+
+  @@index([accountId])
+  @@index([portfolioId])
+  @@index([securityId])
+  @@map("transactions")
+}
+
+model TransactionUnit {
+  id                   Int         @id @default(autoincrement())
+  type                 String      @db.VarChar
+  amount               Decimal     @db.Decimal(10, 2)
+  currencyCode         String      @map("currency_code") @db.Char(3)
+  originalAmount       Decimal?    @map("original_amount") @db.Decimal(10, 2)
+  originalCurrencyCode String?     @map("original_currency_code") @db.Char(3)
+  exchangeRate         Decimal?    @map("exchange_rate") @db.Decimal(16, 8)
+  transactionId        Int         @map("transaction_id")
+  currency             Currency    @relation("transactions_units_currency", fields: [currencyCode], references: [code])
+  originalCurrency     Currency?   @relation("transactions_units_original_currency", fields: [originalCurrencyCode], references: [code])
+  transaction          Transaction @relation(fields: [transactionId], references: [id])
+
+  @@index([transactionId])
+  @@map("transactions_units")
+}
+
 model User {
-  id         Int       @id @default(autoincrement())
-  username   String    @unique
-  password   String?
-  createdAt  DateTime  @default(now()) @map("created_at")
-  lastSeenAt DateTime  @default(dbgenerated("CURRENT_DATE")) @map("last_seen_at")
+  id         Int         @id @default(autoincrement())
+  username   String      @unique @db.VarChar
+  password   String?     @db.VarChar
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  lastSeenAt DateTime    @default(dbgenerated("CURRENT_DATE")) @map("last_seen_at") @db.Date
+  portfolios Portfolio[] @relation("portfolios_user")
   sessions   Session[]
 
-  @@index([username], name: "IDX_fe0bb3f6520ee0469504521e71")
   @@map("users")
 }

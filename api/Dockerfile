@@ -6,6 +6,7 @@ COPY api/package.json api/
 RUN yarn install --frozen-lockfile
 
 COPY api api
+RUN yarn api prisma generate
 RUN yarn api build
 
 FROM node:14-alpine
