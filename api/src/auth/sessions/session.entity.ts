@@ -1,4 +1,4 @@
-import { Column, Entity, Index, ManyToOne, PrimaryColumn } from 'typeorm'
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ApiHideProperty } from '@nestjs/swagger'
 
 import { User } from '../users/user.entity'
@@ -19,14 +19,12 @@ export class Session {
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  @Index()
   lastActivityAt: Date
 
   @ManyToOne(() => User, (user) => user.sessions, {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  @Index()
   @ApiHideProperty()
   @Exclude()
   user: User

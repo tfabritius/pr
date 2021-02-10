@@ -1,11 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  Index,
-} from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
 import Big from 'big.js'
 import { Transform } from 'class-transformer'
 
@@ -32,7 +26,6 @@ export class TransactionUnit {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  @Index()
   @ApiHideProperty()
   transaction: Transaction
 

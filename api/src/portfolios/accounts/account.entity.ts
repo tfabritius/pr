@@ -5,7 +5,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
-  Index,
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
 
@@ -63,7 +62,6 @@ export class Account {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  @Index()
   @Exclude()
   @ApiHideProperty()
   portfolio: Portfolio

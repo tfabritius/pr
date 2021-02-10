@@ -5,7 +5,6 @@ import {
   ManyToOne,
   BeforeUpdate,
   OneToMany,
-  Index,
 } from 'typeorm'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
@@ -58,7 +57,6 @@ export class Portfolio {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  @Index()
   @Exclude()
   @ApiHideProperty()
   user: User

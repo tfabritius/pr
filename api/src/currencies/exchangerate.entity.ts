@@ -4,7 +4,6 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  Index,
 } from 'typeorm'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
@@ -13,7 +12,6 @@ import { Currency } from './currency.entity'
 import { ExchangeRatePrice } from './price.entity'
 
 @Entity('exchangerates')
-@Index(['baseCurrencyCode', 'quoteCurrencyCode'], { unique: true })
 export class ExchangeRate {
   @PrimaryGeneratedColumn()
   @ApiHideProperty()

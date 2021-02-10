@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  Index,
-} from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
@@ -19,7 +13,6 @@ export class User {
   id: number
 
   @Column({ unique: true })
-  @Index()
   username: string
 
   @Column({ select: false, nullable: true })
