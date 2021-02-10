@@ -1,5 +1,5 @@
 import { Column, Entity, Index, ManyToOne, PrimaryColumn } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty } from '@nestjs/swagger'
 
 import { User } from '../users/user.entity'
 import { Exclude } from 'class-transformer'
@@ -7,21 +7,18 @@ import { Exclude } from 'class-transformer'
 @Entity('sessions')
 export class Session {
   @PrimaryColumn({ type: 'character', length: 36 })
-  @ApiProperty()
   token: string
 
   @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  @ApiProperty()
   createdAt: Date
 
   @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  @ApiProperty()
   @Index()
   lastActivityAt: Date
 
@@ -30,6 +27,7 @@ export class Session {
     onDelete: 'CASCADE',
   })
   @Index()
+  @ApiHideProperty()
   @Exclude()
   user: User
 }

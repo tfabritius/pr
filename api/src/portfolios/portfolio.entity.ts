@@ -7,7 +7,7 @@ import {
   OneToMany,
   Index,
 } from 'typeorm'
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
 import { User } from '../auth/users/user.entity'
@@ -19,39 +19,34 @@ import { Currency } from '../currencies/currency.entity'
 @Entity('portfolios')
 export class Portfolio {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
   id: number
 
   @Column()
-  @ApiProperty()
   name: string
 
   @Column()
-  @ApiProperty()
   note: string
 
   @Column({ nullable: false, type: 'character', length: 3 })
-  @ApiProperty()
   baseCurrencyCode: string
 
   @ManyToOne(() => Currency, {
     nullable: false,
     onDelete: 'RESTRICT',
   })
+  @ApiHideProperty()
   baseCurrency: Currency
 
   @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  @ApiProperty()
   createdAt: Date
 
   @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  @ApiProperty()
   updatedAt: Date
 
   @BeforeUpdate()

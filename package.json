@@ -25,7 +25,9 @@
     ],
     "nohoist": [
       "**/@vue/cli-service",
-      "**/typeorm"
+      "**/typeorm",
+      "**/@nestjs/",
+      "**/@nestjs/**"
     ]
   },
   "husky": {

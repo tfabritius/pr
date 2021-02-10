@@ -6,9 +6,8 @@ import {
   OneToMany,
   Index,
 } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
-import * as dayjs from 'dayjs'
 
 import { Currency } from './currency.entity'
 import { ExchangeRatePrice } from './price.entity'
@@ -17,29 +16,28 @@ import { ExchangeRatePrice } from './price.entity'
 @Index(['baseCurrencyCode', 'quoteCurrencyCode'], { unique: true })
 export class ExchangeRate {
   @PrimaryGeneratedColumn()
+  @ApiHideProperty()
   @Exclude()
   id: number
 
   @ManyToOne(() => Currency, { nullable: false })
+  @ApiHideProperty()
   baseCurrency: Currency
 
   @Column({ nullable: false, type: 'character', length: 3 })
-  @ApiProperty()
   baseCurrencyCode: string
 
   @ManyToOne(() => Currency, { nullable: false })
+  @ApiHideProperty()
   quoteCurrency: Currency
 
   @Column({ nullable: false, type: 'character', length: 3 })
-  @ApiProperty()
   quoteCurrencyCode: string
 
   @OneToMany(() => ExchangeRatePrice, (erp) => erp.exchangerate, {
     cascade: ['insert'],
   })
-  @ApiProperty({ type: ExchangeRatePrice, isArray: true })
   prices: ExchangeRatePrice[]
 
-  @ApiProperty({ example: dayjs().format('YYYY-MM-DD') })
   latestPriceDate: string
 }

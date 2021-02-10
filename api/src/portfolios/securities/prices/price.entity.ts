@@ -1,8 +1,7 @@
 import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import Big from 'big.js'
 import { Exclude, Transform } from 'class-transformer'
-import * as dayjs from 'dayjs'
 
 import { Security } from '../security.entity'
 import { DecimalTransformer } from '../../../utils/DecimalTransformer'
@@ -13,16 +12,17 @@ export class SecurityPrice {
     nullable: false,
     onDelete: 'CASCADE',
   })
+  @ApiHideProperty()
   security: Security
 
   @PrimaryColumn({ nullable: false })
   @Exclude()
+  @ApiHideProperty()
   securityId: number
 
   @PrimaryColumn('date', {
     nullable: false,
   })
-  @ApiProperty({ example: dayjs().format('YYYY-MM-DD') })
   date: string
 
   @Column('decimal', {

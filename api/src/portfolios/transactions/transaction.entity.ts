@@ -1,8 +1,4 @@
-import {
-  ApiHideProperty,
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger'
+import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude, Type } from 'class-transformer'
 import {
   Entity,
@@ -101,7 +97,6 @@ export class Transaction {
    * Primary key
    */
   @PrimaryGeneratedColumn()
-  @ApiProperty()
   id: number
 
   /**
@@ -131,14 +126,12 @@ export class Transaction {
    * ID of account
    */
   @Column({ nullable: false })
-  @ApiProperty()
   accountId: number
 
   /**
    * Type of transaction
    */
   @Column()
-  @ApiProperty({ enum: TransactionType, enumName: 'TransactionType' })
   type: TransactionType
 
   /**
@@ -147,7 +140,6 @@ export class Transaction {
   @Column({
     type: 'timestamp with time zone',
   })
-  @ApiProperty()
   datetime: Date
 
   /**
@@ -159,13 +151,11 @@ export class Transaction {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  @ApiPropertyOptional()
   @Type(() => Transaction)
-  partnerTransaction: Transaction
+  partnerTransaction?: Transaction
 
   @Column({ nullable: true })
-  @ApiProperty()
-  partnerTransactionId: number
+  partnerTransactionId?: number
 
   /**
    * Units of transaction
@@ -174,7 +164,6 @@ export class Transaction {
     cascade: true,
     eager: true,
   })
-  @ApiProperty({ type: () => TransactionUnit, isArray: true })
   units: TransactionUnit[]
 
   /**
@@ -182,7 +171,6 @@ export class Transaction {
    * (only if transaction belongs to securities account)
    */
   @Column('decimal', { precision: 16, scale: 8, nullable: true })
-  @ApiProperty({ example: '0.00000000' })
   shares: string
 
   /**
@@ -201,13 +189,11 @@ export class Transaction {
    * ID of affected security
    */
   @Column({ nullable: true })
-  @ApiProperty()
   securityId: number
 
   /**
    * User-defined comment to transaction
    */
   @Column()
-  @ApiProperty()
   note: string
 }

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
   Entity,
   Column,
@@ -25,6 +25,7 @@ export enum UnitType {
 @Entity('transactions_units')
 export class TransactionUnit {
   @PrimaryGeneratedColumn()
+  @ApiHideProperty()
   id: number
 
   @ManyToOne(() => Transaction, (transaction) => transaction.units, {
@@ -32,10 +33,10 @@ export class TransactionUnit {
     onDelete: 'CASCADE',
   })
   @Index()
+  @ApiHideProperty()
   transaction: Transaction
 
   @Column()
-  @ApiProperty({ enum: UnitType })
   type: UnitType
 
   /**
@@ -54,13 +55,13 @@ export class TransactionUnit {
    * Currency code for amount
    */
   @Column({ nullable: false, type: 'character', length: 3 })
-  @ApiProperty()
   currencyCode: string
 
   @ManyToOne(() => Currency, {
     nullable: false,
     onDelete: 'RESTRICT',
   })
+  @ApiHideProperty()
   currency: Currency
 
   /**
@@ -84,13 +85,13 @@ export class TransactionUnit {
    * in case of currency conversion
    */
   @Column({ nullable: true, type: 'character', length: 3 })
-  @ApiProperty()
-  originalCurrencyCode: string
+  originalCurrencyCode?: string
 
   @ManyToOne(() => Currency, {
     nullable: true,
     onDelete: 'RESTRICT',
   })
+  @ApiHideProperty()
   originalCurrency: Currency
 
   /**

@@ -1,8 +1,4 @@
-import {
-  ApiHideProperty,
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger'
+import { ApiHideProperty } from '@nestjs/swagger'
 import {
   Entity,
   Column,
@@ -26,29 +22,25 @@ export enum AccountType {
 @Entity('accounts')
 export class Account {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
   id: number
 
   @Column()
-  @ApiProperty({ enum: AccountType, enumName: 'AccountType' })
   type: AccountType
 
   @Column()
-  @ApiProperty()
   name: string
 
   @Column({ type: 'character', length: 36 })
-  @ApiProperty()
   uuid: string
 
   @Column({ nullable: true, type: 'character', length: 3 })
-  @ApiProperty()
   currencyCode: string
 
   @ManyToOne(() => Currency, {
     nullable: true,
     onDelete: 'RESTRICT',
   })
+  @ApiHideProperty()
   currency: Currency
 
   @ManyToOne(() => Account, {
@@ -59,15 +51,12 @@ export class Account {
   referenceAccount: Account
 
   @Column({ nullable: true })
-  @ApiProperty()
   referenceAccountId: number
 
   @Column()
-  @ApiProperty()
   active: boolean
 
   @Column()
-  @ApiProperty()
   note: string
 
   @ManyToOne(() => Portfolio, (p) => p.accounts, {
@@ -84,6 +73,5 @@ export class Account {
   @Exclude()
   transactions: Transaction[]
 
-  @ApiPropertyOptional()
-  kpis: AccountKpis
+  kpis?: AccountKpis
 }
