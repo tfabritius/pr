@@ -61,6 +61,7 @@ model ExchangeratePrice {
   exchangerates  Exchangerate @relation(fields: [exchangerateId], references: [id])
 
   @@id([exchangerateId, date])
+  @@index([exchangerateId])
   @@map("exchangerates_prices")
 }
 
@@ -109,6 +110,7 @@ model PortfolioSecurityPrice {
   portfolioSecurity PortfolioSecurity @relation(fields: [securityId], references: [id])
 
   @@id([securityId, date])
+  @@index([securityId])
   @@map("portfolios_securities_prices")
 }
 
