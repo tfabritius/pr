@@ -28,11 +28,26 @@ model Account {
   @@map("accounts")
 }
 
+model Clientupdate {
+  id        Int      @id @default(autoincrement()) @db.Integer
+  timestamp DateTime @db.Timestamp(6)
+  version   String   @db.Text
+  country   String?  @db.Text
+  useragent String?  @db.Text
+
+  @@index([country], name: "clientupdates_country")
+  @@index([timestamp], name: "clientupdates_timestamp")
+  @@index([version], name: "clientupdates_version")
+  @@map("clientupdates")
+}
+
 model Currency {
   code                     String            @id @db.Char(3)
   accounts                 Account[]         @relation("accounts_currency")
+  events                   Event[]           @relation("events_currency_code")
   exchangeratesBase        Exchangerate[]    @relation("exchangerates_base_currency")
   exchangeratesQuote       Exchangerate[]    @relation("exchangerates_quote_currency")
+  securityMarkets          SecurityMarket[]  @relation("securities_markets_currency_code")
   transactionUnits         TransactionUnit[] @relation("transactions_units_currency")
   transactionUnitsOriginal TransactionUnit[] @relation("transactions_units_original_currency")
 
@@ -40,6 +55,21 @@ model Currency {
   portfolioSecurities PortfolioSecurity[]
 
   @@map("currencies")
+}
+
+model Event {
+  id           Int       @id @default(autoincrement()) @db.Integer
+  date         DateTime  @db.Date
+  type         String    @db.VarChar(10)
+  amount       Decimal?  @db.Decimal(10, 4)
+  currencyCode String?   @map("currency_code") @db.Char(3)
+  currency     Currency? @relation("events_currency_code", fields: [currencyCode], references: [code])
+  ratio        String?   @db.VarChar(10)
+  securityUuid String    @map("security_uuid") @db.Uuid
+  security     Security  @relation("events_security_uuid", fields: [securityUuid], references: [uuid])
+
+  @@index([securityUuid], name: "events_security_uuid")
+  @@map("events")
 }
 
 model Exchangerate {
@@ -63,6 +93,14 @@ model ExchangeratePrice {
   @@id([exchangerateId, date])
   @@index([exchangerateId])
   @@map("exchangerates_prices")
+}
+
+model Market {
+  code            String           @id @db.Text
+  name            String           @db.Text
+  securityMarkets SecurityMarket[] @relation("securities_markets_market_code")
+
+  @@map("markets")
 }
 
 model Portfolio {
@@ -114,6 +152,70 @@ model PortfolioSecurityPrice {
   @@map("portfolios_securities_prices")
 }
 
+model Security {
+  uuid               String             @id @db.Uuid
+  name               String?            @db.Text
+  isin               String?            @db.VarChar(12)
+  wkn                String?            @db.VarChar(6)
+  symbolXfra         String?            @map("symbol_xfra") @db.VarChar(10)
+  symbolXnas         String?            @map("symbol_xnas") @db.VarChar(10)
+  symbolXnys         String?            @map("symbol_xnys") @db.VarChar(10)
+  securityType       String?            @map("security_type") @db.Text
+  events             Event[]            @relation("events_security_uuid")
+  securityMarkets    SecurityMarket[]   @relation("securities_markets_security_uuid")
+  securityTaxonomies SecurityTaxonomy[] @relation("securities_taxonomies_security_uuid")
+
+  @@index([isin], name: "securities_isin")
+  @@index([name], name: "securities_name")
+  @@index([securityType], name: "securities_security_type")
+  @@index([symbolXfra], name: "securities_symbol_xfra")
+  @@index([symbolXnas], name: "securities_symbol_xnas")
+  @@index([symbolXnys], name: "securities_symbol_xnys")
+  @@index([wkn], name: "securities_wkn")
+  @@map("securities")
+}
+
+model SecurityMarket {
+  id             Int                   @id @default(autoincrement()) @db.Integer
+  securityUuid   String                @map("security_uuid") @db.Uuid
+  marketCode     String                @map("market_code") @db.Text
+  currencyCode   String                @map("currency_code") @db.Char(3)
+  firstPriceDate DateTime?             @map("first_price_date") @db.Date
+  lastPriceDate  DateTime?             @map("last_price_date") @db.Date
+  symbol         String?               @db.VarChar(10)
+  updatePrices   Boolean               @map("update_prices") @db.Boolean
+  security       Security              @relation("securities_markets_security_uuid", fields: [securityUuid], references: [uuid])
+  market         Market                @relation("securities_markets_market_code", fields: [marketCode], references: [code])
+  currency       Currency              @relation("securities_markets_currency_code", fields: [currencyCode], references: [code])
+  prices         SecurityMarketPrice[] @relation("securities_markets_prices_security_market_id")
+
+  @@unique([securityUuid, marketCode], name: "securities_markets_security_uuid_market_code")
+  @@index([securityUuid], name: "securities_markets_security_uuid")
+  @@map("securities_markets")
+}
+
+model SecurityMarketPrice {
+  securityMarketId Int            @map("security_market_id") @db.Integer
+  securityMarket   SecurityMarket @relation("securities_markets_prices_security_market_id", fields: [securityMarketId], references: [id])
+  date             DateTime       @db.Date
+  close            Decimal        @db.Decimal(10, 4)
+
+  @@id([securityMarketId, date])
+  @@index([securityMarketId])
+  @@map("securities_markets_prices")
+}
+
+model SecurityTaxonomy {
+  securityUuid String   @map("security_uuid") @db.Uuid
+  taxonomyUuid String   @map("taxonomy_uuid") @db.Uuid
+  weight       Decimal  @db.Decimal(5, 2)
+  security     Security @relation("securities_taxonomies_security_uuid", fields: [securityUuid], references: [uuid])
+  taxonomy     Taxonomy @relation("securities_taxonomies_taxonomy_uuid", fields: [taxonomyUuid], references: [uuid])
+
+  @@id([taxonomyUuid, securityUuid])
+  @@map("securities_taxonomies")
+}
+
 model Session {
   token          String   @id @db.Char(36)
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
@@ -124,6 +226,24 @@ model Session {
   @@index([userId])
   @@index([lastActivityAt])
   @@map("sessions")
+}
+
+model Taxonomy {
+  uuid               String             @id @db.Uuid
+  parentUuid         String?            @map("parent_uuid") @db.Uuid
+  rootUuid           String?            @map("root_uuid") @db.Uuid
+  name               String             @db.Text
+  code               String?            @db.Text
+  parent             Taxonomy?          @relation("taxonomies_parent_uuid", fields: [parentUuid], references: [uuid])
+  root               Taxonomy?          @relation("taxonomies_root_uuid", fields: [rootUuid], references: [uuid])
+  securityTaxonomies SecurityTaxonomy[] @relation("securities_taxonomies_taxonomy_uuid")
+  children           Taxonomy[]         @relation("taxonomies_parent_uuid")
+  descendants        Taxonomy[]         @relation("taxonomies_root_uuid")
+
+  @@unique([rootUuid, code], name: "taxonomies_root_uuid_code")
+  @@index([parentUuid], name: "taxonomies_parent_uuid")
+  @@index([rootUuid], name: "taxonomies_root_uuid")
+  @@map("taxonomies")
 }
 
 model Transaction {
