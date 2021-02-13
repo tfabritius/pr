@@ -30,7 +30,9 @@ export class ExchangeRatePrice {
     scale: 8,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big) => value.toFixed(8), { toPlainOnly: true })
+  @Transform(({ value }: { value: Big }) => value.toFixed(8), {
+    toPlainOnly: true,
+  })
   @ApiProperty({ type: String, example: '1.00000000' })
   value: Big
 }

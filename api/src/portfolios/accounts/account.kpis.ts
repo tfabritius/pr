@@ -3,11 +3,15 @@ import Big from 'big.js'
 import { Transform } from 'class-transformer'
 
 export class AccountKpis {
-  @Transform((value: Big) => value.toString(), { toPlainOnly: true })
+  @Transform(({ value }: { value: Big }) => value.toString(), {
+    toPlainOnly: true,
+  })
   @ApiPropertyOptional({ type: String })
   balance?: Big
 
-  @Transform((value: Big) => value.toString(), { toPlainOnly: true })
+  @Transform(({ value }: { value: Big }) => value.toString(), {
+    toPlainOnly: true,
+  })
   @ApiPropertyOptional({ type: String })
   valueInBaseCurrency?: Big
 }

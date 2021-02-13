@@ -4,7 +4,7 @@ import { IsOptional, IsBoolean, IsString } from 'class-validator'
 
 export class KpisQuery {
   @IsOptional()
-  @Transform((value) => value === 'true', { toClassOnly: true })
+  @Transform(({ value }) => value === 'true', { toClassOnly: true })
   @IsBoolean()
   @ApiPropertyOptional()
   readonly kpis?: boolean

@@ -40,7 +40,9 @@ export class TransactionUnit {
     scale: 2,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big) => value.toFixed(2), { toPlainOnly: true })
+  @Transform(({ value }: { value: Big }) => value.toFixed(2), {
+    toPlainOnly: true,
+  })
   @ApiProperty({ type: String, example: '0.00' })
   amount: Big
 
@@ -67,9 +69,12 @@ export class TransactionUnit {
     nullable: true,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big | null) => (value ? value.toFixed(2) : null), {
-    toPlainOnly: true,
-  })
+  @Transform(
+    ({ value }: { value: Big | null }) => (value ? value.toFixed(2) : null),
+    {
+      toPlainOnly: true,
+    },
+  )
   @ApiProperty({ type: String, example: '0.00', nullable: true })
   originalAmount: Big | null
 
@@ -96,9 +101,12 @@ export class TransactionUnit {
     nullable: true,
     transformer: new DecimalTransformer(),
   })
-  @Transform((value: Big | null) => (value ? value.toFixed(8) : null), {
-    toPlainOnly: true,
-  })
+  @Transform(
+    ({ value }: { value: Big | null }) => (value ? value.toFixed(8) : null),
+    {
+      toPlainOnly: true,
+    },
+  )
   @ApiProperty({ type: String, example: '0.00000000', nullable: true })
   exchangeRate: Big | null
 }
