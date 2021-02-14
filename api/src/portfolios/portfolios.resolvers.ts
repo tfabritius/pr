@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -10,8 +11,10 @@ import {
 import { Portfolio } from './portfolio.entity'
 import { PortfoliosService } from './portfolios.service'
 import { SecuritiesService } from './securities/securities.service'
+import { GqlAuthGuard } from '../auth/gql-auth.guard'
 
 @Resolver(() => Portfolio)
+@UseGuards(GqlAuthGuard)
 export class PortfoliosResolver {
   constructor(
     private portfoliosService: PortfoliosService,
