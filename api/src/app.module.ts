@@ -12,6 +12,7 @@ import * as ormconfig from './ormconfig'
 import { AuthModule } from './auth/auth.module'
 import { CurrenciesModule } from './currencies/currencies.module'
 import { PortfoliosModule } from './portfolios/portfolios.module'
+import { StatsModule } from './stats/stats.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PortfoliosModule } from './portfolios/portfolios.module'
     AuthModule,
     CurrenciesModule,
     PortfoliosModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

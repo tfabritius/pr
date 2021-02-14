@@ -107,6 +107,9 @@ SERVE_STATIC_PATH = "../web/dist"
 
 # Allowed period of inactivity for sessions in seconds
 SESSION_TIMEOUT = 86400
+
+# Token to download GeoIP database from www.ip2location.com (optional)
+IP2LOCATION_TOKEN = "..."
 ```
 
 ### Frontend (web)
