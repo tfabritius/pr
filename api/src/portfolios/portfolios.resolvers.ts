@@ -23,6 +23,11 @@ export class PortfoliosResolver {
     private securitiesService: SecuritiesService,
   ) {}
 
+  @Query(() => [Portfolio])
+  async portfolios(@AuthUser() user: User) {
+    return this.portfoliosService.getAllOfUser(user)
+  }
+
   @Query(() => Portfolio)
   async portfolio(
     @Args('id', { type: () => Int }) id: number,
