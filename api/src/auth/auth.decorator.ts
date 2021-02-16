@@ -1,9 +1,12 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { GqlExecutionContext, GqlContextType } from '@nestjs/graphql'
 
 export const AuthUser = createParamDecorator(
-  (data: any, ctx: ExecutionContext) => {
-    const req = ctx.switchToHttp().getRequest()
-    // Return the user set by the guard
-    return req.user
+  (data: unknown, ctx: ExecutionContext) => {
+    if (ctx.getType<GqlContextType>() === 'graphql') {
+      return GqlExecutionContext.create(ctx).getContext().req.user
+    } else {
+      return ctx.switchToHttp().getRequest().user
+    }
   },
 )
