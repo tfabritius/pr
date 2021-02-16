@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { Portfolio } from './portfolio.entity'
-import { PortfoliosResolver } from './portfolios.resolvers'
+import { PortfoliosResolver } from './portfolios.resolver'
 import { PortfoliosService } from './portfolios.service'
 import { PortfoliosController } from './portfolios.controller'
 import { SecuritiesModule } from './securities/securities.module'
