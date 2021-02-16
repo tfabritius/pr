@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["nativeTypes", "groupBy"]
+  previewFeatures = ["groupBy"]
 }
 
 datasource db {
