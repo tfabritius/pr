@@ -1,3 +1,4 @@
+import { ObjectType, registerEnumType } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude, Type } from 'class-transformer'
 import {
@@ -90,7 +91,10 @@ export enum TransactionType {
   SECURITIES_TRANSFER = 'SecuritiesTransfer',
 }
 
+registerEnumType(TransactionType, { name: 'TransactionType' })
+
 @Entity('transactions')
+@ObjectType()
 export class Transaction {
   /**
    * Primary key

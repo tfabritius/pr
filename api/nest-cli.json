@@ -8,6 +8,12 @@
         "options": {
           "introspectComments": true
         }
+      },
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "introspectComments": true
+        }
       }
     ]
   }

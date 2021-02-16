@@ -24,15 +24,12 @@ export class Portfolio {
   id: number
 
   @Column()
-  @Field()
   name: string
 
   @Column()
-  @Field()
   note: string
 
   @Column({ nullable: false, type: 'character', length: 3 })
-  @Field()
   baseCurrencyCode: string
 
   @ManyToOne(() => Currency, {

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm'
+import { ObjectType } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
@@ -12,6 +13,7 @@ import { Currency } from './currency.entity'
 import { ExchangeRatePrice } from './price.entity'
 
 @Entity('exchangerates')
+@ObjectType()
 export class ExchangeRate {
   @PrimaryGeneratedColumn()
   @ApiHideProperty()

@@ -1,4 +1,5 @@
 import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import Big from 'big.js'
 import { Exclude, Transform } from 'class-transformer'
@@ -7,6 +8,7 @@ import { Security } from '../security.entity'
 import { DecimalTransformer } from '../../../utils/DecimalTransformer'
 
 @Entity('portfolios_securities_prices')
+@ObjectType()
 export class SecurityPrice {
   @ManyToOne(() => Security, (s: Security) => s.prices, {
     nullable: false,
@@ -34,6 +36,7 @@ export class SecurityPrice {
   @Transform(({ value }: { value: Big }) => value.toFixed(8), {
     toPlainOnly: true,
   })
+  @Field(() => String)
   @ApiProperty({ type: String, example: '1.00000000' })
   value: Big
 }

@@ -1,3 +1,4 @@
+import { ObjectType, registerEnumType, Field } from '@nestjs/graphql'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
 import Big from 'big.js'
@@ -16,7 +17,10 @@ export enum UnitType {
   FEE = 'fee',
 }
 
+registerEnumType(UnitType, { name: 'TransactionUnitType' })
+
 @Entity('transactions_units')
+@ObjectType()
 export class TransactionUnit {
   @PrimaryGeneratedColumn()
   @ApiHideProperty()
@@ -43,6 +47,7 @@ export class TransactionUnit {
   @Transform(({ value }: { value: Big }) => value.toFixed(2), {
     toPlainOnly: true,
   })
+  @Field(() => String)
   @ApiProperty({ type: String, example: '0.00' })
   amount: Big
 
@@ -75,6 +80,7 @@ export class TransactionUnit {
       toPlainOnly: true,
     },
   )
+  @Field(() => String)
   @ApiProperty({ type: String, example: '0.00', nullable: true })
   originalAmount: Big | null
 
@@ -107,6 +113,7 @@ export class TransactionUnit {
       toPlainOnly: true,
     },
   )
+  @Field(() => String)
   @ApiProperty({ type: String, example: '0.00000000', nullable: true })
   exchangeRate: Big | null
 }

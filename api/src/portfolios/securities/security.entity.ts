@@ -1,5 +1,5 @@
 import { ApiHideProperty } from '@nestjs/swagger'
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType, HideField } from '@nestjs/graphql'
 import {
   Entity,
   Column,
@@ -23,15 +23,12 @@ export class Security {
   id: number
 
   @Column()
-  @Field()
   name: string
 
   @Column({ type: 'character', length: 36 })
-  @Field()
   uuid: string
 
   @Column({ nullable: false, type: 'character', length: 3 })
-  @Field()
   currencyCode: string
 
   @ManyToOne(() => Currency, {
@@ -42,19 +39,15 @@ export class Security {
   currency: Currency
 
   @Column()
-  @Field()
   isin: string
 
   @Column()
-  @Field()
   wkn: string
 
   @Column()
-  @Field()
   symbol: string
 
   @Column()
-  @Field()
   active: boolean
 
   @Column()
@@ -77,5 +70,6 @@ export class Security {
 
   latestPriceDate: string
 
+  @HideField()
   kpis?: SecurityKpis
 }

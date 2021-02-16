@@ -1,3 +1,4 @@
+import { ObjectType, registerEnumType, HideField } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import {
   Entity,
@@ -18,7 +19,10 @@ export enum AccountType {
   SECURITIES = 'securities',
 }
 
+registerEnumType(AccountType, { name: 'AccountType' })
+
 @Entity('accounts')
+@ObjectType()
 export class Account {
   @PrimaryGeneratedColumn()
   id: number
@@ -71,5 +75,6 @@ export class Account {
   @Exclude()
   transactions: Transaction[]
 
+  @HideField()
   kpis?: AccountKpis
 }

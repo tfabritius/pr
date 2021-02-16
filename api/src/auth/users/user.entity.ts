@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
+import { ObjectType } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
@@ -6,6 +7,7 @@ import { Session } from '../sessions/session.entity'
 import { Portfolio } from '../../portfolios/portfolio.entity'
 
 @Entity('users')
+@ObjectType()
 export class User {
   @PrimaryGeneratedColumn()
   @ApiHideProperty()
