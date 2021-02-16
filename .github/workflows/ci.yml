@@ -48,4 +48,6 @@ jobs:
         DATABASE_URL: postgresql://pr:password@localhost:5432/pr
     - name: Run E2E tests
       run: yarn api test:e2e
+      env:
+        DATABASE_URL: postgresql://pr:password@localhost:5432/pr
     - run: yarn web build
