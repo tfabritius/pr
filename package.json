@@ -27,7 +27,8 @@
       "**/@vue/cli-service",
       "**/typeorm",
       "**/@nestjs/",
-      "**/@nestjs/**"
+      "**/@nestjs/**",
+      "**/graphql"
     ]
   },
   "husky": {
