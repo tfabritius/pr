@@ -1,11 +1,8 @@
-import { InputType, Field } from '@nestjs/graphql'
-import { ApiProperty } from '@nestjs/swagger'
+import { InputType } from '@nestjs/graphql'
 import { MinLength, MaxLength, Matches, IsNotEmpty } from 'class-validator'
 
 @InputType()
 export class RegisterUserDto {
-  @ApiProperty()
-  @Field()
   @IsNotEmpty({ message: 'Username is missing' })
   @MinLength(6, {
     message: 'Username is too short ($constraint1 characters required)',
@@ -18,8 +15,6 @@ export class RegisterUserDto {
   })
   readonly username: string
 
-  @ApiProperty()
-  @Field()
   @IsNotEmpty({ message: 'Password is missing' })
   @MinLength(8, {
     message: 'Password is too short ($constraint1 characters required)',
@@ -32,13 +27,9 @@ export class RegisterUserDto {
 
 @InputType()
 export class LoginUserDto {
-  @ApiProperty()
-  @Field()
   @IsNotEmpty()
   readonly username: string
 
-  @ApiProperty()
-  @Field()
   @IsNotEmpty()
   readonly password: string
 }
