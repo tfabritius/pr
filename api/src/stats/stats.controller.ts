@@ -1,11 +1,25 @@
-import { Get, Controller, Param, Req, Head } from '@nestjs/common'
+import {
+  Get,
+  Controller,
+  Param,
+  Req,
+  Head,
+  UseGuards,
+  Query,
+  Delete,
+  HttpCode,
+} from '@nestjs/common'
 import {
   ApiTags,
   ApiInternalServerErrorResponse,
   ApiExcludeEndpoint,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
+import { Prisma } from '@prisma/client'
 import { Request } from 'express'
 
+import { AdminGuard } from '../auth/admin.guard'
+import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { PrismaService } from '../prisma.service'
 import { GeoIpService } from './geoip.service'
 import {
@@ -84,5 +98,47 @@ export class StatsController {
 
     const ret = { byDate, byCountry }
     return ret
+  }
+
+  /**
+   * Gets all updates
+   */
+  @Get('')
+  @ApiBearerAuth()
+  @UseGuards(DefaultAuthGuard, AdminGuard)
+  async getAll(@Query() query) {
+    const limit = parseInt(String(query.limit)) || 10
+    const skip = parseInt(String(query.skip)) || 0
+    const sort = String(query.sort || 'timestamp')
+    const descending = query.desc === 'true'
+    const version = query.version
+
+    const where: Prisma.ClientupdateWhereInput = {}
+
+    if (version && typeof version === 'string') {
+      where.version = version
+    }
+
+    const entries = await this.prisma.clientupdate.findMany({
+      where,
+      orderBy: { [sort]: descending ? 'desc' : 'asc' },
+      take: limit,
+      skip,
+    })
+
+    const totalCount = await this.prisma.clientupdate.count()
+
+    return { entries, params: { totalCount } }
+  }
+
+  /**
+   * Delete single entry
+   */
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiBearerAuth()
+  @UseGuards(DefaultAuthGuard, AdminGuard)
+  async delete(@Param('id') id: number) {
+    await this.prisma.clientupdate.delete({ where: { id } })
   }
 }
