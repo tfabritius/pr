@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const transformer = require('@nestjs/graphql/plugin')
 
 module.exports.name = 'nestjs-graphql-transformer'

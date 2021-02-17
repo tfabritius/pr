@@ -8,7 +8,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { Session, User } from '@prisma/client'
+import { User } from '@prisma/client'
 
 import { AuthUser } from '../auth.decorator'
 import { DefaultAuthGuard } from '../default-auth.guard'
