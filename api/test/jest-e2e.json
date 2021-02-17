@@ -4,6 +4,13 @@
     "src/**/*.{ts,tsx}",
     "!**/*.spec.ts"
   ],
+  "globals": {
+    "ts-jest": {
+      "astTransformers": {
+        "before": ["<rootDir>/test/graphql-plugin.ts"]
+      }
+    }
+  },
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "../",
   "testEnvironment": "node",

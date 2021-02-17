@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
-import { ObjectType } from '@nestjs/graphql'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
@@ -15,6 +15,7 @@ export class User {
   id: number
 
   @Column({ unique: true })
+  @Field()
   username: string
 
   @Column({ select: false, nullable: true })

@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
-import { ObjectType } from '@nestjs/graphql'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 
 import { User } from '../users/user.entity'
@@ -9,6 +9,7 @@ import { Exclude } from 'class-transformer'
 @ObjectType()
 export class Session {
   @PrimaryColumn({ type: 'character', length: 36 })
+  @Field()
   token: string
 
   @Column({
