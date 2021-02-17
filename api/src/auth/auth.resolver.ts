@@ -1,7 +1,8 @@
 import { UnauthorizedException } from '@nestjs/common'
 import { Resolver, Mutation, Args, Parent, ResolveField } from '@nestjs/graphql'
 
-import { LoginUserDto, RegisterUserDto } from './auth.dto'
+import { LoginUserDto } from './dto/login.user.dto'
+import { RegisterUserDto } from './dto/register.user.dto'
 import { AuthService } from './auth.service'
 import { Session } from './sessions/session.entity'
 import { SessionsService } from './sessions/sessions.service'

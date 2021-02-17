@@ -24,12 +24,3 @@ export class RegisterUserDto {
   })
   readonly password: string
 }
-
-@InputType()
-export class LoginUserDto {
-  @IsNotEmpty()
-  readonly username: string
-
-  @IsNotEmpty()
-  readonly password: string
-}

@@ -20,7 +20,8 @@ import {
 } from '@nestjs/swagger'
 import { Request } from 'express'
 
-import { LoginUserDto, RegisterUserDto } from './auth.dto'
+import { LoginUserDto } from './dto/login.user.dto'
+import { RegisterUserDto } from './dto/register.user.dto'
 import { DefaultAuthGuard } from './default-auth.guard'
 import { Session } from './sessions/session.entity'
 import { SessionsService } from './sessions/sessions.service'
