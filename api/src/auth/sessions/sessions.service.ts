@@ -1,11 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { InjectRepository } from '@nestjs/typeorm'
-import { LessThan, MoreThan, Repository } from 'typeorm'
+import { User, Session } from '@prisma/client'
 
+import { PrismaService } from '../../prisma.service'
 import { UsersService } from '../users/users.service'
-import { User } from '../users/user.entity'
-import { Session } from './session.entity'
 import { generateUuid } from '../../utils/uuid'
 
 @Injectable()
@@ -13,11 +11,9 @@ export class SessionsService {
   private readonly logger = new Logger(SessionsService.name)
 
   constructor(
+    private prisma: PrismaService,
     private usersService: UsersService,
     private configService: ConfigService,
-
-    @InjectRepository(Session)
-    private readonly sessionsRepository: Repository<Session>,
   ) {}
 
   /**
@@ -40,19 +36,25 @@ export class SessionsService {
    */
   async validateToken(token: string): Promise<User | undefined> {
     try {
-      const session = await this.sessionsRepository.findOne(token, {
-        where: { lastActivityAt: MoreThan(this.lastActivityLimit) },
-        relations: ['user'],
+      const session = await this.prisma.session.findFirst({
+        where: { token, lastActivityAt: { gt: this.lastActivityLimit } },
+        include: { user: true },
       })
+      delete session.user.password
 
       if (!!session && !!session.user) {
         // Update lastActivityAt in background
         session.lastActivityAt = new Date()
-        this.sessionsRepository.save(session).catch((e) => {
-          this.logger.error(
-            `Error while updating session.lastActivityAt in background: ${e}`,
-          )
-        })
+        this.prisma.session
+          .update({
+            data: { lastActivityAt: new Date() },
+            where: { token },
+          })
+          .catch((e) => {
+            this.logger.error(
+              `Error while updating session.lastActivityAt in background: ${e}`,
+            )
+          })
 
         // Update last seen date in background
         this.usersService.updateLastSeen(session.user).catch((e) => {
@@ -72,20 +74,19 @@ export class SessionsService {
    * Creates session for user
    */
   async create(user: User) {
-    const session = new Session()
-    session.token = generateUuid()
-    session.user = user
-    return await this.sessionsRepository.save(session)
+    return await this.prisma.session.create({
+      data: { token: generateUuid(), userId: user.id },
+    })
   }
 
   /**
    * Gets all sessions of user
    */
   async getAllOfUser(user: User): Promise<Session[]> {
-    return await this.sessionsRepository.find({
+    return await this.prisma.session.findMany({
       where: {
-        lastActivityAt: MoreThan(this.lastActivityLimit),
-        user,
+        lastActivityAt: { gt: this.lastActivityLimit },
+        userId: user.id,
       },
     })
   }
@@ -95,8 +96,8 @@ export class SessionsService {
    * or throws NotFoundException
    */
   async delete(token: string): Promise<void> {
-    const { affected } = await this.sessionsRepository.delete(token)
-    if (affected == 0) {
+    const session = await this.prisma.session.delete({ where: { token } })
+    if (!session) {
       throw new NotFoundException('Session not found')
     }
   }
@@ -105,8 +106,8 @@ export class SessionsService {
    * Deletes expired sessions
    */
   async cleanupExpired(): Promise<void> {
-    await this.sessionsRepository.delete({
-      lastActivityAt: LessThan(this.lastActivityLimit),
+    await this.prisma.session.deleteMany({
+      where: { lastActivityAt: { lt: this.lastActivityLimit } },
     })
   }
 }

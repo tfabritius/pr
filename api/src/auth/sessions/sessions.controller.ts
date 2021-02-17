@@ -8,11 +8,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import { Session, User } from '@prisma/client'
 
 import { AuthUser } from '../auth.decorator'
 import { DefaultAuthGuard } from '../default-auth.guard'
-import { User } from '../users/user.entity'
-import { Session } from './session.entity'
+import { SessionResponseDto } from '../dto/session.response.dto'
 import { SessionsService } from './sessions.service'
 
 @Controller('auth/sessions')
@@ -29,10 +29,10 @@ export class SessionsController {
   @ApiOperation({ summary: 'Get all sessions' })
   @ApiOkResponse({
     description: 'List of all sessions is returned.',
-    type: Session,
+    type: SessionResponseDto,
     isArray: true,
   })
-  async readAll(@AuthUser() user: User): Promise<Session[]> {
+  async readAll(@AuthUser() user: User): Promise<SessionResponseDto[]> {
     return await this.sessionsService.getAllOfUser(user)
   }
 }

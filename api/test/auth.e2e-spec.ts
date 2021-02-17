@@ -225,7 +225,7 @@ describe('Authentication (e2e)', () => {
           expect(response.status).toBe(200)
           expect(response.body.username).toBe(user.username.toLowerCase())
           expect(response.body.lastSeenAt).toBe(
-            new Date().toISOString().slice(0, 10),
+            new Date().toISOString().slice(0, 10) + 'T00:00:00.000Z',
           )
         })
       })

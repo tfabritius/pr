@@ -3,17 +3,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { User } from './user.entity'
+import { User } from '@prisma/client'
+import { startOfDay, isEqual } from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
+
+import { PrismaService } from '../../prisma.service'
+
 import * as argon2 from 'argon2'
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Creates user
@@ -35,10 +35,7 @@ export class UsersService {
     }
 
     // Create new user
-    const newUser = new User()
-    newUser.username = username
-
-    return await this.userRepository.save(newUser)
+    return await this.prisma.user.create({ data: { username } })
   }
 
   /**
@@ -46,7 +43,10 @@ export class UsersService {
    * or throws NotFoundException
    */
   async getOne(userId: number): Promise<User> {
-    const user = await this.userRepository.findOne(userId)
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    })
+    delete user.password
 
     if (!user) {
       throw new NotFoundException('User not found')
@@ -62,7 +62,8 @@ export class UsersService {
   async getOneByUsername(username: string): Promise<User> {
     username = username.toLowerCase()
 
-    const user = await this.userRepository.findOne({ username })
+    const user = await this.prisma.user.findUnique({ where: { username } })
+    delete user.password
 
     if (!user) {
       throw new NotFoundException('User not found')
@@ -75,30 +76,35 @@ export class UsersService {
    * Updates password of user
    */
   async updatePassword(user: User, newPassword: string): Promise<User> {
-    user.password = await argon2.hash(newPassword)
-    return await this.userRepository.save(user)
+    const password = await argon2.hash(newPassword)
+    return await this.prisma.user.update({
+      data: { password },
+      where: { id: user.id },
+    })
   }
 
   /**
    * Verfies password of user
    */
   async verifyPassword(user: User, password: string): Promise<boolean> {
-    const db = await this.userRepository.findOne(user.id, {
-      select: ['password'],
+    const { password: dbPassword } = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      select: { password: true },
     })
-
-    return await argon2.verify(db.password, password)
+    return await argon2.verify(dbPassword, password)
   }
 
   /**
    * Update last seen date if necessary
    */
   async updateLastSeen(user: User): Promise<void> {
-    const todayDate = new Date().toISOString().slice(0, 10)
+    const todayDateUtc = zonedTimeToUtc(startOfDay(new Date()), 'local')
 
-    if (user.lastSeenAt != todayDate) {
-      user.lastSeenAt = todayDate
-      await this.userRepository.save(user)
+    if (!isEqual(user.lastSeenAt, todayDateUtc)) {
+      await this.prisma.user.update({
+        data: { lastSeenAt: todayDateUtc },
+        where: { id: user.id },
+      })
     }
   }
 
@@ -107,7 +113,9 @@ export class UsersService {
    * or throws NotFoundException
    */
   async delete(userId: number): Promise<void> {
-    const { affected } = await this.userRepository.delete(userId)
+    // Cascading deletes don't work: https://github.com/prisma/prisma/issues/2057
+    const affected = await this.prisma
+      .$executeRaw`DELETE FROM users WHERE id=${userId}`
     if (affected == 0) {
       throw new NotFoundException('User not found')
     }
