@@ -11,7 +11,7 @@ describe('Auth Guards (e2e)', () => {
     app = await createApp('test')
     await app.init()
     api = ApiClient.create(app.getHttpServer())
-  })
+  }, 30000) // Timeout: 30s
 
   afterAll(async () => {
     await app.close()
