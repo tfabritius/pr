@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["groupBy"]
+  previewFeatures = ["createMany", "groupBy"]
 }
 
 datasource db {
@@ -88,7 +88,7 @@ model ExchangeratePrice {
   exchangerateId Int          @map("exchangerate_id")
   date           DateTime     @db.Date
   value          Decimal      @db.Decimal(16, 8)
-  exchangerates  Exchangerate @relation(fields: [exchangerateId], references: [id])
+  exchangerate   Exchangerate @relation(fields: [exchangerateId], references: [id])
 
   @@id([exchangerateId, date])
   @@index([exchangerateId])
