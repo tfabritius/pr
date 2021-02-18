@@ -1,27 +1,19 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import Big from 'big.js'
-import { Repository } from 'typeorm'
+import { PortfolioSecurity, Prisma } from '@prisma/client'
 
-import { Security } from './security.entity'
-import { SecurityPrice } from './prices/price.entity'
 import { SecurityKpis } from './security.kpis'
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
+import { PrismaService } from '../../prisma.service'
 
 @Injectable()
 export class SecuritiesKpisService {
   constructor(
-    @InjectRepository(Security)
-    private readonly securitiesRepository: Repository<Security>,
-
-    @InjectRepository(SecurityPrice)
-    private readonly securitiesPricesRepository: Repository<SecurityPrice>,
-
+    private readonly prisma: PrismaService,
     private readonly currenciesConversionService: CurrenciesConversionService,
   ) {}
 
   public async getKpis(
-    security: Security,
+    security: PortfolioSecurity,
     { baseCurrencyCode }: { baseCurrencyCode: string },
   ): Promise<SecurityKpis> {
     const kpis = new SecurityKpis()
@@ -46,28 +38,30 @@ export class SecuritiesKpisService {
   /**
    * Gets number of shares
    */
-  private async getShares(security: Security): Promise<Big> {
-    const { shares } = await this.securitiesRepository
-      .createQueryBuilder('security')
-      .select('SUM(t.shares)', 'shares')
-      .innerJoin('security.transactions', 't')
-      .where({ id: security.id })
-      .getRawOne()
-    if (shares === null) return Big('0')
-    return Big(shares)
+  private async getShares(
+    security: PortfolioSecurity,
+  ): Promise<Prisma.Decimal> {
+    const {
+      sum: { shares },
+    } = await this.prisma.transaction.aggregate({
+      sum: { shares: true },
+      where: { securityId: security.id },
+    })
+
+    if (shares === null) return new Prisma.Decimal(0)
+    return shares
   }
 
   /**
    * Gets quote of security
    */
-  private async getQuote(security: Security): Promise<Big> {
-    const price = await this.securitiesPricesRepository
-      .createQueryBuilder('price')
-      .where('security_id = :securityId', { securityId: security.id })
-      .orderBy('date', 'DESC')
-      .take(1)
-      .getOne()
+  private async getQuote(security: PortfolioSecurity): Promise<Prisma.Decimal> {
+    const price = await this.prisma.portfolioSecurityPrice.findFirst({
+      where: { securityId: security.id },
+      orderBy: { date: 'desc' },
+      take: 1,
+    })
 
-    return price?.value ?? Big(0)
+    return price?.value ?? new Prisma.Decimal(0)
   }
 }

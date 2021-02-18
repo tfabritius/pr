@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import Big from 'big.js'
-import { Repository } from 'typeorm'
+import { Account, Prisma } from '@prisma/client'
 
-import { Account, AccountType } from './account.entity'
+import { AccountType } from './account.entity'
 import { AccountKpis } from './account.kpis'
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
+import { PrismaService } from '../../prisma.service'
 
 @Injectable()
 export class AccountsKpisService {
   constructor(
-    @InjectRepository(Account)
-    private readonly accountsRepository: Repository<Account>,
+    private readonly prisma: PrismaService,
 
     private readonly currenciesConversionService: CurrenciesConversionService,
   ) {}
@@ -41,14 +39,11 @@ export class AccountsKpisService {
   /**
    * Gets balance of deposit account
    */
-  private async getDepositBalance(account: Account): Promise<Big> {
-    const { balance } = await this.accountsRepository
-      .createQueryBuilder('account')
-      .select('SUM(u.amount)', 'balance')
-      .innerJoin('account.transactions', 't')
-      .innerJoin('t.units', 'u')
-      .where({ id: account.id })
-      .getRawOne()
-    return Big(balance)
+  private async getDepositBalance(account: Account): Promise<Prisma.Decimal> {
+    const { sum } = await this.prisma.transactionUnit.aggregate({
+      sum: { amount: true },
+      where: { transaction: { accountId: account.id } },
+    })
+    return sum.amount
   }
 }

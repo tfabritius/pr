@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common'
@@ -26,13 +25,12 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { Account } from './account.entity'
 import { AccountDto } from './accounts.dto'
 import { AccountParams } from './account.params'
 import { AccountsService } from './accounts.service'
 import { AccountsKpisService } from './accounts.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-import { KpisQuery } from '../kpis/kpis.query'
+import { PortfolioAccountResponseDto } from '../dto/portfolio.account.response.dto'
 
 @Controller('portfolios/:portfolioId/accounts')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -52,13 +50,13 @@ export class AccountsController {
   @ApiOperation({ summary: 'Create account' })
   @ApiCreatedResponse({
     description: 'Account has been successfully created.',
-    type: Account,
+    type: PortfolioAccountResponseDto,
   })
   async create(
     @Param() params: PortfolioParams,
     @Body() dto: AccountDto,
     @Req() req,
-  ): Promise<Account> {
+  ): Promise<PortfolioAccountResponseDto> {
     return this.service.create(req.portfolio, dto)
   }
 
@@ -66,44 +64,28 @@ export class AccountsController {
   @ApiOperation({ summary: 'Get all accounts of portfolio' })
   @ApiOkResponse({
     description: 'List of all accounts of portfolio is returned.',
-    type: Account,
+    type: PortfolioAccountResponseDto,
     isArray: true,
   })
   async readAll(
     @Param() params: PortfolioParams,
-    @Query() query: KpisQuery,
-  ): Promise<Account[]> {
-    const accounts = await this.service.getAll(params)
-    if (query.kpis) {
-      for (const account of accounts) {
-        account.kpis = await this.kpisService.getKpis(account, {
-          baseCurrencyCode: query.currencyCode,
-        })
-      }
-    }
-    return accounts
+  ): Promise<PortfolioAccountResponseDto[]> {
+    return await this.service.getAll(params)
   }
 
   @Get(':accountId')
   @ApiOperation({ summary: 'Get account' })
   @ApiOkResponse({
     description: 'The account is returned.',
-    type: Account,
+    type: PortfolioAccountResponseDto,
   })
   @ApiNotFoundResponse({
     description: 'Portfolio or account not found',
   })
   async readOne(
     @Param() params: AccountParams,
-    @Query() query: KpisQuery,
-  ): Promise<Account> {
-    const account = await this.service.getOne(params)
-    if (query.kpis) {
-      account.kpis = await this.kpisService.getKpis(account, {
-        baseCurrencyCode: query.currencyCode,
-      })
-    }
-    return account
+  ): Promise<PortfolioAccountResponseDto> {
+    return await this.service.getOne(params)
   }
 
   @Put(':accountId')

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Timeout } from '@nestjs/schedule'
-import Big from 'big.js'
+import { Prisma } from '@prisma/client'
 import * as dayjs from 'dayjs'
 
 import { findAllPairsShortestPath } from '../utils/floyd.warshall'
@@ -82,11 +82,11 @@ export class CurrenciesConversionService {
    * Converts an amount between two currencies
    */
   async convertCurrencyAmount(
-    amount: Big,
+    amount: Prisma.Decimal,
     sourceCurrencyCode: string,
     targetCurrencyCode: string,
     date?: dayjs.Dayjs,
-  ): Promise<Big> {
+  ): Promise<Prisma.Decimal> {
     date = date || dayjs()
 
     const route = this.getConversionRoute(
@@ -106,14 +106,14 @@ export class CurrenciesConversionService {
           quoteCurrencyCode: next,
           date,
         })
-        amount = amount.times(Big(erPrice.toString()))
+        amount = amount.times(erPrice)
       } catch {
         const erPrice = await this.currenciesService.getOneExchangeRatePrice({
           baseCurrencyCode: next,
           quoteCurrencyCode: current,
           date,
         })
-        amount = amount.div(Big(erPrice.toString()))
+        amount = amount.div(erPrice)
       }
     }
 

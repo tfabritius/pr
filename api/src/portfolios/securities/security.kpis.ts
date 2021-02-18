@@ -1,35 +1,35 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import Big from 'big.js'
+import { Prisma } from '@prisma/client'
 import { Transform } from 'class-transformer'
 
 export class SecurityKpis {
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  shares?: Big
+  shares?: Prisma.Decimal
 
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  quote?: Big
+  quote?: Prisma.Decimal
 
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  quoteInBaseCurrency?: Big
+  quoteInBaseCurrency?: Prisma.Decimal
 
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  value?: Big
+  value?: Prisma.Decimal
 
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  valueInBaseCurrency?: Big
+  valueInBaseCurrency?: Prisma.Decimal
 }

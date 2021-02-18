@@ -19,7 +19,7 @@ import {
   ApiUnauthorizedResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger'
-import Big from 'big.js'
+import { Prisma } from '@prisma/client'
 
 import { CurrenciesService } from './currencies.service'
 import {
@@ -88,7 +88,7 @@ export class CurrenciesController {
   async convert(@Body() dto: ConvertCurrenciesDto): Promise<any> {
     try {
       const targetAmount = await this.currenciesConversionService.convertCurrencyAmount(
-        Big(dto.sourceAmount),
+        new Prisma.Decimal(dto.sourceAmount),
         dto.sourceCurrencyCode,
         dto.targetCurrencyCode,
         dto.date,

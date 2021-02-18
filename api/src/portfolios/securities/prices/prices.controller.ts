@@ -28,6 +28,7 @@ import { SecurityPrice } from './price.entity'
 import { SecurityPriceDto } from './prices.dto'
 import { SecuritiesPricesService } from './prices.service'
 import { PricesQuery } from './prices.query'
+import { PortfolioSecurityPriceResponseDto } from '../../dto/portfolio.security.price.response.dto'
 
 @Controller('portfolios/:portfolioId/securities/:securityId/prices')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -47,7 +48,7 @@ export class SecuritiesPricesController {
   @ApiOperation({ summary: 'Create or update prices' })
   @ApiOkResponse({
     description: 'Prices have been successfully created or updated',
-    type: SecurityPrice,
+    type: PortfolioSecurityPriceResponseDto,
     isArray: true,
   })
   @ApiBody({ type: SecurityPrice, isArray: true })
@@ -57,22 +58,22 @@ export class SecuritiesPricesController {
 
     @Body(new ParseArrayPipe({ items: SecurityPriceDto }))
     dtos: SecurityPriceDto[],
-  ): Promise<SecurityPrice[]> {
+  ): Promise<PortfolioSecurityPriceResponseDto[]> {
     const security = await this.securitiesService.getOne(params)
-    return this.pricesService.upsert(security, dtos)
+    return this.pricesService.upsert(security.id, dtos)
   }
 
   @Get()
   @ApiOperation({ summary: 'Get prices' })
   @ApiOkResponse({
     description: 'List of prices is returned',
-    type: SecurityPrice,
+    type: PortfolioSecurityPriceResponseDto,
     isArray: true,
   })
   async readAll(
     @Param() params: SecurityParams,
     @Query() query: PricesQuery,
-  ): Promise<SecurityPrice[]> {
+  ): Promise<PortfolioSecurityPriceResponseDto[]> {
     const prices = await this.pricesService.getAll(params, query)
     return prices
   }
