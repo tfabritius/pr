@@ -76,6 +76,7 @@ export class SessionsService {
   async create(user: User) {
     return await this.prisma.session.create({
       data: { token: generateUuid(), userId: user.id },
+      select: { token: true, createdAt: true, lastActivityAt: true },
     })
   }
 

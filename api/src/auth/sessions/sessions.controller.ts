@@ -12,7 +12,7 @@ import { User } from '@prisma/client'
 
 import { AuthUser } from '../auth.decorator'
 import { DefaultAuthGuard } from '../default-auth.guard'
-import { SessionResponseDto } from '../dto/session.response.dto'
+import { Session } from './session.entity'
 import { SessionsService } from './sessions.service'
 
 @Controller('auth/sessions')
@@ -29,10 +29,10 @@ export class SessionsController {
   @ApiOperation({ summary: 'Get all sessions' })
   @ApiOkResponse({
     description: 'List of all sessions is returned.',
-    type: SessionResponseDto,
+    type: Session,
     isArray: true,
   })
-  async readAll(@AuthUser() user: User): Promise<SessionResponseDto[]> {
+  async readAll(@AuthUser() user: User): Promise<Session[]> {
     return await this.sessionsService.getAllOfUser(user)
   }
 }

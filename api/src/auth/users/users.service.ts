@@ -75,20 +75,26 @@ export class UsersService {
   /**
    * Updates password of user
    */
-  async updatePassword(user: User, newPassword: string): Promise<User> {
+  async updatePassword(
+    { id }: { id: number },
+    newPassword: string,
+  ): Promise<User> {
     const password = await argon2.hash(newPassword)
     return await this.prisma.user.update({
       data: { password },
-      where: { id: user.id },
+      where: { id },
     })
   }
 
   /**
    * Verfies password of user
    */
-  async verifyPassword(user: User, password: string): Promise<boolean> {
+  async verifyPassword(
+    { id }: { id: number },
+    password: string,
+  ): Promise<boolean> {
     const { password: dbPassword } = await this.prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id },
       select: { password: true },
     })
     return await argon2.verify(dbPassword, password)

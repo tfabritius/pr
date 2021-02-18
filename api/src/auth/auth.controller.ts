@@ -18,7 +18,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { Session } from '@prisma/client'
 import { Request } from 'express'
 
 import { LoginUserDto } from './dto/login.user.dto'
@@ -26,7 +25,7 @@ import { RegisterUserDto } from './dto/register.user.dto'
 import { DefaultAuthGuard } from './default-auth.guard'
 import { SessionsService } from './sessions/sessions.service'
 import { UsersService } from './users/users.service'
-import { SessionResponseDto } from './dto/session.response.dto'
+import { Session } from './sessions/session.entity'
 
 @Controller('auth')
 @ApiTags('auth')
@@ -45,7 +44,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register user' })
   @ApiCreatedResponse({
     description: 'User has been registered and logged in',
-    type: SessionResponseDto,
+    type: Session,
   })
   async register(@Body() registerUserDto: RegisterUserDto): Promise<Session> {
     const user = await this.usersService.create(registerUserDto.username)
@@ -61,14 +60,14 @@ export class AuthController {
   })
   @ApiCreatedResponse({
     description: 'The user has been successfully logged in.',
-    type: SessionResponseDto,
+    type: Session,
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async login(
     @Req() req,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() loginUserDto: LoginUserDto,
-  ): Promise<SessionResponseDto> {
+  ): Promise<Session> {
     const session = await this.sessionsService.create(req.user)
 
     // Start cleanup in background
@@ -78,7 +77,7 @@ export class AuthController {
       )
     })
 
-    return new SessionResponseDto(session)
+    return session
   }
 
   @Post('logout')

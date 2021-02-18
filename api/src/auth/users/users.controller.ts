@@ -20,13 +20,12 @@ import {
   ApiOkResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
-import { User } from '@prisma/client'
 
 import { DefaultAuthGuard } from '../default-auth.guard'
 import { AuthUser } from '../auth.decorator'
 import { UsersService } from './users.service'
 import { UpdatePasswordDto } from '../dto/update.password.dto'
-import { UserResponseDto } from '../dto/user.response.dto'
+import { User } from './user.entity'
 
 @Controller('auth/users')
 @UseGuards(DefaultAuthGuard)
@@ -42,10 +41,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user' })
   @ApiOkResponse({
     description: 'The user is returned.',
-    type: UserResponseDto,
+    type: User,
   })
-  async getMe(@AuthUser() user: User): Promise<UserResponseDto> {
-    return new UserResponseDto(user)
+  async getMe(@AuthUser() user: User): Promise<User> {
+    return user
   }
 
   @Post('me/password')
