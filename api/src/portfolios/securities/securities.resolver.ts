@@ -6,6 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
+import { PortfolioSecurity } from '@prisma/client'
 
 import { Security } from './security.entity'
 import { SecuritiesService } from './securities.service'
@@ -27,7 +28,7 @@ export class SecuritiesResolver {
   }
 
   @ResolveField(() => String)
-  async shares(@Parent() security: Security) {
+  async shares(@Parent() security: PortfolioSecurity) {
     const kpis = await this.securitiesKpisService.getKpis(security, {
       baseCurrencyCode: 'EUR',
     })
@@ -36,7 +37,7 @@ export class SecuritiesResolver {
 
   @ResolveField(() => String)
   async quote(
-    @Parent() security: Security,
+    @Parent() security: PortfolioSecurity,
     @Args('currencyCode', { nullable: true }) currencyCode: string,
   ) {
     const kpis = await this.securitiesKpisService.getKpis(security, {

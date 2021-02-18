@@ -1,20 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { Account } from './account.entity'
 import { AccountsService } from './accounts.service'
 import { AccountsKpisService } from './accounts.kpis.service'
 import { AccountsController } from './accounts.controller'
 import { PortfoliosModule } from '../portfolios.module'
 import { CurrenciesModule } from '../../currencies/currencies.module'
+import { PrismaService } from '../../prisma.service'
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Account]),
-    forwardRef(() => PortfoliosModule),
-    CurrenciesModule,
-  ],
-  providers: [AccountsService, AccountsKpisService],
+  imports: [forwardRef(() => PortfoliosModule), CurrenciesModule],
+  providers: [AccountsService, AccountsKpisService, PrismaService],
   controllers: [AccountsController],
   exports: [AccountsService],
 })

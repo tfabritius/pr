@@ -25,11 +25,11 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { Transaction } from './transaction.entity'
 import { TransactionDto } from './transactions.dto'
 import { TransactionParams } from './transaction.params'
 import { TransactionsService } from './transactions.service'
 import { PortfolioParams } from '../portfolio.params'
+import { PortfolioTransactionResponseDto } from '../dto/portfolio.transaction.response.dto'
 
 @Controller('portfolios/:portfolioId/transactions')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -46,13 +46,13 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Create transaction' })
   @ApiCreatedResponse({
     description: 'Transaction has been successfully created.',
-    type: Transaction,
+    type: PortfolioTransactionResponseDto,
   })
   async create(
     @Param() params: PortfolioParams,
     @Body() dto: TransactionDto,
     @Req() req,
-  ): Promise<Transaction> {
+  ): Promise<PortfolioTransactionResponseDto> {
     return this.transactionsService.create(req.portfolio, dto)
   }
 
@@ -60,10 +60,12 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Get all transactions of portfolio' })
   @ApiOkResponse({
     description: 'List of all transactions of portfolio is returned.',
-    type: Transaction,
+    type: PortfolioTransactionResponseDto,
     isArray: true,
   })
-  async readAll(@Param() params: PortfolioParams): Promise<Transaction[]> {
+  async readAll(
+    @Param() params: PortfolioParams,
+  ): Promise<PortfolioTransactionResponseDto[]> {
     return await this.transactionsService.getAll(params)
   }
 
@@ -71,10 +73,12 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Get transaction' })
   @ApiOkResponse({
     description: 'The transaction is returned.',
-    type: Transaction,
+    type: PortfolioTransactionResponseDto,
   })
   @ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
-  async readOne(@Param() params: TransactionParams): Promise<Transaction> {
+  async readOne(
+    @Param() params: TransactionParams,
+  ): Promise<PortfolioTransactionResponseDto> {
     return await this.transactionsService.getOne(params)
   }
 

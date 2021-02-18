@@ -1,17 +1,17 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import Big from 'big.js'
+import { Prisma } from '@prisma/client'
 import { Transform } from 'class-transformer'
 
 export class AccountKpis {
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  balance?: Big
+  balance?: Prisma.Decimal
 
-  @Transform(({ value }: { value: Big }) => value.toString(), {
+  @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })
   @ApiPropertyOptional({ type: String })
-  valueInBaseCurrency?: Big
+  valueInBaseCurrency?: Prisma.Decimal
 }

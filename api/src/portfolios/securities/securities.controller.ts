@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common'
@@ -26,13 +25,12 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { Security } from './security.entity'
 import { SecurityDto } from './securities.dto'
 import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-import { KpisQuery } from '../kpis/kpis.query'
+import { PortfolioSecurityResponseDto } from '../dto/portfolio.security.response.dto'
 
 @Controller('portfolios/:portfolioId/securities')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -52,13 +50,13 @@ export class SecuritiesController {
   @ApiOperation({ summary: 'Create security' })
   @ApiCreatedResponse({
     description: 'Security has been successfully created.',
-    type: Security,
+    type: PortfolioSecurityResponseDto,
   })
   async create(
     @Param() params: PortfolioParams,
     @Body() securityDto: SecurityDto,
     @Req() req,
-  ): Promise<Security | void> {
+  ): Promise<PortfolioSecurityResponseDto> {
     return this.securitiesService.create(req.portfolio, securityDto)
   }
 
@@ -66,39 +64,26 @@ export class SecuritiesController {
   @ApiOperation({ summary: 'Get all securities of portfolio' })
   @ApiOkResponse({
     description: 'List of all securities of portfolio is returned.',
-    type: Security,
+    type: PortfolioSecurityResponseDto,
     isArray: true,
   })
   async readAll(
     @Param() params: PortfolioParams,
-    @Query() query: KpisQuery,
-  ): Promise<Security[]> {
-    const securities = await this.securitiesService.getAll(params)
-    if (query.kpis) {
-      for (const security of securities) {
-        security.kpis = await this.kpisService.getKpis(security, {
-          baseCurrencyCode: query.currencyCode,
-        })
-      }
-    }
-    return securities
+  ): Promise<PortfolioSecurityResponseDto[]> {
+    return await this.securitiesService.getAll(params)
   }
 
   @Get(':securityId')
   @ApiOperation({ summary: 'Get security' })
-  @ApiOkResponse({ description: 'The security is returned.', type: Security })
+  @ApiOkResponse({
+    description: 'The security is returned.',
+    type: PortfolioSecurityResponseDto,
+  })
   @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
   async readOne(
     @Param() params: SecurityParams,
-    @Query() query: KpisQuery,
-  ): Promise<Security> {
-    const security = await this.securitiesService.getOne(params)
-    if (query.kpis) {
-      security.kpis = await this.kpisService.getKpis(security, {
-        baseCurrencyCode: query.currencyCode,
-      })
-    }
-    return security
+  ): Promise<PortfolioSecurityResponseDto> {
+    return await this.securitiesService.getOne(params)
   }
 
   @Put(':securityId')

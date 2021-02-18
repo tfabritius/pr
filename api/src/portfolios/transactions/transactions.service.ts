@@ -3,55 +3,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { FindConditions, In, Not, Repository } from 'typeorm'
+import { Transaction, TransactionUnit } from '@prisma/client'
 
 import { AccountsService } from '../accounts/accounts.service'
 import { Portfolio } from '../portfolio.entity'
 import { PortfolioParams } from '../portfolio.params'
 import { SecuritiesService } from '../securities/securities.service'
-import { Transaction } from './transaction.entity'
 import { TransactionParams } from './transaction.params'
 import { TransactionDto, TransactionUnitDto } from './transactions.dto'
-import { TransactionUnit } from './unit.entity'
+import { PrismaService } from '../../prisma.service'
 
 @Injectable()
 export class TransactionsService {
   constructor(
-    @InjectRepository(Transaction)
-    private readonly transactionsRepository: Repository<Transaction>,
-
-    @InjectRepository(TransactionUnit)
-    private readonly unitsRepository: Repository<TransactionUnit>,
-
+    private readonly prisma: PrismaService,
     private readonly accountsService: AccountsService,
     private readonly securitiesService: SecuritiesService,
   ) {}
-
-  /**
-   * Copies relevant attributes from dto to account object
-   */
-  private copyDtoToTransactions(
-    dto: TransactionDto,
-    transaction: Transaction,
-    partnerTransaction: Transaction,
-  ) {
-    // Copy attributes which are identical for both transactions
-    for (const i of ['type', 'datetime', 'note']) {
-      transaction[i] = dto[i] ?? null
-      if (dto.partnerTransaction) {
-        partnerTransaction[i] = dto[i] ?? null
-      }
-    }
-
-    // Copy attributes which differ between both transactions
-    for (const i of ['accountId', 'securityId', 'shares', 'units']) {
-      transaction[i] = dto[i] ?? null
-      if (dto.partnerTransaction) {
-        partnerTransaction[i] = dto.partnerTransaction[i] ?? null
-      }
-    }
-  }
 
   /**
    * Make sure referenced entities exist and belong to this portfolio
@@ -99,38 +67,63 @@ export class TransactionsService {
   async create(
     portfolio: Portfolio,
     dto: TransactionDto,
-  ): Promise<Transaction> {
+  ): Promise<Transaction & { units: TransactionUnit[] }> {
     const hasPartnerTransaction = !!dto.partnerTransaction
 
     await this.checkOwnerOfReferences(portfolio.id, dto)
 
-    let transaction = new Transaction()
-    transaction.portfolio = portfolio
-    let partnerTransaction = new Transaction()
-    partnerTransaction.portfolio = portfolio
+    const {
+      type,
+      datetime,
+      note,
+      accountId,
+      securityId,
+      shares,
+      units,
+      partnerTransaction,
+    } = dto
 
-    this.copyDtoToTransactions(dto, transaction, partnerTransaction)
+    let partnerTransactionId = null
 
     if (hasPartnerTransaction) {
-      partnerTransaction = await this.transactionsRepository.save(
-        partnerTransaction,
-      )
+      const createdPartnerTransaction = await this.prisma.transaction.create({
+        data: {
+          type,
+          datetime,
+          note,
+          accountId: partnerTransaction.accountId,
+          securityId: partnerTransaction.securityId,
+          shares: partnerTransaction.shares,
+          units: { createMany: { data: partnerTransaction.units } },
+          portfolioId: portfolio.id,
+        },
+      })
 
-      transaction.partnerTransaction = partnerTransaction
+      partnerTransactionId = createdPartnerTransaction.id
     }
 
     // Save the actual transaction
-    transaction = await this.transactionsRepository.save(transaction)
+    const transaction = await this.prisma.transaction.create({
+      data: {
+        type,
+        datetime,
+        note,
+        accountId,
+        securityId,
+        shares,
+        units: { createMany: { data: units } },
+        portfolioId: portfolio.id,
+        partnerTransactionId,
+      },
+      include: { units: true },
+    })
 
     if (hasPartnerTransaction) {
       // Save id of transaction in partner transaction
-      partnerTransaction.partnerTransaction = transaction
-      await this.transactionsRepository.save(partnerTransaction)
-
-      // Replace partner transaction with id to avoid circular reference
-      transaction.partnerTransaction = {
-        id: transaction.partnerTransaction.id,
-      } as Transaction
+      await this.prisma.transaction.update({
+        data: { partnerTransactionId: transaction.id },
+        where: { id: partnerTransactionId },
+      })
     }
 
     return transaction
@@ -139,11 +132,10 @@ export class TransactionsService {
   /**
    * Gets all transactions of portfolio
    */
-  async getAll(params: PortfolioParams): Promise<Transaction[]> {
-    return this.transactionsRepository.find({
-      where: {
-        portfolio: { id: params.portfolioId },
-      },
+  async getAll({ portfolioId }: PortfolioParams) {
+    return await this.prisma.transaction.findMany({
+      where: { portfolioId },
+      include: { units: true },
     })
   }
 
@@ -151,12 +143,12 @@ export class TransactionsService {
    * Gets transaction of portfolio identified by parameters
    * or throws NotFoundException
    */
-  async getOne(params: TransactionParams): Promise<Transaction> {
-    const transaction = await this.transactionsRepository.findOne({
-      relations: ['partnerTransaction'],
-      where: {
-        id: params.transactionId,
-        portfolio: { id: params.portfolioId },
+  async getOne({ transactionId, portfolioId }: TransactionParams) {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: { id: transactionId, portfolioId },
+      include: {
+        partnerTransaction: { include: { units: true } },
+        units: true,
       },
     })
 
@@ -168,25 +160,28 @@ export class TransactionsService {
   }
 
   /**
-   * Deletes transaction units which are not in the provided list of units
-   * (for a given transaction)
+   * Create, update and delete units of transaction
    */
-  async deleteRemovedTransactionUnits(
-    transaction: Transaction,
-    unitsDto: TransactionUnitDto[],
+  private async createUpdateDeleteUnits(
+    unitDtos: TransactionUnitDto[],
+    transactionId: number,
   ) {
-    const dtoTransactionUnitsIds = unitsDto
-      .map((el) => el.id)
-      .filter((el) => !!el)
+    // Delete units which are not in the DTO
+    await this.prisma.transactionUnit.deleteMany({
+      where: {
+        id: { notIn: unitDtos.map((u) => u.id) },
+        transactionId,
+      },
+    })
 
-    const deleteConditions: FindConditions<TransactionUnit> = {
-      transaction,
+    // Create/update units
+    for (const unit of unitDtos) {
+      await this.prisma.transactionUnit.upsert({
+        create: { ...unit, transactionId },
+        update: unit,
+        where: { id: unit.id },
+      })
     }
-
-    if (dtoTransactionUnitsIds.length > 0) {
-      deleteConditions.id = Not(In(dtoTransactionUnitsIds))
-    }
-    await this.unitsRepository.delete(deleteConditions)
   }
 
   /**
@@ -200,40 +195,69 @@ export class TransactionsService {
     const dtoHasPartnerTransaction = !!dto.partnerTransaction
 
     // Check if transaction exists in portfolio
-    let transaction = await this.getOne(params)
-
-    // Workaround for https://github.com/typeorm/typeorm/issues/1351
-    await this.deleteRemovedTransactionUnits(transaction, dto.units)
-    if (dtoHasPartnerTransaction) {
-      await this.deleteRemovedTransactionUnits(
-        transaction.partnerTransaction,
-        dto.partnerTransaction.units,
-      )
-    }
+    const transaction = await this.getOne(params)
 
     await this.checkOwnerOfReferences(params.portfolioId, dto)
 
-    // Get transaction from db without deleted units
-    transaction = await this.getOne(params)
-    const partnerTransaction = transaction.partnerTransaction
+    const {
+      type,
+      datetime,
+      note,
+      accountId,
+      securityId,
+      shares,
+      units,
+      partnerTransaction,
+    } = dto
 
-    this.copyDtoToTransactions(dto, transaction, partnerTransaction)
+    // this.copyDtoToTransactions(dto, transaction, partnerTransaction)
 
     if (dtoHasPartnerTransaction) {
-      await this.transactionsRepository.save(partnerTransaction)
+      // Update the partner transaction
+      await this.prisma.transaction.update({
+        data: {
+          type,
+          datetime,
+          note,
+          accountId: partnerTransaction.accountId,
+          securityId: partnerTransaction.securityId,
+          shares: partnerTransaction.shares,
+        },
+        where: { id: transaction.partnerTransactionId },
+      })
+
+      await this.createUpdateDeleteUnits(
+        partnerTransaction.units,
+        transaction.partnerTransactionId,
+      )
     }
-    return await this.transactionsRepository.save(transaction)
+
+    await this.createUpdateDeleteUnits(units, transaction.id)
+
+    // Update the transaction
+    return await this.prisma.transaction.update({
+      data: {
+        type,
+        datetime,
+        note,
+        accountId,
+        securityId,
+        shares,
+      },
+      where: { id: transaction.id },
+    })
   }
 
   /**
    * Deletes transaction identified by parameters
    * or throws NotFoundException
    */
-  async delete(params: TransactionParams): Promise<void> {
-    const { affected } = await this.transactionsRepository.delete({
-      id: params.transactionId,
-      portfolio: { id: params.portfolioId },
-    })
+  async delete({
+    transactionId,
+    portfolioId,
+  }: TransactionParams): Promise<void> {
+    const affected = await this.prisma
+      .$executeRaw`DELETE FROM transactions WHERE id=${transactionId} AND portfolio_id=${portfolioId}`
 
     if (affected == 0) {
       throw new NotFoundException('Transaction not found')

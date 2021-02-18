@@ -3,85 +3,80 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Account } from '@prisma/client'
 
 import { Portfolio } from '../portfolio.entity'
 import { AccountDto } from './accounts.dto'
-import { Account, AccountType } from './account.entity'
+import { AccountType } from './account.entity'
 import { AccountParams } from './account.params'
 import { PortfolioParams } from '../portfolio.params'
+import { PrismaService } from '../../prisma.service'
 
 @Injectable()
 export class AccountsService {
-  constructor(
-    @InjectRepository(Account)
-    private readonly accountsRepository: Repository<Account>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Copies relevant attributes from dto to account object
+   * Sanitizes DTO, i.e. copies relevant attributes and verifies validity of reference account id
    */
-  private async copyDtoToAccount(
+  private async sanitizeDto(
     portfolioId: number,
     dto: AccountDto,
-    account: Account,
-  ) {
-    account.active = dto.active
-    account.name = dto.name
-    account.note = dto.note
-    account.type = dto.type
-    account.uuid = dto.uuid
+  ): Promise<AccountDto> {
+    const ret = {
+      active: dto.active,
+      name: dto.name,
+      note: dto.note,
+      type: dto.type,
+      uuid: dto.uuid,
+      currencyCode: null,
+      referenceAccountId: null,
+    }
 
     if (dto.type === AccountType.DEPOSIT) {
-      account.currencyCode = dto.currencyCode
-      account.referenceAccount = null
+      ret.currencyCode = dto.currencyCode
     } else {
-      account.currencyCode = null
-      account.referenceAccount = await this.accountsRepository.findOne({
+      const referenceAccount = await this.prisma.account.findFirst({
         where: {
           id: dto.referenceAccountId,
-          portfolio: { id: portfolioId },
+          portfolioId,
         },
       })
 
-      if (!account.referenceAccount) {
+      if (!referenceAccount) {
         throw new BadRequestException('referenceAccount not found')
       }
+
+      ret.referenceAccountId = dto.referenceAccountId
     }
+
+    return ret
   }
 
   /**
    * Creates account in portfolio
    */
   async create(portfolio: Portfolio, dto: AccountDto): Promise<Account> {
-    const account = new Account()
-    await this.copyDtoToAccount(portfolio.id, dto, account)
-    account.portfolio = portfolio
-    return await this.accountsRepository.save(account)
+    const sanitizedDto = await this.sanitizeDto(portfolio.id, dto)
+    return await this.prisma.account.create({
+      data: { ...sanitizedDto, portfolioId: portfolio.id },
+    })
   }
 
   /**
    * Gets all accounts in a portfolio
    */
   async getAll(
-    params: PortfolioParams,
+    { portfolioId }: PortfolioParams,
     {
       includeTransactions = false,
     }: {
       includeTransactions?: boolean
     } = {},
   ): Promise<Account[]> {
-    const relations = []
-    if (includeTransactions) {
-      relations.push('transactions')
-    }
-
-    return this.accountsRepository.find({
-      where: {
-        portfolio: { id: params.portfolioId },
-      },
-      relations,
+    return this.prisma.account.findMany({
+      where: { portfolioId },
+      include: { transactions: includeTransactions },
     })
   }
 
@@ -102,12 +97,9 @@ export class AccountsService {
       relations.push('transactions')
     }
 
-    const account = await this.accountsRepository.findOne({
-      where: {
-        id: params.accountId,
-        portfolio: { id: params.portfolioId },
-      },
-      relations,
+    const account = this.prisma.account.findFirst({
+      where: { id: params.accountId, portfolioId: params.portfolioId },
+      include: { transactions: includeTransactions },
     })
 
     if (!account) {
@@ -122,19 +114,20 @@ export class AccountsService {
    * or throws NotFoundException
    */
   async update(params: AccountParams, dto: AccountDto): Promise<Account> {
-    const account = await this.getOne(params)
-    await this.copyDtoToAccount(params.portfolioId, dto, account)
-    return await this.accountsRepository.save(account)
+    await this.getOne(params)
+    const sanitizedDto = await this.sanitizeDto(params.portfolioId, dto)
+    return await this.prisma.account.update({
+      data: sanitizedDto,
+      where: { id: params.accountId },
+    })
   }
 
   /**
    * Deletes account identified by parameters
    */
   async delete(params: AccountParams): Promise<void> {
-    const { affected } = await this.accountsRepository.delete({
-      id: params.accountId,
-      portfolio: { id: params.portfolioId },
-    })
+    const affected = await this.prisma
+      .$executeRaw`DELETE FROM accounts WHERE id=${params.accountId} AND portfolioId=${params.portfolioId}`
 
     if (affected == 0) {
       throw new NotFoundException('Account not found')

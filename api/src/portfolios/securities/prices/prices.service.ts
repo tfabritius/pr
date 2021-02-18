@@ -1,62 +1,56 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import Big from 'big.js'
+import { Prisma, PortfolioSecurityPrice } from '@prisma/client'
 
-import { Security } from '../security.entity'
-import { SecurityPrice } from './price.entity'
 import { SecurityParams } from '../security.params'
 import { SecurityPriceDto } from './prices.dto'
 import { PricesQuery } from './prices.query'
+import { PrismaService } from '../../../prisma.service'
 
 @Injectable()
 export class SecuritiesPricesService {
-  constructor(
-    @InjectRepository(SecurityPrice)
-    private readonly securitiesPricesRepository: Repository<SecurityPrice>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Creates or updates prices of security
    */
   async upsert(
-    security: Security,
+    securityId: number,
     dtos: SecurityPriceDto[],
-  ): Promise<SecurityPrice[]> {
-    const prices: SecurityPrice[] = dtos.map((el) => {
-      const p = new SecurityPrice()
-      p.securityId = security.id
-      p.date = el.date.format('YYYY-MM-DD')
-      p.value = Big(el.value)
-      return p
-    })
+  ): Promise<PortfolioSecurityPrice[]> {
+    const ret: PortfolioSecurityPrice[] = []
 
-    return await this.securitiesPricesRepository.save(prices)
+    for (const { date, value } of dtos) {
+      const price = await this.prisma.portfolioSecurityPrice.upsert({
+        create: { date: date.toDate(), value, securityId },
+        update: { date: date.toDate(), value },
+        where: { securityId_date: { securityId, date: date.toDate() } },
+      })
+
+      ret.push(price)
+    }
+
+    return ret
   }
 
   /**
    * Gets prices of a security
    */
   async getAll(
-    params: SecurityParams,
+    { securityId }: SecurityParams,
     query: PricesQuery,
-  ): Promise<SecurityPrice[]> {
-    let select = await this.securitiesPricesRepository
-      .createQueryBuilder('price')
-      .where('security_id = :securityId', params)
+  ): Promise<PortfolioSecurityPrice[]> {
+    const dateFilter: Prisma.PortfolioSecurityPriceWhereInput[] = []
 
     if (query.startDate) {
-      select = select.andWhere('date >= :startDate', {
-        startDate: query.startDate.format('YYYY-MM-DD'),
-      })
+      dateFilter.push({ date: { gte: query.startDate.toDate() } })
     }
 
     if (query.endDate) {
-      select = select.andWhere('date <= :endDate', {
-        endDate: query.endDate.format('YYYY-MM-DD'),
-      })
+      dateFilter.push({ date: { lte: query.endDate.toDate() } })
     }
 
-    return select.getMany()
+    return await this.prisma.portfolioSecurityPrice.findMany({
+      where: { securityId, AND: dateFilter },
+    })
   }
 }
