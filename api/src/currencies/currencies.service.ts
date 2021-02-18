@@ -1,36 +1,20 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
 import { Interval, Timeout } from '@nestjs/schedule'
-import Big from 'big.js'
+import { Prisma } from '@prisma/client'
 import * as dayjs from 'dayjs'
-import { LessThanOrEqual, Repository } from 'typeorm'
 import axios from 'axios'
 import { startOfDay, subDays } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
 
-import { Currency } from './currency.entity'
-import { ExchangeRate } from './exchangerate.entity'
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
-import { ExchangeRatePrice } from './price.entity'
 import { PrismaService } from '../prisma.service'
 
 @Injectable()
 export class CurrenciesService {
   private readonly logger = new Logger(CurrenciesService.name)
 
-  constructor(
-    private readonly prisma: PrismaService,
-
-    @InjectRepository(Currency)
-    private readonly currenciesRepository: Repository<Currency>,
-
-    @InjectRepository(ExchangeRate)
-    private readonly exchangeRatesRepository: Repository<ExchangeRate>,
-
-    @InjectRepository(ExchangeRatePrice)
-    private readonly exchangeRatePricesRepository: Repository<ExchangeRatePrice>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Gets all currencies with their exchange rates
@@ -45,23 +29,22 @@ export class CurrenciesService {
    * Gets all exchange rates with latestPriceDate but without prices
    */
   async getAllExchangeRates() {
-    const { entities, raw } = await this.exchangeRatesRepository
-      .createQueryBuilder('exchangerate')
-      .addSelect((qb) =>
-        qb
-          .select('MAX(p.date) as latest_price_date')
-          .from(ExchangeRatePrice, 'p')
-          .where('p.exchangerate_id = exchangerate.id'),
-      )
-      .getRawAndEntities()
-
-    raw.forEach((item, index) => {
-      entities[index].latestPriceDate = item.latest_price_date
-        ? dayjs(item.latest_price_date).format('YYYY-MM-DD')
-        : null
+    const exchangerates = await this.prisma.exchangerate.findMany({
+      include: {
+        prices: {
+          orderBy: { date: 'desc' },
+          take: 1,
+        },
+      },
     })
 
-    return entities
+    return exchangerates.map((er) => {
+      const { prices, ...pureEr } = er
+      return {
+        ...pureEr,
+        latestPriceDate: prices[0].date.toISOString().substring(0, 10),
+      }
+    })
   }
 
   /**
@@ -72,7 +55,7 @@ export class CurrenciesService {
     params: ExchangeRateParams,
     query: ExchangeRateQuery,
   ) {
-    const today = zonedTimeToUtc(startOfDay(new Date()), 'local')
+    const today = startOfDay(new Date())
     const startDate = query.startDate
       ? query.startDate.toDate()
       : subDays(today, 30)
@@ -81,7 +64,7 @@ export class CurrenciesService {
       where: { baseCurrencyCode_quoteCurrencyCode: params },
       include: {
         prices: {
-          where: { date: { gte: startDate } },
+          where: { date: { gte: zonedTimeToUtc(startDate, 'local') } },
           select: { date: true, value: true },
           orderBy: { date: 'asc' },
         },
@@ -107,31 +90,32 @@ export class CurrenciesService {
    *
    * @throws NotFoundException
    */
-  async getOneExchangeRatePrice(
-    options: ExchangeRateParams & { date: dayjs.Dayjs },
-  ): Promise<Big> {
-    const date = options.date
-
-    const exchangerate = await this.exchangeRatesRepository.findOne({
-      baseCurrencyCode: options.baseCurrencyCode,
-      quoteCurrencyCode: options.quoteCurrencyCode,
+  async getOneExchangeRatePrice({
+    baseCurrencyCode,
+    quoteCurrencyCode,
+    date,
+  }: ExchangeRateParams & { date: dayjs.Dayjs }): Promise<Prisma.Decimal> {
+    const exchangerate = await this.prisma.exchangerate.findUnique({
+      where: {
+        baseCurrencyCode_quoteCurrencyCode: {
+          baseCurrencyCode,
+          quoteCurrencyCode,
+        },
+      },
+      include: {
+        prices: {
+          where: { date: { lte: zonedTimeToUtc(date.toDate(), 'local') } },
+          orderBy: { date: 'desc' },
+          take: 1,
+        },
+      },
     })
 
     if (!exchangerate) {
       throw new NotFoundException('Exchange rate not found')
     }
 
-    const price = await this.exchangeRatePricesRepository
-      .createQueryBuilder('prices')
-      .where({
-        exchangerate,
-        date: LessThanOrEqual(date.format('YYYY-MM-DD')),
-      })
-      .orderBy('prices.date', 'DESC')
-      .take(1)
-      .getOne()
-
-    return Big(price.value)
+    return exchangerate.prices[0]?.value
   }
 
   /**
@@ -176,16 +160,18 @@ export class CurrenciesService {
         continue
       }
 
-      const newPrices: ExchangeRatePrice[] = response.data.map((el) => {
-        const p = new ExchangeRatePrice()
-        p.exchangerate = exchangerate
-        p.date = el.date
-        p.value = el.value
-        return p
-      })
+      const newPrices: {
+        exchangerateId: number
+        date: Date
+        value: string
+      }[] = response.data.map((el) => ({
+        exchangerateId: exchangerate.id,
+        date: new Date(el.date),
+        value: el.value,
+      }))
 
       this.logger.debug(`Saving ${newPrices.length} new price(s)`)
-      await this.exchangeRatePricesRepository.save(newPrices)
+      await this.prisma.exchangeratePrice.createMany({ data: newPrices })
     }
 
     this.logger.log('Updating exchange rates finished.')

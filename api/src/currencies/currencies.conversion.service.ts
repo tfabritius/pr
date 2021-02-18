@@ -106,14 +106,14 @@ export class CurrenciesConversionService {
           quoteCurrencyCode: next,
           date,
         })
-        amount = amount.times(erPrice)
+        amount = amount.times(Big(erPrice.toString()))
       } catch {
         const erPrice = await this.currenciesService.getOneExchangeRatePrice({
           baseCurrencyCode: next,
           quoteCurrencyCode: current,
           date,
         })
-        amount = amount.div(erPrice)
+        amount = amount.div(Big(erPrice.toString()))
       }
     }
 

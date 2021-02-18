@@ -21,7 +21,6 @@ import {
 } from '@nestjs/swagger'
 import Big from 'big.js'
 
-import { ExchangeRate } from './exchangerate.entity'
 import { CurrenciesService } from './currencies.service'
 import {
   CurrenciesConversionService,
@@ -32,7 +31,6 @@ import { ExchangeRateQuery } from './exchangerate.query'
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { ConvertCurrenciesDto } from './currencies.dto'
 import { CurrencyResponseDto } from './dto/currency.response.dto'
-import { ExchangerateResponseDto } from './dto/exchangerate.response.dto'
 import { ExchangerateWithPricesResponseDto } from './dto/exchangerate.with.prices.response.dto'
 
 @Controller('currencies')
