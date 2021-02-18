@@ -1,15 +1,6 @@
 import { ObjectType, registerEnumType } from '@nestjs/graphql'
 import { ApiHideProperty } from '@nestjs/swagger'
 import { Exclude, Type } from 'class-transformer'
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm'
 
 import { Account } from '../accounts/account.entity'
 import { Portfolio } from '../portfolio.entity'
@@ -93,22 +84,16 @@ export enum TransactionType {
 
 registerEnumType(TransactionType, { name: 'TransactionType' })
 
-@Entity('transactions')
 @ObjectType()
 export class Transaction {
   /**
    * Primary key
    */
-  @PrimaryGeneratedColumn()
   id: number
 
   /**
    * Portfolio this transaction belongs to
    */
-  @ManyToOne(() => Portfolio, (p) => p.transactions, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
   @Exclude()
   @ApiHideProperty()
   portfolio: Portfolio
@@ -116,84 +101,58 @@ export class Transaction {
   /**
    * Account this transaction belongs to
    */
-  @ManyToOne(() => Account, (a) => a.transactions, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
   @ApiHideProperty()
   account: Account
 
   /**
    * ID of account
    */
-  @Column({ nullable: false })
   accountId: number
 
   /**
    * Type of transaction
    */
-  @Column()
   type: TransactionType
 
   /**
    * Date at which transaction took place
    */
-  @Column({
-    type: 'timestamp with time zone',
-  })
   datetime: Date
 
   /**
    * Corresponding transaction on different (securities/deposit) account
    * depending on transaction type
    */
-  @OneToOne(() => Transaction, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
   @Type(() => Transaction)
   partnerTransaction?: Transaction
 
-  @Column({ nullable: true })
   partnerTransactionId?: number
 
   /**
    * Units of transaction
    */
-  @OneToMany(() => TransactionUnit, (u) => u.transaction, {
-    cascade: true,
-    eager: true,
-  })
   units: TransactionUnit[]
 
   /**
    * Number of shares
    * (only if transaction belongs to securities account)
    */
-  @Column('decimal', { precision: 16, scale: 8, nullable: true })
   shares: string
 
   /**
    * Affected security
    * (only if transaction belongs to securities account)
    */
-  @ManyToOne(() => Security, (security) => security.transactions, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
   @ApiHideProperty()
   security: Security
 
   /**
    * ID of affected security
    */
-  @Column({ nullable: true })
   securityId: number
 
   /**
    * User-defined comment to transaction
    */
-  @Column()
   note: string
 }
