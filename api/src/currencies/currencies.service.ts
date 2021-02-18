@@ -3,20 +3,25 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Interval, Timeout } from '@nestjs/schedule'
 import Big from 'big.js'
 import * as dayjs from 'dayjs'
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm'
+import { LessThanOrEqual, Repository } from 'typeorm'
 import axios from 'axios'
+import { startOfDay, subDays } from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 import { Currency } from './currency.entity'
 import { ExchangeRate } from './exchangerate.entity'
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
 import { ExchangeRatePrice } from './price.entity'
+import { PrismaService } from '../prisma.service'
 
 @Injectable()
 export class CurrenciesService {
   private readonly logger = new Logger(CurrenciesService.name)
 
   constructor(
+    private readonly prisma: PrismaService,
+
     @InjectRepository(Currency)
     private readonly currenciesRepository: Repository<Currency>,
 
@@ -31,8 +36,8 @@ export class CurrenciesService {
    * Gets all currencies with their exchange rates
    */
   async getAllCurrencies() {
-    return this.currenciesRepository.find({
-      relations: ['exchangeRatesBase', 'exchangeRatesQuote'],
+    return await this.prisma.currency.findMany({
+      include: { exchangeratesBase: true, exchangeratesQuote: true },
     })
   }
 
@@ -67,36 +72,34 @@ export class CurrenciesService {
     params: ExchangeRateParams,
     query: ExchangeRateQuery,
   ) {
-    const startDate =
-      query.startDate || dayjs().startOf('day').subtract(30, 'day')
+    const today = zonedTimeToUtc(startOfDay(new Date()), 'local')
+    const startDate = query.startDate
+      ? query.startDate.toDate()
+      : subDays(today, 30)
 
-    const exchangerate = await this.exchangeRatesRepository.findOne(params)
+    const exchangerate = await this.prisma.exchangerate.findUnique({
+      where: { baseCurrencyCode_quoteCurrencyCode: params },
+      include: {
+        prices: {
+          where: { date: { gte: startDate } },
+          select: { date: true, value: true },
+          orderBy: { date: 'asc' },
+        },
+      },
+    })
 
     if (!exchangerate) {
       throw new NotFoundException('Exchange rate not found')
     }
 
-    const prices = await this.exchangeRatePricesRepository
-      .createQueryBuilder('prices')
-      .where({
-        exchangerate,
-        date: MoreThanOrEqual(startDate.format('YYYY-MM-DD')),
-      })
-      .getMany()
+    const {
+      max: { date: latestPriceDate },
+    } = await this.prisma.exchangeratePrice.aggregate({
+      where: { exchangerateId: exchangerate.id },
+      max: { date: true },
+    })
 
-    exchangerate.prices = prices
-
-    const latestPrice = await this.exchangeRatePricesRepository
-      .createQueryBuilder('p')
-      .select('MAX(p.date) as date')
-      .where('p.exchangerate_id = :id', { id: exchangerate.id })
-      .getRawOne()
-
-    exchangerate.latestPriceDate = latestPrice.date
-      ? dayjs(latestPrice.date).format('YYYY-MM-DD')
-      : null
-
-    return exchangerate
+    return { ...exchangerate, latestPriceDate }
   }
 
   /**

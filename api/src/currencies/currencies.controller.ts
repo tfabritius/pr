@@ -21,7 +21,6 @@ import {
 } from '@nestjs/swagger'
 import Big from 'big.js'
 
-import { Currency } from './currency.entity'
 import { ExchangeRate } from './exchangerate.entity'
 import { CurrenciesService } from './currencies.service'
 import {
@@ -32,6 +31,9 @@ import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { ConvertCurrenciesDto } from './currencies.dto'
+import { CurrencyResponseDto } from './dto/currency.response.dto'
+import { ExchangerateResponseDto } from './dto/exchangerate.response.dto'
+import { ExchangerateWithPricesResponseDto } from './dto/exchangerate.with.prices.response.dto'
 
 @Controller('currencies')
 @ApiTags('currencies')
@@ -47,10 +49,10 @@ export class CurrenciesController {
   @ApiOperation({ summary: 'Get all currencies' })
   @ApiOkResponse({
     description: 'List of all currencies is returned.',
-    type: Currency,
+    type: CurrencyResponseDto,
     isArray: true,
   })
-  async readAll(): Promise<Currency[]> {
+  async readAll(): Promise<CurrencyResponseDto[]> {
     return await this.currenciesService.getAllCurrencies()
   }
 
@@ -58,13 +60,13 @@ export class CurrenciesController {
   @ApiOperation({ summary: 'Get exchange rate' })
   @ApiOkResponse({
     description: 'The exchange rate is returned.',
-    type: ExchangeRate,
+    type: ExchangerateWithPricesResponseDto,
   })
   @ApiNotFoundResponse({ description: 'Exchange rate not found' })
   async readOneExchangeRate(
     @Param() params: ExchangeRateParams,
     @Query() query: ExchangeRateQuery,
-  ): Promise<ExchangeRate> {
+  ): Promise<ExchangerateWithPricesResponseDto> {
     return await this.currenciesService.getOneExchangeRate(params, query)
   }
 
