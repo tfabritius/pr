@@ -24,12 +24,12 @@ import {
 
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { AuthUser } from '../auth/auth.decorator'
-import { Portfolio } from './portfolio.entity'
 import { PortfolioDto } from './portfolios.dto'
 import { PortfolioGuard } from './portfolio.guard'
 import { PortfolioParams } from './portfolio.params'
 import { PortfoliosService } from './portfolios.service'
 import { User } from '../auth/users/user.entity'
+import { PortfolioResponseDto } from './dto/portfolio.response.dto'
 
 @Controller('portfolios')
 @UseGuards(DefaultAuthGuard)
@@ -45,12 +45,12 @@ export class PortfoliosController {
   @ApiOperation({ summary: 'Create portfolio' })
   @ApiCreatedResponse({
     description: 'The portfolio has been successfully created.',
-    type: Portfolio,
+    type: PortfolioResponseDto,
   })
   async create(
     @AuthUser() user: User,
     @Body() portfolioDto: PortfolioDto,
-  ): Promise<Portfolio> {
+  ): Promise<PortfolioResponseDto> {
     return this.portfoliosService.create(user, portfolioDto)
   }
 
@@ -58,10 +58,10 @@ export class PortfoliosController {
   @ApiOperation({ summary: 'Get all portfolios' })
   @ApiOkResponse({
     description: 'List of all portfolios is returned.',
-    type: Portfolio,
+    type: PortfolioResponseDto,
     isArray: true,
   })
-  async readAll(@AuthUser() user: User): Promise<Portfolio[]> {
+  async readAll(@AuthUser() user: User): Promise<PortfolioResponseDto[]> {
     return await this.portfoliosService.getAllOfUser(user)
   }
 
@@ -70,10 +70,12 @@ export class PortfoliosController {
   @ApiOperation({ summary: 'Get portfolio' })
   @ApiOkResponse({
     description: 'The portfolio is returned.',
-    type: Portfolio,
+    type: PortfolioResponseDto,
   })
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
-  async readOne(@Param() params: PortfolioParams): Promise<Portfolio> {
+  async readOne(
+    @Param() params: PortfolioParams,
+  ): Promise<PortfolioResponseDto> {
     return await this.portfoliosService.getOne(params)
   }
 

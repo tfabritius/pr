@@ -1,35 +1,33 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Portfolio } from '@prisma/client'
 
 import { User } from '../auth/users/user.entity'
-import { Portfolio } from './portfolio.entity'
 import { PortfolioDto } from './portfolios.dto'
 import { PortfolioParams } from './portfolio.params'
+import { PrismaService } from '../prisma.service'
 
 @Injectable()
 export class PortfoliosService {
-  constructor(
-    @InjectRepository(Portfolio)
-    private readonly portfoliosRepository: Repository<Portfolio>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Creates portfolio
    */
-  async create(user: User, dto: PortfolioDto): Promise<Portfolio> {
-    const portfolio = new Portfolio()
-    Object.assign(portfolio, dto)
-    portfolio.user = user
-    return await this.portfoliosRepository.save(portfolio)
+  async create(
+    user: User,
+    { name, note, baseCurrencyCode }: PortfolioDto,
+  ): Promise<Portfolio> {
+    return await this.prisma.portfolio.create({
+      data: { name, note, baseCurrencyCode, userId: user.id },
+    })
   }
 
   /**
    * Gets all portfolios of an user
    */
   async getAllOfUser(user: User) {
-    return this.portfoliosRepository.find({
-      where: { user },
+    return await this.prisma.portfolio.findMany({
+      where: { userId: user.id },
     })
   }
 
@@ -38,9 +36,9 @@ export class PortfoliosService {
    * or throws NotFoundException
    */
   async getOne(params: PortfolioParams): Promise<Portfolio> {
-    const portfolio = await this.portfoliosRepository.findOne(
-      params.portfolioId,
-    )
+    const portfolio = await this.prisma.portfolio.findUnique({
+      where: { id: params.portfolioId },
+    })
 
     if (!portfolio) {
       throw new NotFoundException('Portfolio not found')
@@ -54,8 +52,8 @@ export class PortfoliosService {
    * or throws NotFoundException
    */
   async getOneOfUser(user: User, params: PortfolioParams): Promise<Portfolio> {
-    const portfolio = await this.portfoliosRepository.findOne({
-      where: { id: params.portfolioId, user },
+    const portfolio = await this.prisma.portfolio.findFirst({
+      where: { id: params.portfolioId, userId: user.id },
     })
 
     if (!portfolio) {
@@ -69,10 +67,15 @@ export class PortfoliosService {
    * Updates portfolio identified by the parameters
    * or throws NotFoundException
    */
-  async update(params: PortfolioParams, dto: PortfolioDto): Promise<Portfolio> {
-    const portfolio = await this.getOne(params)
-    Object.assign(portfolio, dto)
-    return await this.portfoliosRepository.save(portfolio)
+  async update(
+    params: PortfolioParams,
+    { name, note, baseCurrencyCode }: PortfolioDto,
+  ): Promise<Portfolio> {
+    await this.getOne(params)
+    return await this.prisma.portfolio.update({
+      data: { name, note, baseCurrencyCode, updatedAt: new Date() },
+      where: { id: params.portfolioId },
+    })
   }
 
   /**
@@ -80,9 +83,8 @@ export class PortfoliosService {
    * or throws NotFoundException
    */
   async delete(params: PortfolioParams): Promise<void> {
-    const { affected } = await this.portfoliosRepository.delete(
-      params.portfolioId,
-    )
+    const affected = await this.prisma
+      .$executeRaw`DELETE FROM portfolios WHERE id=${params.portfolioId}`
     if (affected == 0) {
       throw new NotFoundException('Portfolio not found')
     }
