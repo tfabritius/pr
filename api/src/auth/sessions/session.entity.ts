@@ -1,8 +1,4 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { ApiHideProperty } from '@nestjs/swagger'
-
-import { User } from '../users/user.entity'
-import { Exclude } from 'class-transformer'
 
 @ObjectType()
 export class Session {
@@ -12,8 +8,4 @@ export class Session {
   createdAt: Date
 
   lastActivityAt: Date
-
-  @ApiHideProperty()
-  @Exclude()
-  user: User
 }

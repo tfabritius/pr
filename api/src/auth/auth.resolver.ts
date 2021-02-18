@@ -7,6 +7,7 @@ import { AuthService } from './auth.service'
 import { Session } from './sessions/session.entity'
 import { SessionsService } from './sessions/sessions.service'
 import { UsersService } from './users/users.service'
+import { User } from './users/user.entity'
 
 @Resolver(() => Session)
 export class AuthResolver {
@@ -34,7 +35,7 @@ export class AuthResolver {
     return session
   }
 
-  @ResolveField('user')
+  @ResolveField('user', () => User)
   async user(@Parent() session: Session) {
     return await this.sessions.validateToken(session.token)
   }
