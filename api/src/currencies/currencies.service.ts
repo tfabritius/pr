@@ -42,7 +42,7 @@ export class CurrenciesService {
       const { prices, ...pureEr } = er
       return {
         ...pureEr,
-        latestPriceDate: prices[0].date.toISOString().substring(0, 10),
+        latestPriceDate: prices[0]?.date.toISOString().substring(0, 10) || null,
       }
     })
   }
