@@ -7,12 +7,13 @@ import { ExchangeRatePrice } from './price.entity'
 import { CurrenciesService } from './currencies.service'
 import { CurrenciesConversionService } from './currencies.conversion.service'
 import { CurrenciesController } from './currencies.controller'
+import { PrismaService } from '../prisma.service'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Currency, ExchangeRate, ExchangeRatePrice]),
   ],
-  providers: [CurrenciesService, CurrenciesConversionService],
+  providers: [CurrenciesService, CurrenciesConversionService, PrismaService],
   controllers: [CurrenciesController],
   exports: [CurrenciesService, CurrenciesConversionService],
 })
