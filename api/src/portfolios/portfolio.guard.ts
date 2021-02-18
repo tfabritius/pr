@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   Inject,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 
 import { PortfoliosService } from './portfolios.service'
@@ -25,14 +26,25 @@ export class PortfolioGuard implements CanActivate {
     const user = req.user
     const params = req.params
 
-    if (!user || !params || !params.portfolioId) {
+    if (
+      !user ||
+      !params ||
+      !params.portfolioId ||
+      typeof params.portfolioId !== 'string'
+    ) {
       throw new InternalServerErrorException(
         'PortfolioGuard is missing user or portfolio parameters.',
       )
     }
 
+    if (isNaN(params.portfolioId)) {
+      throw new NotFoundException('Portfolio not found')
+    }
+
     // Check if portfolio can be obtained by user or throw Exception
-    const p = await this.portfoliosService.getOneOfUser(user, req.params)
+    const p = await this.portfoliosService.getOneOfUser(user, {
+      portfolioId: Number(req.params.portfolioId),
+    })
 
     // Store portfolio in request
     req.portfolio = p

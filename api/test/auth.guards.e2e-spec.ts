@@ -27,6 +27,7 @@ describe('Auth Guards (e2e)', () => {
       ['post', '/portfolios'],
       ['get', '/portfolios'],
       ['get', '/portfolios/42'],
+      ['get', '/portfolios/string'],
       ['put', '/portfolios/42'],
       ['delete', '/portfolios/42'],
       ['post', '/portfolios/42/accounts'],
