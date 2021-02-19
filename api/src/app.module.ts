@@ -16,7 +16,11 @@ import { StatsModule } from './stats/stats.module'
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot({ autoSchemaFile: true, sortSchema: true }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: true,
+      sortSchema: true,
+      playground: process.env.NODE_ENV === 'development',
+    }),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', process.env.SERVE_STATIC_PATH || ''),
