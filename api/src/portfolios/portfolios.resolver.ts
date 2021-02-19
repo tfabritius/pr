@@ -14,6 +14,7 @@ import { SecuritiesService } from './securities/securities.service'
 import { GqlAuthGuard } from '../auth/gql-auth.guard'
 import { AuthUser } from '../auth/auth.decorator'
 import { User } from '../auth/users/user.entity'
+import { PortfolioSecurity } from './securities/security.entity'
 
 @Resolver(() => Portfolio)
 @UseGuards(GqlAuthGuard)
@@ -36,7 +37,7 @@ export class PortfoliosResolver {
     return this.portfoliosService.getOneOfUser(user, { portfolioId: id })
   }
 
-  @ResolveField()
+  @ResolveField(() => [PortfolioSecurity])
   async securities(@Parent() portfolio: Portfolio) {
     return this.securitiesService.getAll({ portfolioId: portfolio.id })
   }

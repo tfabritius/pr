@@ -1,24 +1,10 @@
-import { ObjectType, Field } from '@nestjs/graphql'
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
-import Big from 'big.js'
-import { Exclude, Transform } from 'class-transformer'
-
-import { ExchangeRate } from './exchangerate.entity'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { Prisma } from '@prisma/client'
 
 @ObjectType()
-export class ExchangeRatePrice {
-  exchangerate: ExchangeRate
+export class ExchangeratePrice {
+  date: Date
 
-  @ApiHideProperty()
-  @Exclude()
-  exchangerateId: number
-
-  date: string
-
-  @Transform(({ value }: { value: Big }) => value.toFixed(8), {
-    toPlainOnly: true,
-  })
   @Field(() => String)
-  @ApiProperty({ type: String, example: '1.00000000' })
-  value: Big
+  value: Prisma.Decimal
 }

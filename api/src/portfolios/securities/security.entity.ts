@@ -1,15 +1,7 @@
-import { ApiHideProperty } from '@nestjs/swagger'
-import { Field, Int, ObjectType, HideField } from '@nestjs/graphql'
-import { Exclude } from 'class-transformer'
-
-import { Portfolio } from '../portfolio.entity'
-import { SecurityPrice } from './prices/price.entity'
-import { Transaction } from '../transactions/transaction.entity'
-import { SecurityKpis } from './security.kpis'
-import { Currency } from '../../currencies/currency.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Security {
+export class PortfolioSecurity {
   @Field(() => Int)
   id: number
 
@@ -18,9 +10,6 @@ export class Security {
   uuid: string
 
   currencyCode: string
-
-  @ApiHideProperty()
-  currency: Currency
 
   isin: string
 
@@ -32,17 +21,5 @@ export class Security {
 
   note: string
 
-  @Exclude()
-  @ApiHideProperty()
-  portfolio: Portfolio
-
-  @ApiHideProperty()
-  transactions: Transaction[]
-
-  prices: SecurityPrice[]
-
-  latestPriceDate: string
-
-  @HideField()
-  kpis?: SecurityKpis
+  latestPriceDate?: string
 }

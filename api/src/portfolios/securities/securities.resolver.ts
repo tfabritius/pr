@@ -6,20 +6,20 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { PortfolioSecurity } from '@prisma/client'
+// import { PortfolioSecurity } from '@prisma/client'
 
-import { Security } from './security.entity'
+import { PortfolioSecurity } from './security.entity'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 
-@Resolver(() => Security)
+@Resolver(() => PortfolioSecurity)
 export class SecuritiesResolver {
   constructor(
     private securitiesService: SecuritiesService,
     private securitiesKpisService: SecuritiesKpisService,
   ) {}
 
-  @Query(() => Security)
+  @Query(() => PortfolioSecurity)
   async security(
     @Args('id', { type: () => Int }) id: number,
     @Args('portfolioId', { type: () => Int }) portfolioId: number,

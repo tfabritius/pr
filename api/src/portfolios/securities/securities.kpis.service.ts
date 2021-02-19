@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { PortfolioSecurity, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { SecurityKpis } from './security.kpis'
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
+import { PortfolioSecurity } from './security.entity'
 import { PrismaService } from '../../prisma.service'
 
 @Injectable()

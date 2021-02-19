@@ -5,7 +5,6 @@ import { SecurityDto } from './securities.dto'
 import { SecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
-import { PortfolioSecurityResponseDto } from '../dto/portfolio.security.response.dto'
 
 @Injectable()
 export class SecuritiesService {
@@ -26,9 +25,7 @@ export class SecuritiesService {
   /**
    * Gets all securities in a portfolio
    */
-  async getAll(
-    params: PortfolioParams,
-  ): Promise<PortfolioSecurityResponseDto[]> {
+  async getAll(params: PortfolioParams) {
     const securities = await this.prisma.portfolioSecurity.findMany({
       where: { portfolioId: params.portfolioId },
       include: {
@@ -52,7 +49,7 @@ export class SecuritiesService {
    * Gets security identified by parameters
    * or throws NotFoundException
    */
-  async getOne(params: SecurityParams): Promise<PortfolioSecurityResponseDto> {
+  async getOne(params: SecurityParams) {
     const security = await this.prisma.portfolioSecurity.findFirst({
       where: { id: params.securityId, portfolio: { id: params.portfolioId } },
     })

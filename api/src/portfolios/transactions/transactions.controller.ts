@@ -29,7 +29,7 @@ import { TransactionDto } from './transactions.dto'
 import { TransactionParams } from './transaction.params'
 import { TransactionsService } from './transactions.service'
 import { PortfolioParams } from '../portfolio.params'
-import { PortfolioTransactionResponseDto } from '../dto/portfolio.transaction.response.dto'
+import { PortfolioTransaction } from './transaction.entity'
 
 @Controller('portfolios/:portfolioId/transactions')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -46,13 +46,13 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Create transaction' })
   @ApiCreatedResponse({
     description: 'Transaction has been successfully created.',
-    type: PortfolioTransactionResponseDto,
+    type: PortfolioTransaction,
   })
   async create(
     @Param() params: PortfolioParams,
     @Body() dto: TransactionDto,
     @Req() req,
-  ): Promise<PortfolioTransactionResponseDto> {
+  ): Promise<PortfolioTransaction> {
     return this.transactionsService.create(req.portfolio, dto)
   }
 
@@ -60,12 +60,12 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Get all transactions of portfolio' })
   @ApiOkResponse({
     description: 'List of all transactions of portfolio is returned.',
-    type: PortfolioTransactionResponseDto,
+    type: PortfolioTransaction,
     isArray: true,
   })
   async readAll(
     @Param() params: PortfolioParams,
-  ): Promise<PortfolioTransactionResponseDto[]> {
+  ): Promise<PortfolioTransaction[]> {
     return await this.transactionsService.getAll(params)
   }
 
@@ -73,12 +73,12 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Get transaction' })
   @ApiOkResponse({
     description: 'The transaction is returned.',
-    type: PortfolioTransactionResponseDto,
+    type: PortfolioTransaction,
   })
   @ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
   async readOne(
     @Param() params: TransactionParams,
-  ): Promise<PortfolioTransactionResponseDto> {
+  ): Promise<PortfolioTransaction> {
     return await this.transactionsService.getOne(params)
   }
 
