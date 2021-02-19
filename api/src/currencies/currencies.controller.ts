@@ -26,12 +26,13 @@ import {
   CurrenciesConversionService,
   CurrencyConversionError,
 } from './currencies.conversion.service'
+import { Currency } from './currency.entity'
+import { Exchangerate } from './exchangerate.entity'
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { ConvertCurrenciesDto } from './currencies.dto'
-import { CurrencyResponseDto } from './dto/currency.response.dto'
-import { ExchangerateWithPricesResponseDto } from './dto/exchangerate.with.prices.response.dto'
+import dayjs from 'dayjs'
 
 @Controller('currencies')
 @ApiTags('currencies')
@@ -47,10 +48,10 @@ export class CurrenciesController {
   @ApiOperation({ summary: 'Get all currencies' })
   @ApiOkResponse({
     description: 'List of all currencies is returned.',
-    type: CurrencyResponseDto,
+    type: Currency,
     isArray: true,
   })
-  async readAll(): Promise<CurrencyResponseDto[]> {
+  async readAll(): Promise<Currency[]> {
     return await this.currenciesService.getAllCurrencies()
   }
 
@@ -58,13 +59,13 @@ export class CurrenciesController {
   @ApiOperation({ summary: 'Get exchange rate' })
   @ApiOkResponse({
     description: 'The exchange rate is returned.',
-    type: ExchangerateWithPricesResponseDto,
+    type: Exchangerate,
   })
   @ApiNotFoundResponse({ description: 'Exchange rate not found' })
   async readOneExchangeRate(
     @Param() params: ExchangeRateParams,
     @Query() query: ExchangeRateQuery,
-  ): Promise<ExchangerateWithPricesResponseDto> {
+  ): Promise<Exchangerate> {
     return await this.currenciesService.getOneExchangeRate(params, query)
   }
 

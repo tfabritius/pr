@@ -24,13 +24,13 @@ import {
 } from '@nestjs/swagger'
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
+import { Account } from './account.entity'
 import { PortfolioGuard } from '../portfolio.guard'
 import { AccountDto } from './accounts.dto'
 import { AccountParams } from './account.params'
 import { AccountsService } from './accounts.service'
 import { AccountsKpisService } from './accounts.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-import { PortfolioAccountResponseDto } from '../dto/portfolio.account.response.dto'
 
 @Controller('portfolios/:portfolioId/accounts')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -50,13 +50,13 @@ export class AccountsController {
   @ApiOperation({ summary: 'Create account' })
   @ApiCreatedResponse({
     description: 'Account has been successfully created.',
-    type: PortfolioAccountResponseDto,
+    type: Account,
   })
   async create(
     @Param() params: PortfolioParams,
     @Body() dto: AccountDto,
     @Req() req,
-  ): Promise<PortfolioAccountResponseDto> {
+  ): Promise<Account> {
     return this.service.create(req.portfolio, dto)
   }
 
@@ -64,12 +64,10 @@ export class AccountsController {
   @ApiOperation({ summary: 'Get all accounts of portfolio' })
   @ApiOkResponse({
     description: 'List of all accounts of portfolio is returned.',
-    type: PortfolioAccountResponseDto,
+    type: Account,
     isArray: true,
   })
-  async readAll(
-    @Param() params: PortfolioParams,
-  ): Promise<PortfolioAccountResponseDto[]> {
+  async readAll(@Param() params: PortfolioParams): Promise<Account[]> {
     return await this.service.getAll(params)
   }
 
@@ -77,14 +75,12 @@ export class AccountsController {
   @ApiOperation({ summary: 'Get account' })
   @ApiOkResponse({
     description: 'The account is returned.',
-    type: PortfolioAccountResponseDto,
+    type: Account,
   })
   @ApiNotFoundResponse({
     description: 'Portfolio or account not found',
   })
-  async readOne(
-    @Param() params: AccountParams,
-  ): Promise<PortfolioAccountResponseDto> {
+  async readOne(@Param() params: AccountParams): Promise<Account> {
     return await this.service.getOne(params)
   }
 

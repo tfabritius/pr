@@ -30,7 +30,7 @@ import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
-import { PortfolioSecurityResponseDto } from '../dto/portfolio.security.response.dto'
+import { PortfolioSecurity } from './security.entity'
 
 @Controller('portfolios/:portfolioId/securities')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -50,13 +50,13 @@ export class SecuritiesController {
   @ApiOperation({ summary: 'Create security' })
   @ApiCreatedResponse({
     description: 'Security has been successfully created.',
-    type: PortfolioSecurityResponseDto,
+    type: PortfolioSecurity,
   })
   async create(
     @Param() params: PortfolioParams,
     @Body() securityDto: SecurityDto,
     @Req() req,
-  ): Promise<PortfolioSecurityResponseDto> {
+  ): Promise<PortfolioSecurity> {
     return this.securitiesService.create(req.portfolio, securityDto)
   }
 
@@ -64,12 +64,12 @@ export class SecuritiesController {
   @ApiOperation({ summary: 'Get all securities of portfolio' })
   @ApiOkResponse({
     description: 'List of all securities of portfolio is returned.',
-    type: PortfolioSecurityResponseDto,
+    type: PortfolioSecurity,
     isArray: true,
   })
   async readAll(
     @Param() params: PortfolioParams,
-  ): Promise<PortfolioSecurityResponseDto[]> {
+  ): Promise<PortfolioSecurity[]> {
     return await this.securitiesService.getAll(params)
   }
 
@@ -77,12 +77,10 @@ export class SecuritiesController {
   @ApiOperation({ summary: 'Get security' })
   @ApiOkResponse({
     description: 'The security is returned.',
-    type: PortfolioSecurityResponseDto,
+    type: PortfolioSecurity,
   })
   @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
-  async readOne(
-    @Param() params: SecurityParams,
-  ): Promise<PortfolioSecurityResponseDto> {
+  async readOne(@Param() params: SecurityParams): Promise<PortfolioSecurity> {
     return await this.securitiesService.getOne(params)
   }
 

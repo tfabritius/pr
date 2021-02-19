@@ -1,10 +1,6 @@
-import { ObjectType, registerEnumType } from '@nestjs/graphql'
-import { ApiHideProperty } from '@nestjs/swagger'
-import { Exclude, Type } from 'class-transformer'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Prisma } from '@prisma/client'
 
-import { Account } from '../accounts/account.entity'
-import { Portfolio } from '../portfolio.entity'
-import { Security } from '../securities/security.entity'
 import { TransactionUnit } from './unit.entity'
 
 /**
@@ -85,24 +81,11 @@ export enum TransactionType {
 registerEnumType(TransactionType, { name: 'TransactionType' })
 
 @ObjectType()
-export class Transaction {
+export class PortfolioTransaction {
   /**
    * Primary key
    */
   id: number
-
-  /**
-   * Portfolio this transaction belongs to
-   */
-  @Exclude()
-  @ApiHideProperty()
-  portfolio: Portfolio
-
-  /**
-   * Account this transaction belongs to
-   */
-  @ApiHideProperty()
-  account: Account
 
   /**
    * ID of account
@@ -112,7 +95,7 @@ export class Transaction {
   /**
    * Type of transaction
    */
-  type: TransactionType
+  type: string
 
   /**
    * Date at which transaction took place
@@ -123,8 +106,7 @@ export class Transaction {
    * Corresponding transaction on different (securities/deposit) account
    * depending on transaction type
    */
-  @Type(() => Transaction)
-  partnerTransaction?: Transaction
+  partnerTransaction?: PortfolioTransaction
 
   partnerTransactionId?: number
 
@@ -137,17 +119,12 @@ export class Transaction {
    * Number of shares
    * (only if transaction belongs to securities account)
    */
-  shares: string
-
-  /**
-   * Affected security
-   * (only if transaction belongs to securities account)
-   */
-  @ApiHideProperty()
-  security: Security
+  @Field(() => String)
+  shares: Prisma.Decimal
 
   /**
    * ID of affected security
+   * (only if transaction belongs to securities account)
    */
   securityId: number
 

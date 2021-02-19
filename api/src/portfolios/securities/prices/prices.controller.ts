@@ -24,11 +24,10 @@ import { DefaultAuthGuard } from '../../../auth/default-auth.guard'
 import { PortfolioGuard } from '../../portfolio.guard'
 import { SecuritiesService } from '../securities.service'
 import { SecurityParams } from '../security.params'
-import { SecurityPrice } from './price.entity'
+import { PortfolioSecurityPrice } from './price.entity'
 import { SecurityPriceDto } from './prices.dto'
 import { SecuritiesPricesService } from './prices.service'
 import { PricesQuery } from './prices.query'
-import { PortfolioSecurityPriceResponseDto } from '../../dto/portfolio.security.price.response.dto'
 
 @Controller('portfolios/:portfolioId/securities/:securityId/prices')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -48,17 +47,17 @@ export class SecuritiesPricesController {
   @ApiOperation({ summary: 'Create or update prices' })
   @ApiOkResponse({
     description: 'Prices have been successfully created or updated',
-    type: PortfolioSecurityPriceResponseDto,
+    type: PortfolioSecurityPrice,
     isArray: true,
   })
-  @ApiBody({ type: SecurityPrice, isArray: true })
+  @ApiBody({ type: SecurityPriceDto, isArray: true })
   async upsert(
     @Param()
     params: SecurityParams,
 
     @Body(new ParseArrayPipe({ items: SecurityPriceDto }))
     dtos: SecurityPriceDto[],
-  ): Promise<PortfolioSecurityPriceResponseDto[]> {
+  ): Promise<PortfolioSecurityPrice[]> {
     const security = await this.securitiesService.getOne(params)
     return this.pricesService.upsert(security.id, dtos)
   }
@@ -67,13 +66,13 @@ export class SecuritiesPricesController {
   @ApiOperation({ summary: 'Get prices' })
   @ApiOkResponse({
     description: 'List of prices is returned',
-    type: PortfolioSecurityPriceResponseDto,
+    type: PortfolioSecurityPrice,
     isArray: true,
   })
   async readAll(
     @Param() params: SecurityParams,
     @Query() query: PricesQuery,
-  ): Promise<PortfolioSecurityPriceResponseDto[]> {
+  ): Promise<PortfolioSecurityPrice[]> {
     const prices = await this.pricesService.getAll(params, query)
     return prices
   }
