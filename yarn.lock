@@ -1110,11 +1110,6 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/big.js@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-6.0.1.tgz#66f85c0d11073997a3a1c11660e46304b61af8f1"
-  integrity sha512-Ru+oDee9WHvcWVcjrDoIIRJ7lFSsL18Yg5461SVdGj0W0SJoFc5wQEfjDdHdpBrg1W9WjNraCE6Ydic7/HrSTw==
-
 "@types/big.js@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-6.0.2.tgz#a86938c1bb4511e69d91f69823cacc3f48ff1fa3"
