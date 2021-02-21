@@ -64,9 +64,9 @@ export class CurrenciesService {
       where: { baseCurrencyCode_quoteCurrencyCode: params },
       include: {
         prices: {
-          where: { date: { gte: zonedTimeToUtc(startDate, 'local') } },
-          select: { date: true, value: true },
-          orderBy: { date: 'asc' },
+          select: { date: true },
+          orderBy: { date: 'desc' },
+          take: 1,
         },
       },
     })
@@ -75,14 +75,21 @@ export class CurrenciesService {
       throw new NotFoundException('Exchange rate not found')
     }
 
-    const {
-      max: { date: latestPriceDate },
-    } = await this.prisma.exchangeratePrice.aggregate({
-      where: { exchangerateId: exchangerate.id },
-      max: { date: true },
+    const prices = await this.prisma.exchangeratePrice.findMany({
+      where: { date: { gte: zonedTimeToUtc(startDate, 'local') } },
+      select: { date: true, value: true },
+      orderBy: { date: 'asc' },
     })
 
-    return { ...exchangerate, latestPriceDate }
+    return {
+      ...exchangerate,
+      prices: prices.map((p) => ({
+        ...p,
+        date: p.date.toISOString().substring(0, 10),
+      })),
+      latestPriceDate:
+        exchangerate.prices[0]?.date.toISOString().substring(0, 10) ?? null,
+    }
   }
 
   /**

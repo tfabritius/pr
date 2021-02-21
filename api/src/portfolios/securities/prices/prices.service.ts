@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Prisma, PortfolioSecurityPrice } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { SecurityParams } from '../security.params'
 import { SecurityPriceDto } from './prices.dto'
@@ -14,7 +14,7 @@ export class SecuritiesPricesService {
    * Creates or updates prices of security
    */
   async upsert(securityId: number, dtos: SecurityPriceDto[]) {
-    const ret: { date: Date; value: Prisma.Decimal }[] = []
+    const ret: { date: string; value: Prisma.Decimal }[] = []
 
     for (const { date, value } of dtos) {
       const price = await this.prisma.portfolioSecurityPrice.upsert({
@@ -24,7 +24,10 @@ export class SecuritiesPricesService {
         select: { date: true, value: true },
       })
 
-      ret.push(price)
+      ret.push({
+        ...price,
+        date: price.date.toISOString().substring(0, 10),
+      })
     }
 
     return ret
@@ -33,10 +36,7 @@ export class SecuritiesPricesService {
   /**
    * Gets prices of a security
    */
-  async getAll(
-    { securityId }: SecurityParams,
-    query: PricesQuery,
-  ): Promise<PortfolioSecurityPrice[]> {
+  async getAll({ securityId }: SecurityParams, query: PricesQuery) {
     const dateFilter: Prisma.PortfolioSecurityPriceWhereInput[] = []
 
     if (query.startDate) {
@@ -47,8 +47,13 @@ export class SecuritiesPricesService {
       dateFilter.push({ date: { lte: query.endDate.toDate() } })
     }
 
-    return await this.prisma.portfolioSecurityPrice.findMany({
+    const prices = await this.prisma.portfolioSecurityPrice.findMany({
       where: { securityId, AND: dateFilter },
+      select: { date: true, value: true },
     })
+    return prices.map((p) => ({
+      ...p,
+      date: p.date.toISOString().substring(0, 10),
+    }))
   }
 }

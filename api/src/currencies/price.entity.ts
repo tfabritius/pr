@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client'
 
 @ObjectType()
 export class ExchangeratePrice {
-  date: Date
+  date: string
 
   @Field(() => String)
   value: Prisma.Decimal
