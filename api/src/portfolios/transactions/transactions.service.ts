@@ -245,6 +245,7 @@ export class TransactionsService {
         shares,
       },
       where: { id: transaction.id },
+      include: { units: true },
     })
   }
 
