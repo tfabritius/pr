@@ -1,5 +1,13 @@
-import { UnauthorizedException } from '@nestjs/common'
-import { Resolver, Mutation, Args, Parent, ResolveField } from '@nestjs/graphql'
+import { Req, UnauthorizedException, UseGuards } from '@nestjs/common'
+import {
+  Resolver,
+  Mutation,
+  Args,
+  Parent,
+  ResolveField,
+  Query,
+} from '@nestjs/graphql'
+import { Request } from 'express'
 
 import { LoginUserDto } from './dto/login.user.dto'
 import { RegisterUserDto } from './dto/register.user.dto'
@@ -8,6 +16,8 @@ import { Session } from './sessions/session.entity'
 import { SessionsService } from './sessions/sessions.service'
 import { UsersService } from './users/users.service'
 import { User } from './users/user.entity'
+import { AuthUser } from './auth.decorator'
+import { GqlAuthGuard } from './gql-auth.guard'
 
 @Resolver(() => Session)
 export class AuthResolver {
@@ -18,21 +28,58 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => Session)
-  async register(@Args('data') { username, password }: RegisterUserDto) {
+  async register(
+    @Args('data') { username, password }: RegisterUserDto,
+    @Req() req: Request,
+  ) {
     const user = await this.users.create(username)
     await this.users.updatePassword(user, password)
-    const session = await this.sessions.create(user)
+    const session = await this.sessions.create(user, {
+      note: req.headers['user-agent'],
+    })
     return session
   }
 
   @Mutation(() => Session)
-  async login(@Args('data') { username, password }: LoginUserDto) {
+  async login(
+    @Args('data') { username, password }: LoginUserDto,
+    @Req() req: Request,
+  ) {
     const user = await this.auth.validateUsernamePassword(username, password)
     if (!user) {
       throw new UnauthorizedException()
     }
-    const session = await this.sessions.create(user)
+    const session = await this.sessions.create(user, {
+      note: req.headers['user-agent'],
+    })
     return session
+  }
+
+  @Mutation(() => Session)
+  @UseGuards(GqlAuthGuard)
+  async createSession(@AuthUser() user: User, @Args('note') note: string) {
+    return await this.sessions.create(user, { note })
+  }
+
+  @Query(() => [Session], { name: 'sessions' })
+  @UseGuards(GqlAuthGuard)
+  async getSessions(@AuthUser() user: User) {
+    return await this.sessions.getAllOfUser(user)
+  }
+
+  @Mutation(() => Session)
+  @UseGuards(GqlAuthGuard)
+  async updateSession(
+    @AuthUser() user: User,
+    @Args('token') token: string,
+    @Args('note') note: string,
+  ) {
+    return await this.sessions.update({ token, note }, user)
+  }
+
+  @Mutation(() => Session)
+  async deleteSession(@Args('token') token: string) {
+    return await this.sessions.delete(token)
   }
 
   @ResolveField('user', () => User)
