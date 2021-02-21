@@ -14,8 +14,6 @@ import {
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -43,13 +41,10 @@ export class SecuritiesPricesController {
     public pricesService: SecuritiesPricesService,
   ) {}
 
+  /**
+   * Creates or updates prices of security
+   */
   @Patch()
-  @ApiOperation({ summary: 'Create or update prices' })
-  @ApiOkResponse({
-    description: 'Prices have been successfully created or updated',
-    type: PortfolioSecurityPrice,
-    isArray: true,
-  })
   @ApiBody({ type: SecurityPriceDto, isArray: true })
   async upsert(
     @Param()
@@ -62,18 +57,14 @@ export class SecuritiesPricesController {
     return this.pricesService.upsert(security.id, dtos)
   }
 
+  /**
+   * Gets list of prices of security
+   */
   @Get()
-  @ApiOperation({ summary: 'Get prices' })
-  @ApiOkResponse({
-    description: 'List of prices is returned',
-    type: PortfolioSecurityPrice,
-    isArray: true,
-  })
   async readAll(
     @Param() params: SecurityParams,
     @Query() query: PricesQuery,
   ): Promise<PortfolioSecurityPrice[]> {
-    const prices = await this.pricesService.getAll(params, query)
-    return prices
+    return await this.pricesService.getAll(params, query)
   }
 }

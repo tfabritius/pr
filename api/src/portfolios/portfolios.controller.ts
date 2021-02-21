@@ -11,14 +11,10 @@ import {
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
 
@@ -41,12 +37,10 @@ import { User } from '../auth/users/user.entity'
 export class PortfoliosController {
   constructor(private readonly portfoliosService: PortfoliosService) {}
 
+  /**
+   * Creates portfolio
+   */
   @Post()
-  @ApiOperation({ summary: 'Create portfolio' })
-  @ApiCreatedResponse({
-    description: 'The portfolio has been successfully created.',
-    type: Portfolio,
-  })
   async create(
     @AuthUser() user: User,
     @Body() portfolioDto: PortfolioDto,
@@ -54,50 +48,43 @@ export class PortfoliosController {
     return this.portfoliosService.create(user, portfolioDto)
   }
 
+  /**
+   * Gets list of all portfolios
+   */
   @Get()
-  @ApiOperation({ summary: 'Get all portfolios' })
-  @ApiOkResponse({
-    description: 'List of all portfolios is returned.',
-    type: Portfolio,
-    isArray: true,
-  })
   async readAll(@AuthUser() user: User): Promise<Portfolio[]> {
     return await this.portfoliosService.getAllOfUser(user)
   }
 
+  /**
+   * Gets single portfolio
+   */
   @Get(':portfolioId')
   @UseGuards(PortfolioGuard)
-  @ApiOperation({ summary: 'Get portfolio' })
-  @ApiOkResponse({
-    description: 'The portfolio is returned.',
-    type: Portfolio,
-  })
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
   async readOne(@Param() params: PortfolioParams): Promise<Portfolio> {
     return await this.portfoliosService.getOne(params)
   }
 
+  /**
+   * Updates portfolio
+   */
   @Put(':portfolioId')
   @UseGuards(PortfolioGuard)
-  @ApiOperation({ summary: 'Update portfolio' })
-  @ApiOkResponse({
-    description: 'The portfolio has been successfully updated.',
-  })
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
   async update(
     @Param() params: PortfolioParams,
     @Body() portfolioDto: PortfolioDto,
-  ) {
+  ): Promise<Portfolio> {
     return this.portfoliosService.update(params, portfolioDto)
   }
 
+  /**
+   * Deletes portfolio
+   */
   @Delete(':portfolioId')
   @HttpCode(204)
   @UseGuards(PortfolioGuard)
-  @ApiOperation({ summary: 'Delete portfolio' })
-  @ApiNoContentResponse({
-    description: 'The portfolio has been successfully deleted.',
-  })
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
   async delete(@Param() params: PortfolioParams) {
     await this.portfoliosService.delete(params)

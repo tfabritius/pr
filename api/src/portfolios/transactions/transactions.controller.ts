@@ -13,12 +13,8 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -37,17 +33,15 @@ import { PortfolioTransaction } from './transaction.entity'
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
-@ApiNotFoundResponse({ description: 'Portfolio not found' })
+@ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class TransactionsController {
   constructor(public transactionsService: TransactionsService) {}
 
+  /**
+   * Creates transaction
+   */
   @Post()
-  @ApiOperation({ summary: 'Create transaction' })
-  @ApiCreatedResponse({
-    description: 'Transaction has been successfully created.',
-    type: PortfolioTransaction,
-  })
   async create(
     @Param() params: PortfolioParams,
     @Body() dto: TransactionDto,
@@ -56,52 +50,42 @@ export class TransactionsController {
     return this.transactionsService.create(req.portfolio, dto)
   }
 
+  /**
+   * Gets list of all transactions of portfolio
+   */
   @Get()
-  @ApiOperation({ summary: 'Get all transactions of portfolio' })
-  @ApiOkResponse({
-    description: 'List of all transactions of portfolio is returned.',
-    type: PortfolioTransaction,
-    isArray: true,
-  })
   async readAll(
     @Param() params: PortfolioParams,
   ): Promise<PortfolioTransaction[]> {
     return await this.transactionsService.getAll(params)
   }
 
+  /**
+   * Gets transaction
+   */
   @Get(':transactionId')
-  @ApiOperation({ summary: 'Get transaction' })
-  @ApiOkResponse({
-    description: 'The transaction is returned.',
-    type: PortfolioTransaction,
-  })
-  @ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
   async readOne(
     @Param() params: TransactionParams,
   ): Promise<PortfolioTransaction> {
     return await this.transactionsService.getOne(params)
   }
 
+  /**
+   * Updates transaction
+   */
   @Put(':transactionId')
-  @ApiOperation({ summary: 'Update transaction' })
-  @ApiOkResponse({
-    description: 'The transaction has been successfully updated.',
-  })
-  @ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
   async update(
     @Param() params: TransactionParams,
     @Body() dto: TransactionDto,
-  ) {
+  ): Promise<PortfolioTransaction> {
     return this.transactionsService.update(params, dto)
   }
 
+  /**
+   * Deletes transaction
+   */
   @Delete(':transactionId')
   @HttpCode(204)
-  @ApiOperation({ summary: 'Delete transaction' })
-  @ApiNoContentResponse({
-    description: 'The transaction has been successfully deleted.',
-  })
-  @ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
   async delete(@Param() params: TransactionParams) {
     await this.transactionsService.delete(params)
   }

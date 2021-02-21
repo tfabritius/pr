@@ -192,10 +192,7 @@ export class TransactionsService {
    * Updates transaction identified by parameters
    * or throws NotFoundException
    */
-  async update(
-    params: TransactionParams,
-    dto: TransactionDto,
-  ): Promise<Transaction> {
+  async update(params: TransactionParams, dto: TransactionDto) {
     const dtoHasPartnerTransaction = !!dto.partnerTransaction
 
     // Check if transaction exists in portfolio
