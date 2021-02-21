@@ -97,7 +97,7 @@ export class AccountsService {
       relations.push('transactions')
     }
 
-    const account = this.prisma.account.findFirst({
+    const account = await this.prisma.account.findFirst({
       where: { id: params.accountId, portfolioId: params.portfolioId },
       include: { transactions: includeTransactions },
     })
