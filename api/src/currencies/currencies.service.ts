@@ -59,7 +59,7 @@ export class CurrenciesService {
    * or throws NotFoundException
    */
   async getOneExchangeRate(
-    params: ExchangeRateParams,
+    { baseCurrencyCode, quoteCurrencyCode }: ExchangeRateParams,
     query: ExchangeRateQuery,
   ) {
     const today = startOfDay(new Date())
@@ -68,7 +68,12 @@ export class CurrenciesService {
       : subDays(today, 30)
 
     const exchangerate = await this.prisma.exchangerate.findUnique({
-      where: { baseCurrencyCode_quoteCurrencyCode: params },
+      where: {
+        baseCurrencyCode_quoteCurrencyCode: {
+          baseCurrencyCode,
+          quoteCurrencyCode,
+        },
+      },
       select: {
         baseCurrencyCode: true,
         quoteCurrencyCode: true,
@@ -85,7 +90,10 @@ export class CurrenciesService {
     }
 
     const prices = await this.prisma.exchangeratePrice.findMany({
-      where: { date: { gte: zonedTimeToUtc(startDate, 'local') } },
+      where: {
+        date: { gte: zonedTimeToUtc(startDate, 'local') },
+        exchangerate: { baseCurrencyCode, quoteCurrencyCode },
+      },
       select: { date: true, value: true },
       orderBy: { date: 'asc' },
     })
