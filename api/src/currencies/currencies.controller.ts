@@ -32,7 +32,6 @@ import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { ConvertCurrenciesDto } from './currencies.dto'
-import dayjs from 'dayjs'
 
 @Controller('currencies')
 @ApiTags('currencies')
