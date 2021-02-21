@@ -40,7 +40,7 @@ export class SecuritiesService {
       const { prices, ...pureS } = s
       return {
         ...pureS,
-        latestPriceDate: prices[0].date.toISOString().substring(0, 10) || null,
+        latestPriceDate: prices[0]?.date.toISOString().substring(0, 10) || null,
       }
     })
   }
@@ -52,22 +52,22 @@ export class SecuritiesService {
   async getOne(params: SecurityParams) {
     const security = await this.prisma.portfolioSecurity.findFirst({
       where: { id: params.securityId, portfolio: { id: params.portfolioId } },
+      include: {
+        prices: {
+          orderBy: { date: 'desc' },
+          take: 1,
+        },
+      },
     })
 
     if (!security) {
       throw new NotFoundException('Security not found')
     }
 
-    const {
-      max: { date: latestPriceDate },
-    } = await this.prisma.portfolioSecurityPrice.aggregate({
-      max: { date: true },
-      where: { securityId: params.securityId },
-    })
-
+    const { prices, ...securityWithoutPrices } = security
     return {
-      ...security,
-      latestPriceDate: latestPriceDate.toISOString().substring(0, 10) || null,
+      ...securityWithoutPrices,
+      latestPriceDate: prices[0]?.date.toISOString().substring(0, 10) || null,
     }
   }
 
