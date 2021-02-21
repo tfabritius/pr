@@ -21,7 +21,14 @@ export class CurrenciesService {
    */
   async getAllCurrencies() {
     return await this.prisma.currency.findMany({
-      include: { exchangeratesBase: true, exchangeratesQuote: true },
+      include: {
+        exchangeratesBase: {
+          select: { baseCurrencyCode: true, quoteCurrencyCode: true },
+        },
+        exchangeratesQuote: {
+          select: { baseCurrencyCode: true, quoteCurrencyCode: true },
+        },
+      },
     })
   }
 
@@ -62,7 +69,9 @@ export class CurrenciesService {
 
     const exchangerate = await this.prisma.exchangerate.findUnique({
       where: { baseCurrencyCode_quoteCurrencyCode: params },
-      include: {
+      select: {
+        baseCurrencyCode: true,
+        quoteCurrencyCode: true,
         prices: {
           select: { date: true },
           orderBy: { date: 'desc' },
