@@ -11,13 +11,9 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiNoContentResponse,
-  ApiOperation,
   ApiUnauthorizedResponse,
   ApiTags,
-  ApiOkResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
 
@@ -37,21 +33,18 @@ import { User } from './user.entity'
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  /**
+   * Gets current user
+   */
   @Get('me')
-  @ApiOperation({ summary: 'Get current user' })
-  @ApiOkResponse({
-    description: 'The user is returned.',
-    type: User,
-  })
   async getMe(@AuthUser() user: User): Promise<User> {
     return user
   }
 
+  /**
+   * Changes password of current user
+   */
   @Post('me/password')
-  @ApiOperation({ summary: 'Change password of current user' })
-  @ApiCreatedResponse({
-    description: 'Password of current user has been successfully changed.',
-  })
   @ApiForbiddenResponse({
     description: 'Password has not been changed. Existing password was wrong.',
   })
@@ -71,12 +64,11 @@ export class UsersController {
     await this.userService.updatePassword(user, updatePasswordDto.newPassword)
   }
 
+  /**
+   * Deletes current user
+   */
   @Delete('me')
   @HttpCode(204)
-  @ApiOperation({ summary: 'Delete current user' })
-  @ApiNoContentResponse({
-    description: 'The current user has been successfully deleted.',
-  })
   async deleteMe(@AuthUser() user: User) {
     return await this.userService.delete(user.id)
   }

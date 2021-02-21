@@ -13,12 +13,8 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -38,7 +34,7 @@ import { PortfolioSecurity } from './security.entity'
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
-@ApiNotFoundResponse({ description: 'Portfolio not found' })
+@ApiNotFoundResponse({ description: 'Portfolio or security not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class SecuritiesController {
   constructor(
@@ -46,12 +42,10 @@ export class SecuritiesController {
     private readonly kpisService: SecuritiesKpisService,
   ) {}
 
+  /**
+   * Creates security in portfolio
+   */
   @Post()
-  @ApiOperation({ summary: 'Create security' })
-  @ApiCreatedResponse({
-    description: 'Security has been successfully created.',
-    type: PortfolioSecurity,
-  })
   async create(
     @Param() params: PortfolioParams,
     @Body() securityDto: SecurityDto,
@@ -60,50 +54,40 @@ export class SecuritiesController {
     return this.securitiesService.create(req.portfolio, securityDto)
   }
 
+  /**
+   * Gets list of all securities of portfolio
+   */
   @Get()
-  @ApiOperation({ summary: 'Get all securities of portfolio' })
-  @ApiOkResponse({
-    description: 'List of all securities of portfolio is returned.',
-    type: PortfolioSecurity,
-    isArray: true,
-  })
   async readAll(
     @Param() params: PortfolioParams,
   ): Promise<PortfolioSecurity[]> {
     return await this.securitiesService.getAll(params)
   }
 
+  /**
+   * Gets security
+   */
   @Get(':securityId')
-  @ApiOperation({ summary: 'Get security' })
-  @ApiOkResponse({
-    description: 'The security is returned.',
-    type: PortfolioSecurity,
-  })
-  @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
   async readOne(@Param() params: SecurityParams): Promise<PortfolioSecurity> {
     return await this.securitiesService.getOne(params)
   }
 
+  /**
+   * Updates security
+   */
   @Put(':securityId')
-  @ApiOperation({ summary: 'Update security' })
-  @ApiOkResponse({
-    description: 'The security has been successfully updated.',
-  })
-  @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
   async update(
     @Param() params: SecurityParams,
     @Body() securityDto: SecurityDto,
-  ) {
+  ): Promise<PortfolioSecurity> {
     return this.securitiesService.update(params, securityDto)
   }
 
+  /**
+   * Delets security
+   */
   @Delete(':securityId')
   @HttpCode(204)
-  @ApiOperation({ summary: 'Delete security' })
-  @ApiNoContentResponse({
-    description: 'The security has been successfully deleted.',
-  })
-  @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
   async delete(@Param() params: SecurityParams) {
     await this.securitiesService.delete(params)
   }

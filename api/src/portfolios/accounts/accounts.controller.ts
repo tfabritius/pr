@@ -13,12 +13,8 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -38,7 +34,7 @@ import { PortfolioParams } from '../portfolio.params'
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiBadRequestResponse({ description: 'Bad request' })
-@ApiNotFoundResponse({ description: 'Portfolio not found' })
+@ApiNotFoundResponse({ description: 'Portfolio or account not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class AccountsController {
   constructor(
@@ -46,12 +42,10 @@ export class AccountsController {
     private readonly kpisService: AccountsKpisService,
   ) {}
 
+  /**
+   * Creates account
+   */
   @Post()
-  @ApiOperation({ summary: 'Create account' })
-  @ApiCreatedResponse({
-    description: 'Account has been successfully created.',
-    type: Account,
-  })
   async create(
     @Param() params: PortfolioParams,
     @Body() dto: AccountDto,
@@ -60,51 +54,35 @@ export class AccountsController {
     return this.service.create(req.portfolio, dto)
   }
 
+  /**
+   * Gets list of all accounts of portfolio
+   */
   @Get()
-  @ApiOperation({ summary: 'Get all accounts of portfolio' })
-  @ApiOkResponse({
-    description: 'List of all accounts of portfolio is returned.',
-    type: Account,
-    isArray: true,
-  })
   async readAll(@Param() params: PortfolioParams): Promise<Account[]> {
     return await this.service.getAll(params)
   }
 
+  /**
+   * Gets account
+   */
   @Get(':accountId')
-  @ApiOperation({ summary: 'Get account' })
-  @ApiOkResponse({
-    description: 'The account is returned.',
-    type: Account,
-  })
-  @ApiNotFoundResponse({
-    description: 'Portfolio or account not found',
-  })
   async readOne(@Param() params: AccountParams): Promise<Account> {
     return await this.service.getOne(params)
   }
 
+  /**
+   * Updates account
+   */
   @Put(':accountId')
-  @ApiOperation({ summary: 'Update account' })
-  @ApiOkResponse({
-    description: 'The account has been successfully updated.',
-  })
-  @ApiNotFoundResponse({
-    description: 'Portfolio or account not found',
-  })
   async update(@Param() params: AccountParams, @Body() dto: AccountDto) {
     return this.service.update(params, dto)
   }
 
+  /**
+   * Deletes account
+   */
   @Delete(':accountId')
   @HttpCode(204)
-  @ApiOperation({ summary: 'Delete account' })
-  @ApiNoContentResponse({
-    description: 'The account has been successfully deleted.',
-  })
-  @ApiNotFoundResponse({
-    description: 'Portfolio or account not found',
-  })
   async delete(@Param() params: AccountParams) {
     await this.service.delete(params)
   }

@@ -10,9 +10,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import {
-  ApiOperation,
   ApiTags,
-  ApiOkResponse,
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -43,23 +41,18 @@ export class CurrenciesController {
     private readonly currenciesConversionService: CurrenciesConversionService,
   ) {}
 
+  /**
+   * Gets list of all available currencies and their exchange rates
+   */
   @Get()
-  @ApiOperation({ summary: 'Get all currencies' })
-  @ApiOkResponse({
-    description: 'List of all currencies is returned.',
-    type: Currency,
-    isArray: true,
-  })
   async readAll(): Promise<Currency[]> {
     return await this.currenciesService.getAllCurrencies()
   }
 
+  /**
+   * Gets exchange rate incl. list of prices
+   */
   @Get(':baseCurrencyCode/:quoteCurrencyCode')
-  @ApiOperation({ summary: 'Get exchange rate' })
-  @ApiOkResponse({
-    description: 'The exchange rate is returned.',
-    type: Exchangerate,
-  })
   @ApiNotFoundResponse({ description: 'Exchange rate not found' })
   async readOneExchangeRate(
     @Param() params: ExchangeRateParams,
@@ -68,23 +61,23 @@ export class CurrenciesController {
     return await this.currenciesService.getOneExchangeRate(params, query)
   }
 
+  /**
+   * Triggers update of prices of exchange rates
+   */
   @Post('update')
   @HttpCode(200)
   @UseGuards(DefaultAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update currencies incl. exchange rate prices' })
-  @ApiOkResponse({ description: 'Update has finished.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async update(): Promise<void> {
     return await this.currenciesService.updateExchangeRates()
   }
 
+  /**
+   * Converts amount between currencies
+   */
   @Post('convert')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Convert amount between currencies' })
-  @ApiOkResponse({
-    description: 'The converted amount is returned.',
-  })
   async convert(@Body() dto: ConvertCurrenciesDto): Promise<any> {
     try {
       const targetAmount = await this.currenciesConversionService.convertCurrencyAmount(

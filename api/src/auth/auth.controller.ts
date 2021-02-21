@@ -11,10 +11,7 @@ import { AuthGuard } from '@nestjs/passport'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
@@ -40,12 +37,12 @@ export class AuthController {
     private sessionsService: SessionsService,
   ) {}
 
+  /**
+   * Registers user
+   *
+   * User is automatically logged in and session is returned.
+   */
   @Post('register')
-  @ApiOperation({ summary: 'Register user' })
-  @ApiCreatedResponse({
-    description: 'User has been registered and logged in',
-    type: Session,
-  })
   async register(@Body() registerUserDto: RegisterUserDto): Promise<Session> {
     const user = await this.usersService.create(registerUserDto.username)
     await this.usersService.updatePassword(user, registerUserDto.password)
@@ -53,15 +50,15 @@ export class AuthController {
     return session
   }
 
+  /**
+   * Logs in user
+   *
+   * Session is returned.
+   * @param req
+   * @param loginUserDto
+   */
   @Post('login')
   @UseGuards(AuthGuard('local'))
-  @ApiOperation({
-    summary: 'Login user',
-  })
-  @ApiCreatedResponse({
-    description: 'The user has been successfully logged in.',
-    type: Session,
-  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async login(
     @Req() req,
@@ -80,14 +77,15 @@ export class AuthController {
     return session
   }
 
+  /**
+   * Logs out user
+   *
+   * Session is deleted.
+   */
   @Post('logout')
   @HttpCode(204)
   @UseGuards(DefaultAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Logout user' })
-  @ApiNoContentResponse({
-    description: 'The session has been successfully deleted.',
-  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async delete(@Req() req: Request) {
     // Extract session id from Authorization header
