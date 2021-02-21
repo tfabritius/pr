@@ -43,10 +43,15 @@ export class AuthController {
    * User is automatically logged in and session is returned.
    */
   @Post('register')
-  async register(@Body() registerUserDto: RegisterUserDto): Promise<Session> {
+  async register(
+    @Body() registerUserDto: RegisterUserDto,
+    @Req() req,
+  ): Promise<Session> {
     const user = await this.usersService.create(registerUserDto.username)
     await this.usersService.updatePassword(user, registerUserDto.password)
-    const session = await this.sessionsService.create(user)
+    const session = await this.sessionsService.create(user, {
+      note: req.headers['user-agent'],
+    })
     return session
   }
 
@@ -65,7 +70,9 @@ export class AuthController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() loginUserDto: LoginUserDto,
   ): Promise<Session> {
-    const session = await this.sessionsService.create(req.user)
+    const session = await this.sessionsService.create(req.user, {
+      note: req.headers['user-agent'],
+    })
 
     // Start cleanup in background
     this.sessionsService.cleanupExpired().catch((e) => {

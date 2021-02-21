@@ -217,9 +217,10 @@ model SecurityTaxonomy {
 }
 
 model Session {
-  token          String   @id @db.Char(36)
+  token          String   @id @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
   lastActivityAt DateTime @default(now()) @map("last_activity_at") @db.Timestamptz
+  note           String   @default("") @db.Text
   userId         Int      @map("user_id")
   user           User     @relation(fields: [userId], references: [id])
 
@@ -292,7 +293,7 @@ model User {
   password   String?     @db.VarChar
   createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz
   lastSeenAt DateTime    @default(dbgenerated("CURRENT_DATE")) @map("last_seen_at") @db.Date
-  isAdmin    Boolean     @map("is_admin") @default(false) @db.Boolean
+  isAdmin    Boolean     @default(false) @map("is_admin") @db.Boolean
   portfolios Portfolio[] @relation("portfolios_user")
   sessions   Session[]
 

@@ -77,22 +77,47 @@ export class SessionsService {
   /**
    * Creates session for user
    */
-  async create(user: User) {
+  async create({ id }: { id: number }, { note }: { note?: string } = {}) {
     return await this.prisma.session.create({
-      data: { token: generateUuid(), userId: user.id },
-      select: { token: true, createdAt: true, lastActivityAt: true },
+      data: { token: generateUuid(), userId: id, note },
+      select: {
+        token: true,
+        note: true,
+        createdAt: true,
+        lastActivityAt: true,
+      },
     })
   }
 
   /**
    * Gets all sessions of user
    */
-  async getAllOfUser(user: User): Promise<Session[]> {
+  async getAllOfUser({ id }: { id: number }): Promise<Session[]> {
     return await this.prisma.session.findMany({
       where: {
         lastActivityAt: { gt: this.lastActivityLimit },
-        userId: user.id,
+        userId: id,
       },
+    })
+  }
+
+  /**
+   * Updates sessions of user
+   */
+  async update(
+    { token, note }: { token: string; note: string },
+    { id }: { id: number },
+  ) {
+    const session = await this.prisma.session.findFirst({
+      where: { token, userId: id },
+    })
+    if (!session) {
+      throw new NotFoundException('Session not found')
+    }
+
+    return await this.prisma.session.update({
+      data: { note },
+      where: { token },
     })
   }
 
@@ -100,11 +125,14 @@ export class SessionsService {
    * Deletes session
    * or throws NotFoundException
    */
-  async delete(token: string): Promise<void> {
-    const session = await this.prisma.session.delete({ where: { token } })
+  async delete(token: string) {
+    const session = await this.prisma.session.findUnique({
+      where: { token },
+    })
     if (!session) {
       throw new NotFoundException('Session not found')
     }
+    return await this.prisma.session.delete({ where: { token } })
   }
 
   /**
