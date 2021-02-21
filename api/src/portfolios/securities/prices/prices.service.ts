@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 import { SecurityParams } from '../security.params'
 import { SecurityPriceDto } from './prices.dto'
@@ -16,11 +17,16 @@ export class SecuritiesPricesService {
   async upsert(securityId: number, dtos: SecurityPriceDto[]) {
     const ret: { date: string; value: Prisma.Decimal }[] = []
 
-    for (const { date, value } of dtos) {
+    for (const { date: dayjsDate, value } of dtos) {
+      const date = zonedTimeToUtc(dayjsDate.toDate(), 'local')
       const price = await this.prisma.portfolioSecurityPrice.upsert({
-        create: { date: date.toDate(), value, securityId },
-        update: { date: date.toDate(), value },
-        where: { securityId_date: { securityId, date: date.toDate() } },
+        create: {
+          date,
+          value,
+          securityId,
+        },
+        update: { date, value },
+        where: { securityId_date: { securityId, date } },
         select: { date: true, value: true },
       })
 
@@ -40,11 +46,13 @@ export class SecuritiesPricesService {
     const dateFilter: Prisma.PortfolioSecurityPriceWhereInput[] = []
 
     if (query.startDate) {
-      dateFilter.push({ date: { gte: query.startDate.toDate() } })
+      const startDate = zonedTimeToUtc(query.startDate.toDate(), 'local')
+      dateFilter.push({ date: { gte: startDate } })
     }
 
     if (query.endDate) {
-      dateFilter.push({ date: { lte: query.endDate.toDate() } })
+      const endDate = zonedTimeToUtc(query.endDate.toDate(), 'local')
+      dateFilter.push({ date: { lte: endDate } })
     }
 
     const prices = await this.prisma.portfolioSecurityPrice.findMany({
