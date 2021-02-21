@@ -287,7 +287,7 @@ describe('Transactions (e2e)', () => {
       it('adds optional attributes to transaction', async () => {
         const changedTransaction = {
           ...testTransactionMinimal,
-          shares: '5.55000000',
+          shares: '5.55',
           securityId: otherSecurityId,
         }
 
@@ -310,7 +310,7 @@ describe('Transactions (e2e)', () => {
       it('updates optional attributes of transaction', async () => {
         const changedTransaction = {
           ...testTransactionFull,
-          shares: '11.22000000',
+          shares: '11.22',
           securityId: otherSecurityId,
         }
 
@@ -333,7 +333,7 @@ describe('Transactions (e2e)', () => {
       it('adds unit to transaction', async () => {
         const changedTransaction = {
           ...testTransactionMinimal,
-          units: [{ type: 'tax', amount: '100.00', currencyCode: 'JPY' }],
+          units: [{ type: 'tax', amount: '100', currencyCode: 'JPY' }],
         }
 
         const updateResponse = await api.put(
