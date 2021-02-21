@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { User, Session } from '@prisma/client'
+import { differenceInSeconds } from 'date-fns'
 
 import { PrismaService } from '../../prisma.service'
 import { UsersService } from '../users/users.service'
@@ -43,18 +44,21 @@ export class SessionsService {
       delete session.user.password
 
       if (!!session && !!session.user) {
+        const now = new Date()
         // Update lastActivityAt in background
-        session.lastActivityAt = new Date()
-        this.prisma.session
-          .update({
-            data: { lastActivityAt: new Date() },
-            where: { token },
-          })
-          .catch((e) => {
-            this.logger.error(
-              `Error while updating session.lastActivityAt in background: ${e}`,
-            )
-          })
+        // if is more than 1 minute old (don't update too often)
+        if (differenceInSeconds(now, session.lastActivityAt) > 60) {
+          this.prisma.session
+            .update({
+              data: { lastActivityAt: now },
+              where: { token },
+            })
+            .catch((e) => {
+              this.logger.error(
+                `Error while updating session.lastActivityAt in background: ${e}`,
+              )
+            })
+        }
 
         // Update last seen date in background
         this.usersService.updateLastSeen(session.user).catch((e) => {
