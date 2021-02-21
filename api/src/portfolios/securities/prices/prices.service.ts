@@ -13,17 +13,15 @@ export class SecuritiesPricesService {
   /**
    * Creates or updates prices of security
    */
-  async upsert(
-    securityId: number,
-    dtos: SecurityPriceDto[],
-  ): Promise<PortfolioSecurityPrice[]> {
-    const ret: PortfolioSecurityPrice[] = []
+  async upsert(securityId: number, dtos: SecurityPriceDto[]) {
+    const ret: { date: Date; value: Prisma.Decimal }[] = []
 
     for (const { date, value } of dtos) {
       const price = await this.prisma.portfolioSecurityPrice.upsert({
         create: { date: date.toDate(), value, securityId },
         update: { date: date.toDate(), value },
         where: { securityId_date: { securityId, date: date.toDate() } },
+        select: { date: true, value: true },
       })
 
       ret.push(price)
