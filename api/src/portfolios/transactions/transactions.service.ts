@@ -174,11 +174,15 @@ export class TransactionsService {
       },
     })
 
-    // Create/update units
-    for (const unit of unitDtos) {
-      await this.prisma.transactionUnit.upsert({
-        create: { ...unit, transactionId },
-        update: unit,
+    // Create units without id
+    await this.prisma.transactionUnit.createMany({
+      data: unitDtos.filter((u) => !u.id).map((u) => ({ ...u, transactionId })),
+    })
+
+    // Update units with id
+    for (const unit of unitDtos.filter((u) => u.id)) {
+      await this.prisma.transactionUnit.update({
+        data: unit,
         where: { id: unit.id },
       })
     }
