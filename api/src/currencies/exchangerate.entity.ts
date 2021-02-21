@@ -5,6 +5,6 @@ import { ExchangeratePrice } from './price.entity'
 export class Exchangerate {
   baseCurrencyCode: string
   quoteCurrencyCode: string
-  latestPriceDate?: Date
+  latestPriceDate?: string
   prices?: ExchangeratePrice[]
 }

@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client'
 
 @ObjectType()
 export class PortfolioSecurityPrice {
-  date: Date
+  date: string
 
   @Field(() => String)
   @ApiProperty({ type: String, example: '1.00000000' })
