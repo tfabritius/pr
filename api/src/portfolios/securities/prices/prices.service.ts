@@ -15,28 +15,21 @@ export class SecuritiesPricesService {
    * Creates or updates prices of security
    */
   async upsert(securityId: number, dtos: SecurityPriceDto[]) {
-    const ret: { date: string; value: Prisma.Decimal }[] = []
+    const prices: { date: string; value: Prisma.Decimal }[] = dtos.map((p) => ({
+      date: p.date.format('YYYY-MM-DD'),
+      value: new Prisma.Decimal(p.value),
+    }))
 
-    for (const { date: dayjsDate, value } of dtos) {
-      const date = zonedTimeToUtc(dayjsDate.toDate(), 'local')
-      const price = await this.prisma.portfolioSecurityPrice.upsert({
-        create: {
-          date,
-          value,
-          securityId,
-        },
-        update: { date, value },
-        where: { securityId_date: { securityId, date } },
-        select: { date: true, value: true },
-      })
+    await this.prisma.$executeRaw(
+      'INSERT INTO portfolios_securities_prices (security_id, date, value) ' +
+        'VALUES ' +
+        prices
+          .map((price) => `(${securityId}, '${price.date}', ${price.value})`)
+          .join(',') +
+        ' ON CONFLICT(security_id, date) DO UPDATE SET value=excluded.value',
+    )
 
-      ret.push({
-        ...price,
-        date: price.date.toISOString().substring(0, 10),
-      })
-    }
-
-    return ret
+    return prices
   }
 
   /**
