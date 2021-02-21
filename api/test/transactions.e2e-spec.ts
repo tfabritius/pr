@@ -36,7 +36,7 @@ describe('Transactions (e2e)', () => {
 
   const testTransactionFull = {
     ...testTransactionMinimal,
-    shares: '1.23000000',
+    shares: '1.23',
     securityId: undefined,
     units: [
       {
