@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common'
-import * as AdmZip from 'adm-zip'
+import AdmZip from 'adm-zip'
 import axios from 'axios'
 import { existsSync } from 'fs'
-import * as ip2loc from 'ip2location-nodejs'
-import * as util from 'util'
+import ip2loc from 'ip2location-nodejs'
+import util from 'util'
 
 @Injectable()
 export class GeoIpService implements OnModuleInit {

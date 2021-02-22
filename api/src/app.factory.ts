@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { Test, TestingModule } from '@nestjs/testing'
-import * as helmet from 'helmet'
+import helmet from 'helmet'
 
 import { AppModule } from './app.module'
 
