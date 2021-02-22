@@ -76,21 +76,12 @@ describe('Currencies (e2e)', () => {
       })
     })
 
-    it('?startDate=1999-02-29 fails due to invalid date', async () => {
-      const response = await api.get('/currencies/EUR/USD?startDate=1999-02-29')
-
-      expect(response.status).toBe(400)
-      expect(response.body.message).toContainEqual(
-        expect.stringContaining('startDate must be a valid date'),
-      )
-    })
-
     it('?startDate=foo fails due to invalid date', async () => {
       const response = await api.get('/currencies/EUR/USD?startDate=foo')
 
       expect(response.status).toBe(400)
       expect(response.body.message).toContainEqual(
-        expect.stringContaining('startDate must be a valid date'),
+        expect.stringContaining('startDate must be a Date instance'),
       )
     })
   })
