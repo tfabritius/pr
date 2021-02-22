@@ -12,7 +12,7 @@ model Account {
   id                  Int           @id @default(autoincrement())
   type                String        @db.VarChar
   name                String        @db.VarChar
-  uuid                String        @db.Char(36)
+  uuid                String        @db.Uuid
   currencyCode        String?       @map("currency_code") @db.Char(3)
   referenceAccountId  Int?          @map("reference_account_id")
   active              Boolean
@@ -124,7 +124,7 @@ model Portfolio {
 model PortfolioSecurity {
   id           Int                      @id @default(autoincrement())
   name         String                   @db.VarChar
-  uuid         String                   @db.Char(36)
+  uuid         String                   @db.Uuid
   currencyCode String                   @map("currency_code") @db.Char(3)
   isin         String                   @db.VarChar
   wkn          String                   @db.VarChar
