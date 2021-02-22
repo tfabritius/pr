@@ -11,6 +11,7 @@ import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { CurrenciesModule } from './currencies/currencies.module'
 import { PortfoliosModule } from './portfolios/portfolios.module'
+import { SecuritiesModule } from './securities/securities.module'
 import { StatsModule } from './stats/stats.module'
 
 @Module({
@@ -30,6 +31,7 @@ import { StatsModule } from './stats/stats.module'
     AuthModule,
     CurrenciesModule,
     PortfoliosModule,
+    SecuritiesModule,
     StatsModule,
   ],
   controllers: [AppController],
