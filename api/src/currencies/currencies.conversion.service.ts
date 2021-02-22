@@ -1,5 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { Timeout } from '@nestjs/schedule'
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
 import { findAllPairsShortestPath } from '../utils/floyd.warshall'
@@ -16,17 +15,20 @@ export class CurrencyConversionError extends Error {
 }
 
 @Injectable()
-export class CurrenciesConversionService {
+export class CurrenciesConversionService implements OnModuleInit {
   private readonly logger = new Logger(CurrenciesConversionService.name)
 
   constructor(private readonly currenciesService: CurrenciesService) {}
 
   private currencyConversionRoutes: Map<string, Map<string, string>>
 
+  async onModuleInit() {
+    await this.calculateCurrencyConversionRoutes()
+  }
+
   /**
    * Calculates shortes path between all currency pairs
    */
-  @Timeout(10)
   private async calculateCurrencyConversionRoutes() {
     this.logger.debug('Calculating currency conversion routes')
 
