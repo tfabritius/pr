@@ -1,16 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDecimal, IsString } from 'class-validator'
-import { Transform } from 'class-transformer'
-import * as dayjs from 'dayjs'
-
-import { IsValidDayjs } from '../../../utils/dayjs.validators'
-import { parseDayjsYYYYMMDD } from '../../../utils/parse.dayjs'
+import { IsDate, IsDecimal, IsString } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class SecurityPriceDto {
-  @Transform(parseDayjsYYYYMMDD, { toClassOnly: true })
-  @IsValidDayjs()
-  @ApiProperty({ type: String, example: dayjs().format('YYYY-MM-DD') })
-  readonly date: dayjs.Dayjs
+  @ApiProperty({ type: String, example: 'YYYY-MM-DD' })
+  @Type(() => Date)
+  @IsDate()
+  readonly date: Date
 
   @IsString()
   @IsDecimal({ decimal_digits: '0,8' })

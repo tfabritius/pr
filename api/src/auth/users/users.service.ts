@@ -4,12 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { User } from '@prisma/client'
-import { startOfDay, isEqual } from 'date-fns'
-import { zonedTimeToUtc } from 'date-fns-tz'
+import * as argon2 from 'argon2'
+import { isEqual } from 'date-fns'
 
 import { PrismaService } from '../../prisma.service'
-
-import * as argon2 from 'argon2'
+import { startOfDayInUtc } from '../../utils/start.of.day.in.utc'
 
 @Injectable()
 export class UsersService {
@@ -104,7 +103,7 @@ export class UsersService {
    * Update last seen date if necessary
    */
   async updateLastSeen(user: User): Promise<void> {
-    const todayDateUtc = zonedTimeToUtc(startOfDay(new Date()), 'local')
+    const todayDateUtc = startOfDayInUtc(new Date())
 
     if (!isEqual(user.lastSeenAt, todayDateUtc)) {
       await this.prisma.user.update({

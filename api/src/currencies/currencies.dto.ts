@@ -1,10 +1,12 @@
-import { IsDecimal, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import {
+  IsDate,
+  IsDecimal,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { Transform } from 'class-transformer'
-import * as dayjs from 'dayjs'
-
-import { IsValidDayjs } from '../utils/dayjs.validators'
-import { parseDayjsYYYYMMDD } from '../utils/parse.dayjs'
+import { Type } from 'class-transformer'
 
 export class ConvertCurrenciesDto {
   @IsString()
@@ -19,8 +21,8 @@ export class ConvertCurrenciesDto {
   readonly sourceAmount: string
 
   @IsOptional()
-  @Transform(parseDayjsYYYYMMDD, { toClassOnly: true })
-  @IsValidDayjs()
-  @ApiPropertyOptional({ type: String, example: dayjs().format('YYYY-MM-DD') })
-  readonly date?: dayjs.Dayjs
+  @ApiPropertyOptional({ type: String, example: 'YYYY-MM-DD' })
+  @Type(() => Date)
+  @IsDate()
+  readonly date?: Date
 }

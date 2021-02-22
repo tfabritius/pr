@@ -1,14 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { Transform } from 'class-transformer'
-import { IsOptional } from 'class-validator'
-import * as dayjs from 'dayjs'
-import { parseDayjsYYYYMMDD } from '../utils/parse.dayjs'
-import { IsValidDayjs } from '../utils/dayjs.validators'
+import { Type } from 'class-transformer'
+import { IsDate, IsOptional } from 'class-validator'
 
 export class ExchangeRateQuery {
   @IsOptional()
-  @Transform(parseDayjsYYYYMMDD, { toClassOnly: true })
-  @IsValidDayjs()
-  @ApiPropertyOptional({ example: dayjs().format('YYYY-MM-DD') })
-  readonly startDate?: dayjs.Dayjs
+  @ApiPropertyOptional({ type: String, example: 'YYYY-MM-DD' })
+  @Type(() => Date)
+  @IsDate()
+  readonly startDate?: Date
 }
