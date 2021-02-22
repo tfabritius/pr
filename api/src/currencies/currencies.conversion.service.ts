@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Timeout } from '@nestjs/schedule'
 import { Prisma } from '@prisma/client'
-import * as dayjs from 'dayjs'
 
 import { findAllPairsShortestPath } from '../utils/floyd.warshall'
+import { startOfDayInUtc } from '../utils/start.of.day.in.utc'
 import { CurrenciesService } from './currencies.service'
 
 export class CurrencyConversionError extends Error {
@@ -85,9 +85,9 @@ export class CurrenciesConversionService {
     amount: Prisma.Decimal,
     sourceCurrencyCode: string,
     targetCurrencyCode: string,
-    date?: dayjs.Dayjs,
+    date?: Date,
   ): Promise<Prisma.Decimal> {
-    date = date || dayjs()
+    date = date || startOfDayInUtc(new Date())
 
     const route = this.getConversionRoute(
       sourceCurrencyCode,

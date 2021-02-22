@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { zonedTimeToUtc } from 'date-fns-tz'
 
 import { SecurityParams } from '../security.params'
 import { SecurityPriceDto } from './prices.dto'
@@ -16,7 +15,7 @@ export class SecuritiesPricesService {
    */
   async upsert(securityId: number, dtos: SecurityPriceDto[]) {
     const prices: { date: string; value: Prisma.Decimal }[] = dtos.map((p) => ({
-      date: p.date.format('YYYY-MM-DD'),
+      date: p.date.toISOString().substr(0, 10),
       value: new Prisma.Decimal(p.value),
     }))
 
@@ -39,13 +38,11 @@ export class SecuritiesPricesService {
     const dateFilter: Prisma.PortfolioSecurityPriceWhereInput[] = []
 
     if (query.startDate) {
-      const startDate = zonedTimeToUtc(query.startDate.toDate(), 'local')
-      dateFilter.push({ date: { gte: startDate } })
+      dateFilter.push({ date: { gte: query.startDate } })
     }
 
     if (query.endDate) {
-      const endDate = zonedTimeToUtc(query.endDate.toDate(), 'local')
-      dateFilter.push({ date: { lte: endDate } })
+      dateFilter.push({ date: { lte: query.endDate } })
     }
 
     const prices = await this.prisma.portfolioSecurityPrice.findMany({

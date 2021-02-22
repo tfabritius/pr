@@ -1,14 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { Interval, Timeout } from '@nestjs/schedule'
 import { Prisma } from '@prisma/client'
-import * as dayjs from 'dayjs'
 import axios from 'axios'
-import { startOfDay, subDays } from 'date-fns'
-import { zonedTimeToUtc } from 'date-fns-tz'
+import { addDays, subDays } from 'date-fns'
 
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
 import { PrismaService } from '../prisma.service'
+import { startOfDayInUtc } from '../utils/start.of.day.in.utc'
 
 @Injectable()
 export class CurrenciesService {
@@ -62,10 +61,9 @@ export class CurrenciesService {
     { baseCurrencyCode, quoteCurrencyCode }: ExchangeRateParams,
     query: ExchangeRateQuery,
   ) {
-    const today = startOfDay(new Date())
     const startDate = query.startDate
-      ? query.startDate.toDate()
-      : subDays(today, 30)
+      ? query.startDate
+      : startOfDayInUtc(subDays(new Date(), 30))
 
     const exchangerate = await this.prisma.exchangerate.findUnique({
       where: {
@@ -91,7 +89,7 @@ export class CurrenciesService {
 
     const prices = await this.prisma.exchangeratePrice.findMany({
       where: {
-        date: { gte: zonedTimeToUtc(startDate, 'local') },
+        date: { gte: startDate },
         exchangerate: { baseCurrencyCode, quoteCurrencyCode },
       },
       select: { date: true, value: true },
@@ -118,7 +116,7 @@ export class CurrenciesService {
     baseCurrencyCode,
     quoteCurrencyCode,
     date,
-  }: ExchangeRateParams & { date: dayjs.Dayjs }): Promise<Prisma.Decimal> {
+  }: ExchangeRateParams & { date: Date }): Promise<Prisma.Decimal> {
     const exchangerate = await this.prisma.exchangerate.findUnique({
       where: {
         baseCurrencyCode_quoteCurrencyCode: {
@@ -128,7 +126,7 @@ export class CurrenciesService {
       },
       include: {
         prices: {
-          where: { date: { lte: zonedTimeToUtc(date.toDate(), 'local') } },
+          where: { date: { lte: date } },
           orderBy: { date: 'desc' },
           take: 1,
         },
@@ -172,8 +170,8 @@ export class CurrenciesService {
       const params: any = {}
 
       if (exchangerate.latestPriceDate) {
-        const latestPriceDate = dayjs(exchangerate.latestPriceDate)
-        params.from = latestPriceDate.add(1, 'day').format('YYYY-MM-DD')
+        const latestPriceDate = new Date(exchangerate.latestPriceDate)
+        params.from = addDays(latestPriceDate, 1).toISOString().substring(0, 10)
       }
 
       this.logger.debug(`GET ${url}, params: ${JSON.stringify(params)}`)
