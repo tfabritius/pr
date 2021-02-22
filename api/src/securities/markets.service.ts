@@ -27,9 +27,9 @@ export class SecurityMarketsService {
         create: {
           securityUuid,
           marketCode,
-          currencyCode,
+          currencyCode: currencyCode || '',
           symbol,
-          updatePrices,
+          updatePrices: updatePrices ?? true,
         },
         update: {
           updatePrices,
