@@ -13,6 +13,7 @@ import { CurrenciesModule } from './currencies/currencies.module'
 import { PortfoliosModule } from './portfolios/portfolios.module'
 import { SecuritiesModule } from './securities/securities.module'
 import { StatsModule } from './stats/stats.module'
+import { TaxonomiesModule } from './taxonomies/taxonomies.module'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { StatsModule } from './stats/stats.module'
     PortfoliosModule,
     SecuritiesModule,
     StatsModule,
+    TaxonomiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
