@@ -1,25 +1,31 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 export class CreateUpdateSecurityDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  readonly name: string
+  readonly name?: string
 
+  @IsOptional()
   @IsString()
-  readonly isin: string
+  readonly isin?: string
 
+  @IsOptional()
   @IsString()
-  readonly wkn: string
+  readonly wkn?: string
 
+  @IsOptional()
   @IsString()
-  readonly securityType: string
+  readonly securityType?: string
 
+  @IsOptional()
   @IsString()
-  readonly symbolXfra: string
+  readonly symbolXfra?: string
 
+  @IsOptional()
   @IsString()
-  readonly symbolXnas: string
+  readonly symbolXnas?: string
 
+  @IsOptional()
   @IsString()
-  readonly symbolXnys: string
+  readonly symbolXnys?: string
 }
