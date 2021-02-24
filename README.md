@@ -100,16 +100,23 @@ Backend Configuration is *not* relevant during build phase, only when actually r
 # api/.env
 
 # PostgreSQL database
-DATABASE_URL = "postgresql://user:password@host:5432/database"
+DATABASE_URL="postgresql://user:password@host:5432/database"
+
+# E-mail address used as recipient in contact endpoint
+CONTACT_RECIPIENT_EMAIL="me@example.com"
+
+# Transport configuration for sending emails, https://nodemailer.com/smtp/
+# Default: use local sendmail (if available)
+MAILER_TRANSPORT="smtps://username:password@smtp.example.com/"
 
 # Serve static files from this path under / and move api endpoints to /api
-SERVE_STATIC_PATH = "../web/dist"
+SERVE_STATIC_PATH="../web/dist"
 
 # Allowed period of inactivity for sessions in seconds
-SESSION_TIMEOUT = 86400
+SESSION_TIMEOUT=86400
 
 # Token to download GeoIP database from www.ip2location.com (optional)
-IP2LOCATION_TOKEN = "..."
+IP2LOCATION_TOKEN="..."
 ```
 
 ### Frontend (web)
@@ -118,7 +125,7 @@ IP2LOCATION_TOKEN = "..."
 # web/.env
 
 # URL to API
-VUE_APP_API_URL = http://localhost:3000/
+VUE_APP_API_URL=http://localhost:3000/
 ```
 
 ## Recommended VSCode settings

@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
+import { MailerModule } from '@nestjs-modules/mailer'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-
 import { AuthModule } from './auth/auth.module'
+import { ContactModule } from './contact/contact.module'
 import { CurrenciesModule } from './currencies/currencies.module'
 import { PortfoliosModule } from './portfolios/portfolios.module'
 import { SecuritiesModule } from './securities/securities.module'
@@ -23,6 +24,17 @@ import { TaxonomiesModule } from './taxonomies/taxonomies.module'
       sortSchema: true,
       playground: process.env.NODE_ENV === 'development',
     }),
+    MailerModule.forRootAsync({
+      useFactory: () => {
+        if (process.env.MAILER_TRANSPORT) {
+          return {
+            transport: process.env.MAILER_TRANSPORT,
+          }
+        } else {
+          return { transport: { sendmail: true } }
+        }
+      },
+    }),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', process.env.SERVE_STATIC_PATH || ''),
@@ -30,6 +42,7 @@ import { TaxonomiesModule } from './taxonomies/taxonomies.module'
       serveStaticOptions: { fallthrough: true },
     }),
     AuthModule,
+    ContactModule,
     CurrenciesModule,
     PortfoliosModule,
     SecuritiesModule,
