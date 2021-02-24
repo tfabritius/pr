@@ -8,6 +8,7 @@ import {
   Query,
   Delete,
   HttpCode,
+  Header,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -40,6 +41,7 @@ export class StatsController {
    * Counts request (GET or HEAD) as update to a certain version
    */
   @Head('/update/name.abuchen.portfolio/:version')
+  @Header('Cache-Control', 'no-cache')
   @ApiExcludeEndpoint()
   async saveUpdate(@Param('version') version: string, @Req() req: Request) {
     const country = this.geoip.getCountryFromIp(req.ip)

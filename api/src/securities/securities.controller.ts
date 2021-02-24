@@ -12,6 +12,7 @@ import {
   Query,
   Patch,
   Logger,
+  Header,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -228,6 +229,7 @@ export class SecuritiesController {
    * Searches for securities (public)
    */
   @Get('/search/:query')
+  @Header('Cache-Control', 'max-age=600, public')
   async searchSecurities(
     @Param('query') query: string,
     @Query() { securityType }: SearchSecuritiesQueryDto,
@@ -271,6 +273,7 @@ export class SecuritiesController {
    * Gets security (public)
    */
   @Get('uuid/:uuid')
+  @Header('Cache-Control', 'max-age=600, public')
   async getSecurityPublic(
     @Param('uuid') uuid: string,
   ): Promise<PublicSecurity> {
@@ -293,6 +296,7 @@ export class SecuritiesController {
    * Get security prices (public)
    */
   @Get('uuid/:uuid/markets/:marketCode')
+  @Header('Cache-Control', 'max-age=600, public')
   async getPrices(
     @Param('uuid') uuid: string,
     @Param('marketCode') marketCode: string,
