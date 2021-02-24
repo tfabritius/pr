@@ -4,6 +4,7 @@ import {
   INestApplication,
   ValidationPipe,
 } from '@nestjs/common'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { Test, TestingModule } from '@nestjs/testing'
 import helmet from 'helmet'
@@ -13,10 +14,10 @@ import { AppModule } from './app.module'
 export async function createApp(
   environment: 'prod' | 'test' = 'prod',
 ): Promise<INestApplication> {
-  let app: INestApplication
+  let app: NestExpressApplication
 
   if (environment === 'prod') {
-    app = await NestFactory.create(AppModule)
+    app = await NestFactory.create<NestExpressApplication>(AppModule)
     if (process.env.SERVE_STATIC_PATH) {
       app.setGlobalPrefix('api')
     }
@@ -62,6 +63,9 @@ export async function createApp(
 
   /* Allow cross-origin requests */
   app.enableCors()
+
+  /* Trust reverse proxy, e.g. use IP address from X-Forwarded-For */
+  app.set('trust proxy', 1)
 
   return app
 }
