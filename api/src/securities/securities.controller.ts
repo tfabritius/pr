@@ -13,6 +13,7 @@ import {
   Patch,
   Logger,
   Header,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -93,7 +94,7 @@ export class SecuritiesController {
   @UseGuards(DefaultAuthGuard, AdminGuard)
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async getSecurity(@Param('uuid') uuid: string) {
+  async getSecurity(@Param('uuid', ParseUUIDPipe) uuid: string) {
     const { securityMarkets, ...security } = await this.securities.getOne(uuid)
 
     return {
@@ -126,7 +127,7 @@ export class SecuritiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async updateSecurity(
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() dto: CreateUpdateSecurityDto,
   ) {
     await this.securities.getOne(uuid)
@@ -140,7 +141,7 @@ export class SecuritiesController {
   @UseGuards(DefaultAuthGuard, AdminGuard)
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async deleteSecurity(@Param('uuid') uuid: string) {
+  async deleteSecurity(@Param('uuid', ParseUUIDPipe) uuid: string) {
     await this.securities.getOne(uuid)
     return await this.securities.delete(uuid)
   }
@@ -153,7 +154,7 @@ export class SecuritiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async patchMarket(
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Param('marketCode') marketCode: string,
     @Body() dto: CreateUpdateSecurityMarketDto,
   ) {
@@ -169,7 +170,7 @@ export class SecuritiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async deleteMarket(
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Param('marketCode') marketCode: string,
   ) {
     await this.securities.getOne(uuid)
@@ -185,8 +186,8 @@ export class SecuritiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async putTaxonomies(
-    @Param('uuid') securityUuid: string,
-    @Param('rootUuid') rootUuid: string,
+    @Param('uuid', ParseUUIDPipe) securityUuid: string,
+    @Param('rootUuid', ParseUUIDPipe) rootUuid: string,
     @Body(new ParseArrayPipe({ items: SecurityTaxonomyDto }))
     dtos: SecurityTaxonomyDto[],
   ) {
@@ -275,7 +276,7 @@ export class SecuritiesController {
   @Get('uuid/:uuid')
   @Header('Cache-Control', 'max-age=600, public')
   async getSecurityPublic(
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
   ): Promise<PublicSecurity> {
     const { securityMarkets, ...security } = await this.securities.getOnePublic(
       uuid,
@@ -298,7 +299,7 @@ export class SecuritiesController {
   @Get('uuid/:uuid/markets/:marketCode')
   @Header('Cache-Control', 'max-age=600, public')
   async getPrices(
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Param('marketCode') marketCode: string,
     @Query('from') from?: string,
   ) {

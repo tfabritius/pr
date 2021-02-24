@@ -8,6 +8,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -42,7 +43,7 @@ export class TaxonomiesController {
    * Gets single taxonomy with all descendants
    */
   @Get('/:uuid')
-  async getOne(@Param('uuid') uuid: string) {
+  async getOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return await this.prisma.taxonomy.findUnique({
       where: { uuid },
       include: { descendants: true },
@@ -57,7 +58,7 @@ export class TaxonomiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async create(
-    @Body('parentUuid') parentUuid: string,
+    @Body('parentUuid', ParseUUIDPipe) parentUuid: string,
     @Body('name') name: string,
     @Body('code') code: string,
   ) {
@@ -90,7 +91,7 @@ export class TaxonomiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async update(
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() body: { name?: string; parentUuid?: string; code?: string },
   ) {
     const data: Prisma.TaxonomyUpdateInput = {}
@@ -139,7 +140,7 @@ export class TaxonomiesController {
   @UseGuards(DefaultAuthGuard, AdminGuard)
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async delete(@Param('uuid') uuid: string) {
+  async delete(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return await this.prisma.taxonomy.delete({ where: { uuid } })
   }
 }
