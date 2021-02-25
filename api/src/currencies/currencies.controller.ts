@@ -17,7 +17,6 @@ import {
   ApiUnauthorizedResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger'
-import { Prisma } from '@prisma/client'
 
 import { CurrenciesService } from './currencies.service'
 import {
@@ -29,7 +28,7 @@ import { Exchangerate } from './exchangerate.entity'
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
-import { ConvertCurrenciesDto } from './currencies.dto'
+import { ConvertCurrenciesDto } from './dto/convert.currencies.dto'
 
 @Controller('currencies')
 @ApiTags('currencies')
@@ -81,7 +80,7 @@ export class CurrenciesController {
   async convert(@Body() dto: ConvertCurrenciesDto): Promise<any> {
     try {
       const targetAmount = await this.currenciesConversionService.convertCurrencyAmount(
-        new Prisma.Decimal(dto.sourceAmount),
+        dto.sourceAmount,
         dto.sourceCurrencyCode,
         dto.targetCurrencyCode,
         dto.date,
