@@ -109,6 +109,12 @@ CONTACT_RECIPIENT_EMAIL="me@example.com"
 # Default: use local sendmail (if available)
 MAILER_TRANSPORT="smtps://username:password@smtp.example.com/"
 
+# Maximum score of results to be shown from fuzzy search
+SECURITIES_SEARCH_MAX_SCORE=0.001
+
+# Minimum number of results to be shown (independent from score)
+SECURITIES_SEARCH_MIN_RESULTS=10
+
 # Serve static files from this path under / and move api endpoints to /api
 SERVE_STATIC_PATH="../web/dist"
 

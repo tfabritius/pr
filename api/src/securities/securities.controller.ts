@@ -235,39 +235,7 @@ export class SecuritiesController {
     @Param('query') query: string,
     @Query() { securityType }: SearchSecuritiesQueryDto,
   ): Promise<PublicSecurity[]> {
-    securityType = securityType || ''
-
-    const searchResults = this.securities.searchFtsIndex(query)
-
-    const securities: PublicSecurity[] = [] // Array to be returned
-
-    const minResults = Number(process.env.SEARCH_MIN_RESULTS) || 3
-    const maxScore = Number(process.env.SEARCH_MAX_SCORE) || 0.001
-
-    for (const searchResult of searchResults) {
-      // Return this search result immediately if there is an exact match on ISIN or WKN
-      if (
-        searchResult.item.isin?.toLocaleUpperCase() === query.toUpperCase() ||
-        searchResult.item.wkn?.toLocaleUpperCase() === query.toUpperCase()
-      ) {
-        return [searchResult.item]
-      }
-
-      // Stop looping through list of results, if...
-      if (
-        (!searchResult.score || searchResult.score > maxScore) && // no more results below threshold score
-        securities.length >= minResults // and minimum number of results is reached
-      ) {
-        break
-      }
-
-      // Add search result if filter on security matches (if given)
-      if (!securityType || searchResult.item.securityType === securityType) {
-        securities.push(searchResult.item)
-      }
-    }
-
-    return securities
+    return this.securities.searchFtsIndex(query, securityType)
   }
 
   /**

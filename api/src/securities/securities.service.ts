@@ -5,6 +5,7 @@ import {
   OnModuleInit,
   ServiceUnavailableException,
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { Prisma } from '@prisma/client'
 import Fuse from 'fuse.js'
 
@@ -17,7 +18,10 @@ import { PublicSecurity } from './dto/public.security.dto'
 export class SecuritiesService implements OnModuleInit {
   private readonly logger = new Logger(SecuritiesService.name)
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {}
 
   private ftsIndex: Fuse<PublicSecurity>
 
@@ -88,12 +92,44 @@ export class SecuritiesService implements OnModuleInit {
    *
    * Throws ServiceUnavailableException if index is not ready (yet)
    */
-  searchFtsIndex(query: string): Array<Fuse.FuseResult<PublicSecurity>> {
+  searchFtsIndex(query: string, securityType?: string): Array<PublicSecurity> {
     if (!this.ftsIndex) {
       throw new ServiceUnavailableException('Service unavailable')
     }
 
-    return this.ftsIndex.search(query)
+    const rawResults = this.ftsIndex.search(query)
+
+    const results: PublicSecurity[] = []
+
+    const minResults =
+      this.config.get<number>('SECURITIES_SEARCH_MIN_RESULTS') || 10
+    const maxScore =
+      this.config.get<number>('SECURITIES_SEARCH_MAX_SCORE') || 0.001
+
+    for (const searchResult of rawResults) {
+      // Return this search result immediately if there is an exact match on ISIN or WKN
+      if (
+        searchResult.item.isin?.toLocaleUpperCase() === query.toUpperCase() ||
+        searchResult.item.wkn?.toLocaleUpperCase() === query.toUpperCase()
+      ) {
+        return [searchResult.item]
+      }
+
+      // Stop looping through list of results, if...
+      if (
+        (!searchResult.score || searchResult.score > maxScore) && // no more results below threshold score
+        results.length >= minResults // and minimum number of results is reached
+      ) {
+        break
+      }
+
+      // Add search result if filter on security matches (if given)
+      if (!securityType || searchResult.item.securityType === securityType) {
+        results.push(searchResult.item)
+      }
+    }
+
+    return results
   }
 
   async create(security: CreateUpdateSecurityDto) {
