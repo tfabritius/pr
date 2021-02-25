@@ -16,7 +16,7 @@ export class SecuritiesPricesService {
   async upsert(securityId: number, dtos: SecurityPriceDto[]) {
     const prices: { date: string; value: Prisma.Decimal }[] = dtos.map((p) => ({
       date: p.date.toISOString().substr(0, 10),
-      value: new Prisma.Decimal(p.value),
+      value: p.value,
     }))
 
     await this.prisma.$executeRaw(

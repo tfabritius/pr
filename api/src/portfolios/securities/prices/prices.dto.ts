@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDate, IsDecimal, IsString } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Prisma } from '@prisma/client'
+import { IsDate } from 'class-validator'
+import { Transform, Type } from 'class-transformer'
+
+import { parseDecimal } from '../../../utils/decimal.parser'
+import { IsValidDecimal } from '../../../utils/decimal.validator'
 
 export class SecurityPriceDto {
   @ApiProperty({ type: String, example: 'YYYY-MM-DD' })
@@ -8,7 +12,8 @@ export class SecurityPriceDto {
   @IsDate()
   readonly date: Date
 
-  @IsString()
-  @IsDecimal({ decimal_digits: '0,8' })
-  readonly value: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiProperty({ type: String, example: '1.0' })
+  readonly value: Prisma.Decimal
 }

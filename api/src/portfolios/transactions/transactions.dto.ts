@@ -1,6 +1,7 @@
-import { Type } from 'class-transformer'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Prisma } from '@prisma/client'
+import { Transform, Type } from 'class-transformer'
 import {
-  IsDecimal,
   IsDefined,
   IsEnum,
   IsISO8601,
@@ -10,6 +11,8 @@ import {
   ValidateNested,
 } from 'class-validator'
 
+import { parseDecimal } from '../../utils/decimal.parser'
+import { IsValidDecimal } from '../../utils/decimal.validator'
 import { TransactionType } from './transaction.entity'
 import { UnitType } from './unit.entity'
 
@@ -21,23 +24,29 @@ export class TransactionUnitDto {
   @IsEnum(UnitType)
   readonly type: UnitType
 
-  @IsDecimal({ decimal_digits: '0,2' })
-  readonly amount: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiProperty({ type: String, example: '1.0' })
+  readonly amount: Prisma.Decimal
 
   @IsString()
   readonly currencyCode: string
 
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,2' })
-  readonly originalAmount?: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiPropertyOptional({ type: String, example: '1.0' })
+  readonly originalAmount?: Prisma.Decimal
 
   @IsOptional()
   @IsString()
   readonly originalCurrencyCode?: string
 
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,8' })
-  readonly exchangeRate?: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiPropertyOptional({ type: String, example: '1.0' })
+  readonly exchangeRate?: Prisma.Decimal
 }
 
 class PartnerTransactionDto {
@@ -50,8 +59,10 @@ class PartnerTransactionDto {
   readonly units: TransactionUnitDto[]
 
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,8' })
-  readonly shares?: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiPropertyOptional({ type: String, example: '1.0' })
+  readonly shares?: Prisma.Decimal
 
   @IsOptional()
   @IsNumber()
@@ -79,8 +90,10 @@ export class TransactionDto {
   readonly units: TransactionUnitDto[]
 
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,8' })
-  readonly shares?: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiPropertyOptional({ type: String, example: '1.0' })
+  readonly shares?: Prisma.Decimal
 
   @IsOptional()
   @IsNumber()

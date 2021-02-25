@@ -1,9 +1,17 @@
-import { IsString, IsUUID } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { Prisma } from '@prisma/client'
+import { Transform } from 'class-transformer'
+import { IsUUID } from 'class-validator'
+
+import { parseDecimal } from '../../utils/decimal.parser'
+import { IsValidDecimal } from '../../utils/decimal.validator'
 
 export class SecurityTaxonomyDto {
   @IsUUID()
   taxonomyUuid: string
 
-  @IsString()
-  weight: string
+  @Transform(parseDecimal)
+  @IsValidDecimal()
+  @ApiProperty({ type: String, example: '1.0' })
+  weight: Prisma.Decimal
 }
