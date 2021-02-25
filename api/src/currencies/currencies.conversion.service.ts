@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
 import { findAllPairsShortestPath } from '../utils/floyd.warshall'
@@ -109,13 +114,17 @@ export class CurrenciesConversionService implements OnModuleInit {
           date,
         })
         amount = amount.times(erPrice)
-      } catch {
-        const erPrice = await this.currenciesService.getOneExchangeRatePrice({
-          baseCurrencyCode: next,
-          quoteCurrencyCode: current,
-          date,
-        })
-        amount = amount.div(erPrice)
+      } catch (e) {
+        if (e instanceof NotFoundException) {
+          const erPrice = await this.currenciesService.getOneExchangeRatePrice({
+            baseCurrencyCode: next,
+            quoteCurrencyCode: current,
+            date,
+          })
+          amount = amount.div(erPrice)
+        } else {
+          throw e
+        }
       }
     }
 
