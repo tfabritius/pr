@@ -72,6 +72,32 @@ export class SecuritiesService {
   }
 
   /**
+   * Gets security identified by parameters
+   * or throws NotFoundException
+   */
+  async getOneOfUser(securityId: number, userId: number) {
+    const security = await this.prisma.portfolioSecurity.findFirst({
+      where: { id: securityId, portfolio: { userId } },
+      include: {
+        prices: {
+          orderBy: { date: 'desc' },
+          take: 1,
+        },
+      },
+    })
+
+    if (!security) {
+      throw new NotFoundException('Security not found')
+    }
+
+    const { prices, ...securityWithoutPrices } = security
+    return {
+      ...securityWithoutPrices,
+      latestPriceDate: prices[0]?.date.toISOString().substring(0, 10) || null,
+    }
+  }
+
+  /**
    * Updates security identified by the parameters
    * or throws NotFoundException
    */
