@@ -1,4 +1,4 @@
-import { Req, UnauthorizedException, UseGuards } from '@nestjs/common'
+import { UnauthorizedException, UseGuards } from '@nestjs/common'
 import {
   Resolver,
   Mutation,
@@ -7,7 +7,6 @@ import {
   ResolveField,
   Query,
 } from '@nestjs/graphql'
-import { Request } from 'express'
 
 import { LoginUserDto } from './dto/login.user.dto'
 import { RegisterUserDto } from './dto/register.user.dto'
@@ -18,6 +17,7 @@ import { UsersService } from './users/users.service'
 import { User } from './users/user.entity'
 import { AuthUser } from './auth.decorator'
 import { GqlAuthGuard } from './gql-auth.guard'
+import { UserAgent } from '../utils/user-agent.decorator'
 
 @Resolver(() => Session)
 export class AuthResolver {
@@ -30,12 +30,12 @@ export class AuthResolver {
   @Mutation(() => Session)
   async register(
     @Args('data') { username, password }: RegisterUserDto,
-    @Req() req: Request,
+    @UserAgent() userAgent: string,
   ) {
     const user = await this.users.create(username)
     await this.users.updatePassword(user, password)
     const session = await this.sessions.create(user, {
-      note: req.headers['user-agent'],
+      note: userAgent,
     })
     return session
   }
@@ -43,14 +43,14 @@ export class AuthResolver {
   @Mutation(() => Session)
   async login(
     @Args('data') { username, password }: LoginUserDto,
-    @Req() req: Request,
+    @UserAgent() userAgent: string,
   ) {
     const user = await this.auth.validateUsernamePassword(username, password)
     if (!user) {
       throw new UnauthorizedException()
     }
     const session = await this.sessions.create(user, {
-      note: req.headers['user-agent'],
+      note: userAgent,
     })
     return session
   }

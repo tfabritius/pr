@@ -23,6 +23,9 @@ import { DefaultAuthGuard } from './default-auth.guard'
 import { SessionsService } from './sessions/sessions.service'
 import { UsersService } from './users/users.service'
 import { Session } from './sessions/session.entity'
+import { UserAgent } from '../utils/user-agent.decorator'
+import { AuthUser } from './auth.decorator'
+import { User } from './users/user.entity'
 
 @Controller('auth')
 @ApiTags('auth')
@@ -45,12 +48,12 @@ export class AuthController {
   @Post('register')
   async register(
     @Body() registerUserDto: RegisterUserDto,
-    @Req() req,
+    @UserAgent() userAgent: string,
   ): Promise<Session> {
     const user = await this.usersService.create(registerUserDto.username)
     await this.usersService.updatePassword(user, registerUserDto.password)
     const session = await this.sessionsService.create(user, {
-      note: req.headers['user-agent'],
+      note: userAgent,
     })
     return session
   }
@@ -66,12 +69,13 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async login(
-    @Req() req,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() loginUserDto: LoginUserDto,
+    @AuthUser() user: User,
+    @UserAgent() userAgent: string,
   ): Promise<Session> {
-    const session = await this.sessionsService.create(req.user, {
-      note: req.headers['user-agent'],
+    const session = await this.sessionsService.create(user, {
+      note: userAgent,
     })
 
     // Start cleanup in background
