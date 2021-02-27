@@ -34,6 +34,7 @@ import { SearchSecuritiesQueryDto } from './dto/search.securities.query.dto'
 import { SecurityTaxonomyDto } from './dto/security.taxonomy.dto'
 import { SecurityMarketsService } from './markets.service'
 import { SecuritiesService } from './securities.service'
+import { ParseLaxUUIDPipe } from '../utils/parse-lax-uuid.pipe'
 
 @Controller('securities')
 @ApiTags('securities')
@@ -244,7 +245,7 @@ export class SecuritiesController {
   @Get('uuid/:uuid')
   @Header('Cache-Control', 'max-age=600, public')
   async getSecurityPublic(
-    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Param('uuid', ParseLaxUUIDPipe) uuid: string,
   ): Promise<PublicSecurity> {
     const { securityMarkets, ...security } = await this.securities.getOnePublic(
       uuid,
@@ -267,7 +268,7 @@ export class SecuritiesController {
   @Get('uuid/:uuid/markets/:marketCode')
   @Header('Cache-Control', 'max-age=600, public')
   async getPrices(
-    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Param('uuid', ParseLaxUUIDPipe) uuid: string,
     @Param('marketCode') marketCode: string,
     @Query('from') from?: string,
   ) {
