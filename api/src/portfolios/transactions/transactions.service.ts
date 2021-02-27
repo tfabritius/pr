@@ -259,7 +259,7 @@ export class TransactionsService {
     portfolioId,
   }: TransactionParams): Promise<void> {
     const affected = await this.prisma
-      .$executeRaw`DELETE FROM transactions WHERE id=${transactionId} AND portfolio_id=${portfolioId}`
+      .$executeRaw`DELETE FROM portfolios_transactions WHERE id=${transactionId} AND portfolio_id=${portfolioId}`
 
     if (affected == 0) {
       throw new NotFoundException('Transaction not found')

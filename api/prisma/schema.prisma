@@ -25,7 +25,7 @@ model Account {
   transactions        Transaction[]
 
   @@index([portfolioId])
-  @@map("accounts")
+  @@map("portfolios_accounts")
 }
 
 model Clientupdate {
@@ -267,7 +267,7 @@ model Transaction {
   @@index([accountId])
   @@index([portfolioId])
   @@index([securityId])
-  @@map("transactions")
+  @@map("portfolios_transactions")
 }
 
 model TransactionUnit {
@@ -284,7 +284,7 @@ model TransactionUnit {
   transaction          Transaction @relation(fields: [transactionId], references: [id])
 
   @@index([transactionId])
-  @@map("transactions_units")
+  @@map("portfolios_transactions_units")
 }
 
 model User {
