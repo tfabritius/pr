@@ -8,6 +8,8 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { Prisma } from '@prisma/client'
 import Fuse from 'fuse.js'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const FuseConstructor = require('fuse.js')
 
 import { PrismaService } from '../prisma.service'
 import { generateUuid } from '../utils/uuid'
@@ -81,7 +83,7 @@ export class SecuritiesService implements OnModuleInit {
         'markets.symbol',
       ],
     }
-    const fts = new Fuse(entriesWithDateOnly, options)
+    const fts = new FuseConstructor(entriesWithDateOnly, options)
 
     this.ftsIndex = fts
     this.logger.log('Full text search index created.')

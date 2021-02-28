@@ -7,7 +7,7 @@ import {
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { Test, TestingModule } from '@nestjs/testing'
-import helmet from 'helmet'
+import * as helmet from 'helmet'
 
 import { AppModule } from './app.module'
 

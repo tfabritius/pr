@@ -1,4 +1,4 @@
-import request from 'supertest'
+import * as request from 'supertest'
 
 export class ApiClient {
   private request: request.SuperTest<request.Test>

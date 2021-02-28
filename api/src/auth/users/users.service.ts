@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { User } from '@prisma/client'
-import argon2 from 'argon2'
+import * as argon2 from 'argon2'
 import { isEqual } from 'date-fns'
 
 import { PrismaService } from '../../prisma.service'
