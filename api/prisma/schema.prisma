@@ -8,9 +8,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AccountType {
+  deposit
+  securities
+
+  @@map("portfolio_account_type")
+}
+
+enum TransactionType {
+  Payment
+  CurrencyTransfer
+  DepositInterest
+  DepositFee
+  DepositTax
+  SecuritiesOrder
+  SecuritiesDividend
+  SecuritiesFee
+  SecuritiesTax
+  SecuritiesTransfer
+
+  @@map("portfolio_transaction_type")
+}
+
+enum TransactionUnitType {
+  base
+  tax
+  fee
+
+  @@map("portfolio_transaction_unit_type")
+}
+
 model Account {
   id                  Int           @id @default(autoincrement())
-  type                String        @db.VarChar
+  type                AccountType
   name                String        @db.VarChar
   uuid                String        @db.Uuid
   currencyCode        String?       @map("currency_code") @db.Char(3)
@@ -250,7 +280,7 @@ model Taxonomy {
 model Transaction {
   id                        Int                @id @default(autoincrement())
   accountId                 Int                @map("account_id")
-  type                      String             @db.VarChar
+  type                      TransactionType
   datetime                  DateTime           @db.Timestamptz
   partnerTransactionId      Int?               @unique @map("partner_transaction_id")
   shares                    Decimal?           @db.Decimal(16, 8)
@@ -271,17 +301,17 @@ model Transaction {
 }
 
 model TransactionUnit {
-  id                   Int         @id @default(autoincrement())
-  type                 String      @db.VarChar
-  amount               Decimal     @db.Decimal(10, 2)
-  currencyCode         String      @map("currency_code") @db.Char(3)
-  originalAmount       Decimal?    @map("original_amount") @db.Decimal(10, 2)
-  originalCurrencyCode String?     @map("original_currency_code") @db.Char(3)
-  exchangeRate         Decimal?    @map("exchange_rate") @db.Decimal(16, 8)
-  transactionId        Int         @map("transaction_id")
-  currency             Currency    @relation("transactions_units_currency", fields: [currencyCode], references: [code])
-  originalCurrency     Currency?   @relation("transactions_units_original_currency", fields: [originalCurrencyCode], references: [code])
-  transaction          Transaction @relation(fields: [transactionId], references: [id])
+  id                   Int                 @id @default(autoincrement())
+  type                 TransactionUnitType
+  amount               Decimal             @db.Decimal(10, 2)
+  currencyCode         String              @map("currency_code") @db.Char(3)
+  originalAmount       Decimal?            @map("original_amount") @db.Decimal(10, 2)
+  originalCurrencyCode String?             @map("original_currency_code") @db.Char(3)
+  exchangeRate         Decimal?            @map("exchange_rate") @db.Decimal(16, 8)
+  transactionId        Int                 @map("transaction_id")
+  currency             Currency            @relation("transactions_units_currency", fields: [currencyCode], references: [code])
+  originalCurrency     Currency?           @relation("transactions_units_original_currency", fields: [originalCurrencyCode], references: [code])
+  transaction          Transaction         @relation(fields: [transactionId], references: [id])
 
   @@index([transactionId])
   @@map("portfolios_transactions_units")
