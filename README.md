@@ -16,11 +16,11 @@ $ yarn install --frozen-lockfile
 # Set `DATABASE_URL` environment variable or `api/.env`
 $ DATABASE_URL="postgresql://user:password@host:5432/database"
 
-# Push schema to DB
-$ yarn api prisma db push --preview-feature
+# Run DB migrations (development mode, using shadow database)
+$ yarn api prisma db dev --preview-feature
 
-# Seed DB
-$ yarn api prisma db seed --preview-feature
+# Run DB migrations (production mode, without shadow database)
+$ yarn api prisma db deploy --preview-feature
 
 # Start backend in watch mode
 $ yarn api dev
