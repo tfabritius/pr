@@ -11,7 +11,11 @@
       </v-app-bar-nav-icon>
 
       <v-toolbar-title style="cursor: pointer">
-        <router-link to="/" tag="span">Portfolio Report</router-link>
+        <router-link to="/" custom v-slot="{ navigate }">
+          <span @click="navigate" @keypress.enter="navigate" role="link">
+            Portfolio Report
+          </span>
+        </router-link>
       </v-toolbar-title>
 
       <v-spacer />
