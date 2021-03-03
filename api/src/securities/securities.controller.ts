@@ -100,7 +100,6 @@ export class SecuritiesController {
 
     return {
       ...security,
-      uuid: security.uuid?.replace(/-/g, ''),
       markets: securityMarkets.map((m) => ({
         ...m,
         firstPriceDate: m.firstPriceDate?.toISOString().substring(0, 10),
