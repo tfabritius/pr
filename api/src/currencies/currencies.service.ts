@@ -1,8 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { Interval, Timeout } from '@nestjs/schedule'
-import { Prisma } from '@prisma/client'
+import { ExchangeratePrice, Prisma } from '@prisma/client'
 import axios from 'axios'
 import { addDays, subDays } from 'date-fns'
+import * as xmljs from 'xml-js'
 
 import { ExchangeRateParams } from './exchangerate.params'
 import { ExchangeRateQuery } from './exchangerate.query'
@@ -150,53 +151,86 @@ export class CurrenciesService {
 
     const today: string = new Date().toISOString().substring(0, 10)
 
-    for (const exchangerate of exchangeRates) {
-      if (
-        exchangerate.latestPriceDate &&
-        exchangerate.latestPriceDate === today
-      ) {
+    for (const {
+      id,
+      baseCurrencyCode,
+      quoteCurrencyCode,
+      latestPriceDate,
+    } of exchangeRates) {
+      if (latestPriceDate && latestPriceDate === today) {
         this.logger.debug(
-          'Skipping exchange rate ' + JSON.stringify(exchangerate),
+          `Skipping exchange rate ${baseCurrencyCode}/${quoteCurrencyCode}`,
         )
         continue
       }
 
-      const url =
-        `https://www.portfolio-report.net/api/exchangeRates` +
-        `/${exchangerate.baseCurrencyCode}` +
-        `/${exchangerate.quoteCurrencyCode}` +
-        `/prices`
-
-      const params: any = {}
-
-      if (exchangerate.latestPriceDate) {
-        const latestPriceDate = new Date(exchangerate.latestPriceDate)
-        params.from = addDays(latestPriceDate, 1).toISOString().substring(0, 10)
+      let from: Date
+      if (latestPriceDate) {
+        from = addDays(new Date(latestPriceDate), 1)
       }
 
-      this.logger.debug(`GET ${url}, params: ${JSON.stringify(params)}`)
-      const response = await axios.get(url, { params })
+      let newPrices: ExchangeratePrice[] = []
 
-      if (response.data.length === 0) {
-        this.logger.debug('Empty response, skipping update')
-        continue
+      if (baseCurrencyCode === 'EUR') {
+        this.logger.debug(
+          `Retrieving ${baseCurrencyCode}/${quoteCurrencyCode} from ECB`,
+        )
+
+        const prices = await this.getExchangeratePricesEcb(
+          baseCurrencyCode,
+          quoteCurrencyCode,
+          from,
+        )
+
+        newPrices = prices.map((el) => ({
+          ...el,
+          exchangerateId: id,
+        }))
+      } else {
+        this.logger.debug(
+          `No source available for ${baseCurrencyCode}/${quoteCurrencyCode}`,
+        )
       }
 
-      const newPrices: {
-        exchangerateId: number
-        date: Date
-        value: string
-      }[] = response.data.map((el) => ({
-        exchangerateId: exchangerate.id,
-        date: new Date(el.date),
-        value: el.value,
-      }))
-
-      this.logger.debug(`Saving ${newPrices.length} new price(s)`)
-      await this.prisma.exchangeratePrice.createMany({ data: newPrices })
+      if (newPrices.length > 0) {
+        this.logger.debug(`Adding ${newPrices.length} new price(s)`)
+        await this.prisma.exchangeratePrice.createMany({ data: newPrices })
+      }
     }
 
     this.logger.log('Updating exchange rates finished.')
+  }
+
+  /**
+   * Retrieves prices of EUR exchange rates from ECB
+   */
+  async getExchangeratePricesEcb(
+    baseCurrencyCode: 'EUR',
+    quoteCurrencyCode: string,
+    from?: Date,
+  ): Promise<Pick<ExchangeratePrice, 'date' | 'value'>[]> {
+    const url = `https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/${quoteCurrencyCode.toLowerCase()}.xml`
+
+    const response = await axios.get(url)
+    const parsedXml: xmljs.ElementCompact = xmljs.xml2js(response.data, {
+      compact: true,
+    })
+
+    const prices: Pick<ExchangeratePrice, 'date' | 'value'>[] = []
+
+    for (const el of parsedXml.CompactData?.DataSet?.Series?.Obs) {
+      const date = new Date(el._attributes.TIME_PERIOD)
+      const value = new Prisma.Decimal(el._attributes.OBS_VALUE)
+
+      if (!from || date >= from) {
+        prices.push({
+          date,
+          value,
+        })
+      }
+    }
+
+    return prices
   }
 
   @Timeout(5 * 60 * 1000)
