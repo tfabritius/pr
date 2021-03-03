@@ -17,10 +17,10 @@ $ yarn install --frozen-lockfile
 $ DATABASE_URL="postgresql://user:password@host:5432/database"
 
 # Run DB migrations (development mode, using shadow database)
-$ yarn api prisma db dev --preview-feature
+$ yarn api prisma migrate dev --preview-feature
 
 # Run DB migrations (production mode, without shadow database)
-$ yarn api prisma db deploy --preview-feature
+$ yarn api prisma migrate deploy --preview-feature
 
 # Start backend in watch mode
 $ yarn api dev
