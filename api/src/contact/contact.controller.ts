@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config'
 import { MailerService } from '@nestjs-modules/mailer'
 import { ApiTags } from '@nestjs/swagger'
 import { Request } from 'express'
-import util from 'util'
+import * as util from 'util'
 
 import { SendMailDto } from './send.mail.dto'
 
