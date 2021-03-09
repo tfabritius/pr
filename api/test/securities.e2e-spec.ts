@@ -34,7 +34,6 @@ describe('Securities (e2e)', () => {
 
   const testSecurity = {
     name: 'Test security',
-    uuid: '11111111-1111-1111-1111-111111111111',
     note: 'comment',
     currencyCode: 'EUR',
     isin: 'some isin',
@@ -52,9 +51,9 @@ describe('Securities (e2e)', () => {
   describe('404s', () => {
     test.each([
       ['GET', '/securities'],
-      ['GET', '/securities/42'],
-      ['PUT', '/securities/42'],
-      ['DELETE', '/securities/42'],
+      ['GET', '/securities/11111111-1111-1111-1111-111111111111'],
+      ['PUT', '/securities/11111111-1111-1111-1111-111111111111'],
+      ['DELETE', '/securities/11111111-1111-1111-1111-111111111111'],
     ])(
       '%s /portfolios/42%s returns 404 Portfolio not found',
       async (method, url) => {
@@ -64,18 +63,12 @@ describe('Securities (e2e)', () => {
       },
     )
 
-    test.each([
-      ['GET', undefined],
-      ['PUT', testSecurity],
-      ['DELETE', undefined],
-    ])(
-      '%s .../securities/42 returns 404 Security not found',
-      async (method, payload) => {
-        const args: any[] = [`/portfolios/${portfolioId}/securities/42`]
-        if (payload) {
-          args.push(payload)
-        }
-        const response = await api[method.toLowerCase()](...args)
+    test.each([['GET'], ['DELETE']])(
+      '%s .../securities/11111111-1111-1111-1111-111111111111 returns 404 Security not found',
+      async (method) => {
+        const response = await api[method.toLowerCase()](
+          `/portfolios/${portfolioId}/securities/11111111-1111-1111-1111-111111111111`,
+        )
 
         expect(response.status).toBe(404)
         expect(response.body.message).toContain('Security not found')
@@ -84,7 +77,9 @@ describe('Securities (e2e)', () => {
   })
 
   describe('POST .../securities', () => {
-    it.each(getObjectsWithMissingAttribute(testSecurity))(
+    it.each(
+      getObjectsWithMissingAttribute(testSecurity, ['name', 'currencyCode']),
+    )(
       `fails if attribute %p is missing`,
       async (missingAttribute, security) => {
         const response = await api.post(
@@ -99,7 +94,7 @@ describe('Securities (e2e)', () => {
       },
     )
 
-    test('returns security with id', async () => {
+    test('returns security with uuid', async () => {
       const createResponse = await api.post(
         `/portfolios/${portfolioId}/securities`,
         testSecurity,
@@ -107,15 +102,15 @@ describe('Securities (e2e)', () => {
 
       expect(createResponse.status).toBe(201)
       expect(createResponse.body).toMatchObject(testSecurity)
-      expect(typeof createResponse.body.id).toBe('number')
+      expect(typeof createResponse.body.uuid).toBe('string')
     })
   })
 
   describe('GET/PUT/DELETE .../securities', () => {
-    let securityId: number
+    let securityUuid: string
 
     beforeEach(async () => {
-      securityId = await api.createSecurity(portfolioId, testSecurity)
+      securityUuid = await api.createSecurity(portfolioId, testSecurity)
     })
 
     test('GET .../securities contains security', async () => {
@@ -124,26 +119,28 @@ describe('Securities (e2e)', () => {
       expect(response.body).toContainEqual(
         expect.objectContaining({
           ...testSecurity,
-          id: securityId,
+          uuid: securityUuid,
         }),
       )
     })
 
-    test('GET .../securities/$id returns security', async () => {
+    test('GET .../securities/$uuid returns security', async () => {
       const response = await api.get(
-        `/portfolios/${portfolioId}/securities/${securityId}`,
+        `/portfolios/${portfolioId}/securities/${securityUuid}`,
       )
 
       expect(response.status).toBe(200)
       expect(response.body).toMatchObject(testSecurity)
     })
 
-    describe('PUT .../securities/$id', () => {
-      it.each(getObjectsWithMissingAttribute(testSecurity))(
+    describe('PUT .../securities/$uuid', () => {
+      it.each(
+        getObjectsWithMissingAttribute(testSecurity, ['name', 'currencyCode']),
+      )(
         'fails if attribute %p is missing',
         async (missingAttribute, security) => {
           const response = await api.put(
-            `/portfolios/${portfolioId}/securities/${securityId}`,
+            `/portfolios/${portfolioId}/securities/${securityUuid}`,
             security,
           )
 
@@ -157,7 +154,6 @@ describe('Securities (e2e)', () => {
       it('updates the security', async () => {
         const changedSecurity = {
           name: 'changed security',
-          uuid: '22222222-2222-2222-2222-222222222222',
           note: 'different note',
           currencyCode: 'CHF',
           isin: 'another isin',
@@ -166,7 +162,7 @@ describe('Securities (e2e)', () => {
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/securities/${securityId}`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}`,
           changedSecurity,
         )
 
@@ -174,42 +170,42 @@ describe('Securities (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedSecurity)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/securities/${securityId}`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
         expect(getResponse.body).toMatchObject(changedSecurity)
       })
 
-      it('does not update "id"', async () => {
+      it('does not update "uuid"', async () => {
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/securities/${securityId}`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}`,
           {
             ...testSecurity,
-            id: securityId + 666,
+            uuid: '22222222-2222-2222-2222-222222222222',
           },
         )
 
         expect(updateResponse.status).toBe(200)
-        expect(updateResponse.body.id).toBe(securityId)
+        expect(updateResponse.body.uuid).toBe(securityUuid)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/securities/${securityId}`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}`,
         )
         expect(getResponse.status).toBe(200)
       })
     })
 
-    test('DELETE .../securities/$id removes security', async () => {
+    test('DELETE .../securities/$uuid removes security', async () => {
       const deleteResponse = await api.delete(
-        `/portfolios/${portfolioId}/securities/${securityId}`,
+        `/portfolios/${portfolioId}/securities/${securityUuid}`,
       )
 
       expect(deleteResponse.status).toBe(204)
       expect(deleteResponse.body).toStrictEqual({})
 
       const getResponse = await api.get(
-        `/portfolios/${portfolioId}/securites/${securityId}`,
+        `/portfolios/${portfolioId}/securites/${securityUuid}`,
       )
 
       expect(getResponse.status).toBe(404)

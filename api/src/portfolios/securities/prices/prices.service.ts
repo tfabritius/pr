@@ -13,19 +13,25 @@ export class SecuritiesPricesService {
   /**
    * Creates or updates prices of security
    */
-  async upsert(securityId: number, dtos: SecurityPriceDto[]) {
+  async upsert(
+    { portfolioId, securityUuid }: SecurityParams,
+    dtos: SecurityPriceDto[],
+  ) {
     const prices: { date: string; value: Prisma.Decimal }[] = dtos.map((p) => ({
       date: p.date.toISOString().substr(0, 10),
       value: p.value,
     }))
 
     await this.prisma.$executeRaw(
-      'INSERT INTO portfolios_securities_prices (security_id, date, value) ' +
+      'INSERT INTO portfolios_securities_prices (portfolio_id, portfolio_security_uuid, date, value) ' +
         'VALUES ' +
         prices
-          .map((price) => `(${securityId}, '${price.date}', ${price.value})`)
+          .map(
+            (price) =>
+              `(${portfolioId}, '${securityUuid}', '${price.date}', ${price.value})`,
+          )
           .join(',') +
-        ' ON CONFLICT(security_id, date) DO UPDATE SET value=excluded.value',
+        ' ON CONFLICT(portfolio_id, portfolio_security_uuid, date) DO UPDATE SET value=excluded.value',
     )
 
     return prices
@@ -34,7 +40,10 @@ export class SecuritiesPricesService {
   /**
    * Gets prices of a security
    */
-  async getAll({ securityId }: SecurityParams, query: PricesQuery) {
+  async getAll(
+    { portfolioId, securityUuid }: SecurityParams,
+    query: PricesQuery,
+  ) {
     const dateFilter: Prisma.PortfolioSecurityPriceWhereInput[] = []
 
     if (query.startDate) {
@@ -46,7 +55,11 @@ export class SecuritiesPricesService {
     }
 
     const prices = await this.prisma.portfolioSecurityPrice.findMany({
-      where: { securityId, AND: dateFilter },
+      where: {
+        portfolioId,
+        portfolioSecurityUuid: securityUuid,
+        AND: dateFilter,
+      },
       select: { date: true, value: true },
     })
     return prices.map((p) => ({

@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Req,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -21,11 +20,12 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { TransactionDto } from './transactions.dto'
+import { CreateUpdateTransactionDto } from './transactions.dto'
 import { TransactionParams } from './transaction.params'
 import { TransactionsService } from './transactions.service'
 import { PortfolioParams } from '../portfolio.params'
 import { PortfolioTransaction } from './transaction.entity'
+import { generateUuid } from '../../utils/uuid'
 
 @Controller('portfolios/:portfolioId/transactions')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -44,10 +44,12 @@ export class TransactionsController {
   @Post()
   async create(
     @Param() params: PortfolioParams,
-    @Body() dto: TransactionDto,
-    @Req() req,
+    @Body() dto: CreateUpdateTransactionDto,
   ): Promise<PortfolioTransaction> {
-    return this.transactionsService.create(req.portfolio, dto)
+    return this.transactionsService.upsert(
+      { ...params, transactionUuid: generateUuid() },
+      dto,
+    )
   }
 
   /**
@@ -63,7 +65,7 @@ export class TransactionsController {
   /**
    * Gets transaction
    */
-  @Get(':transactionId')
+  @Get(':transactionUuid')
   async readOne(
     @Param() params: TransactionParams,
   ): Promise<PortfolioTransaction> {
@@ -71,20 +73,20 @@ export class TransactionsController {
   }
 
   /**
-   * Updates transaction
+   * Creates or updates transaction
    */
-  @Put(':transactionId')
+  @Put(':transactionUuid')
   async update(
     @Param() params: TransactionParams,
-    @Body() dto: TransactionDto,
+    @Body() dto: CreateUpdateTransactionDto,
   ): Promise<PortfolioTransaction> {
-    return this.transactionsService.update(params, dto)
+    return this.transactionsService.upsert(params, dto)
   }
 
   /**
    * Deletes transaction
    */
-  @Delete(':transactionId')
+  @Delete(':transactionUuid')
   @HttpCode(204)
   async delete(@Param() params: TransactionParams) {
     await this.transactionsService.delete(params)

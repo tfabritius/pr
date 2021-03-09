@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Portfolio, PortfolioSecurity } from '@prisma/client'
+import { PortfolioSecurity } from '@prisma/client'
 
-import { SecurityDto } from './securities.dto'
+import { CreateUpdateSecurityDto } from './securities.dto'
 import { SecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
@@ -11,14 +11,42 @@ export class SecuritiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Creates security in portfolio
+   * Creates or updates security
    */
-  async create(
-    portfolio: Portfolio,
-    dto: SecurityDto,
-  ): Promise<PortfolioSecurity> {
-    return await this.prisma.portfolioSecurity.create({
-      data: { ...dto, portfolioId: portfolio.id },
+  async upsert(
+    { portfolioId, securityUuid: uuid }: SecurityParams,
+    {
+      name,
+      currencyCode,
+      isin,
+      wkn,
+      symbol,
+      active,
+      note,
+    }: CreateUpdateSecurityDto,
+  ) {
+    return await this.prisma.portfolioSecurity.upsert({
+      create: {
+        uuid,
+        name,
+        isin,
+        wkn,
+        symbol,
+        active,
+        note,
+        currency: { connect: { code: currencyCode } },
+        portfolio: { connect: { id: portfolioId } },
+      },
+      update: {
+        name,
+        isin,
+        wkn,
+        symbol,
+        active,
+        note,
+        currency: { connect: { code: currencyCode } },
+      },
+      where: { portfolioId_uuid: { portfolioId, uuid } },
     })
   }
 
@@ -49,9 +77,12 @@ export class SecuritiesService {
    * Gets security identified by parameters
    * or throws NotFoundException
    */
-  async getOne(params: SecurityParams) {
+  async getOne({ portfolioId, securityUuid: uuid }: SecurityParams) {
     const security = await this.prisma.portfolioSecurity.findFirst({
-      where: { id: params.securityId, portfolio: { id: params.portfolioId } },
+      where: {
+        uuid,
+        portfolio: { id: portfolioId },
+      },
       include: {
         prices: {
           orderBy: { date: 'desc' },
@@ -75,9 +106,13 @@ export class SecuritiesService {
    * Gets security identified by parameters
    * or throws NotFoundException
    */
-  async getOneOfUser(securityId: number, userId: number) {
+  async getOneOfUser(
+    portfolioId: number,
+    securityUuid: string,
+    userId: number,
+  ) {
     const security = await this.prisma.portfolioSecurity.findFirst({
-      where: { id: securityId, portfolio: { userId } },
+      where: { portfolioId, uuid: securityUuid, portfolio: { userId } },
       include: {
         prices: {
           orderBy: { date: 'desc' },
@@ -103,13 +138,18 @@ export class SecuritiesService {
    */
   async update(
     params: SecurityParams,
-    dto: SecurityDto,
+    dto: CreateUpdateSecurityDto,
   ): Promise<PortfolioSecurity> {
     await this.getOne(params)
 
     return await this.prisma.portfolioSecurity.update({
       data: dto,
-      where: { id: params.securityId },
+      where: {
+        portfolioId_uuid: {
+          portfolioId: params.portfolioId,
+          uuid: params.securityUuid,
+        },
+      },
     })
   }
 
@@ -118,7 +158,7 @@ export class SecuritiesService {
    */
   async delete(params: SecurityParams): Promise<void> {
     const affected = await this.prisma
-      .$executeRaw`DELETE FROM portfolios_securities WHERE id=${params.securityId} AND portfolio_id=${params.portfolioId}`
+      .$executeRaw`DELETE FROM portfolios_securities WHERE uuid=${params.securityUuid} AND portfolio_id=${params.portfolioId}`
 
     if (affected == 0) {
       throw new NotFoundException('Security not found')

@@ -1,16 +1,14 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { Transaction, TransactionUnit } from '@prisma/client'
 
 import { AccountsService } from '../accounts/accounts.service'
-import { Portfolio } from '../portfolio.entity'
 import { PortfolioParams } from '../portfolio.params'
 import { SecuritiesService } from '../securities/securities.service'
 import { TransactionParams } from './transaction.params'
-import { TransactionDto, TransactionUnitDto } from './transactions.dto'
+import {
+  CreateUpdateTransactionDto,
+  TransactionUnitDto,
+} from './transactions.dto'
 import { PrismaService } from '../../prisma.service'
 
 @Injectable()
@@ -22,111 +20,72 @@ export class TransactionsService {
   ) {}
 
   /**
-   * Make sure referenced entities exist and belong to this portfolio
+   * Creates or updates transaction
    */
-  private async checkOwnerOfReferences(
-    portfolioId: number,
-    dto: TransactionDto,
-  ) {
-    try {
-      await this.accountsService.getOne({
-        portfolioId,
-        accountId: dto.accountId,
-      })
-      if (dto.partnerTransaction) {
-        await this.accountsService.getOne({
-          portfolioId,
-          accountId: dto.partnerTransaction.accountId,
-        })
-      }
-    } catch (e) {
-      throw new BadRequestException('Account not found')
-    }
+  async upsert(
+    { portfolioId, transactionUuid: uuid }: TransactionParams,
+    dto: CreateUpdateTransactionDto,
+  ): Promise<Transaction & { units: TransactionUnit[] }> {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { portfolioId_uuid: { portfolioId, uuid } },
+    })
 
-    try {
-      if (dto.securityId) {
-        await this.securitiesService.getOne({
-          portfolioId,
-          securityId: dto.securityId,
-        })
-      }
-      if (dto.partnerTransaction && dto.partnerTransaction.securityId) {
-        await this.securitiesService.getOne({
-          portfolioId,
-          securityId: dto.partnerTransaction.securityId,
-        })
-      }
-    } catch (e) {
-      throw new BadRequestException('Security not found')
+    if (transaction) {
+      return await this.update(portfolioId, uuid, dto)
+    } else {
+      return await this.create(portfolioId, uuid, dto)
     }
   }
 
-  /**
-   * Creates transaction
-   */
   async create(
-    portfolio: Portfolio,
-    dto: TransactionDto,
-  ): Promise<Transaction & { units: TransactionUnit[] }> {
-    const hasPartnerTransaction = !!dto.partnerTransaction
-
-    await this.checkOwnerOfReferences(portfolio.id, dto)
-
-    const {
+    portfolioId: number,
+    uuid: string,
+    {
+      accountUuid,
       type,
       datetime,
-      note,
-      accountId,
-      securityId,
-      shares,
+      partnerTransactionUuid,
       units,
-      partnerTransaction,
-    } = dto
+      shares,
+      portfolioSecurityUuid,
+      note,
+    }: CreateUpdateTransactionDto,
+  ) {
+    // let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
+    // if (partnerTransactionUuid) {
+    //   partnerTransaction = {
+    //     connect: {
+    //       portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
+    //     },
+    //   }
+    // }
 
-    let partnerTransactionId = null
+    // let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
+    // if (securityUuid) {
+    //   portfolioSecurity = {
+    //     connect: { portfolioId_uuid: { portfolioId, uuid: securityUuid } },
+    //   }
+    // }
 
-    if (hasPartnerTransaction) {
-      const createdPartnerTransaction = await this.prisma.transaction.create({
-        data: {
-          type,
-          datetime,
-          note,
-          accountId: partnerTransaction.accountId,
-          securityId: partnerTransaction.securityId,
-          shares: partnerTransaction.shares,
-          units: { createMany: { data: partnerTransaction.units } },
-          portfolioId: portfolio.id,
-        },
-      })
-
-      partnerTransactionId = createdPartnerTransaction.id
-    }
-
-    // Save the actual transaction
-    const transaction = await this.prisma.transaction.create({
+    return await this.prisma.transaction.create({
       data: {
+        uuid,
         type,
         datetime,
         note,
-        accountId,
-        securityId,
         shares,
+        account: {
+          connect: {
+            portfolioId_uuid: { portfolioId, uuid: accountUuid },
+          },
+        },
+        partnerTransactionUuid,
+        portfolioSecurityUuid,
+        portfolio: { connect: { id: portfolioId } },
         units: { createMany: { data: units } },
-        portfolioId: portfolio.id,
-        partnerTransactionId,
       },
       include: { units: true },
     })
-
-    if (hasPartnerTransaction) {
-      // Save id of transaction in partner transaction
-      await this.prisma.transaction.update({
-        data: { partnerTransactionId: transaction.id },
-        where: { id: partnerTransactionId },
-      })
-    }
-
-    return transaction
   }
 
   /**
@@ -143,11 +102,10 @@ export class TransactionsService {
    * Gets transaction of portfolio identified by parameters
    * or throws NotFoundException
    */
-  async getOne({ transactionId, portfolioId }: TransactionParams) {
-    const transaction = await this.prisma.transaction.findFirst({
-      where: { id: transactionId, portfolioId },
+  async getOne({ transactionUuid, portfolioId }: TransactionParams) {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { portfolioId_uuid: { portfolioId, uuid: transactionUuid } },
       include: {
-        partnerTransaction: { include: { units: true } },
         units: true,
       },
     })
@@ -163,20 +121,24 @@ export class TransactionsService {
    * Create, update and delete units of transaction
    */
   private async createUpdateDeleteUnits(
+    portfolioId: number,
+    transactionUuid: string,
     unitDtos: TransactionUnitDto[],
-    transactionId: number,
   ) {
     // Delete units which are not in the DTO
     await this.prisma.transactionUnit.deleteMany({
       where: {
         id: { notIn: unitDtos.map((u) => u.id) },
-        transactionId,
+        portfolioId,
+        transactionUuid,
       },
     })
 
     // Create units without id
     await this.prisma.transactionUnit.createMany({
-      data: unitDtos.filter((u) => !u.id).map((u) => ({ ...u, transactionId })),
+      data: unitDtos
+        .filter((u) => !u.id)
+        .map((u) => ({ ...u, portfolioId, transactionUuid })),
     })
 
     // Update units with id
@@ -192,60 +154,53 @@ export class TransactionsService {
    * Updates transaction identified by parameters
    * or throws NotFoundException
    */
-  async update(params: TransactionParams, dto: TransactionDto) {
-    const dtoHasPartnerTransaction = !!dto.partnerTransaction
-
-    // Check if transaction exists in portfolio
-    const transaction = await this.getOne(params)
-
-    await this.checkOwnerOfReferences(params.portfolioId, dto)
-
-    const {
+  async update(
+    portfolioId: number,
+    uuid: string,
+    {
+      accountUuid,
       type,
       datetime,
-      note,
-      accountId,
-      securityId,
-      shares,
+      partnerTransactionUuid,
       units,
-      partnerTransaction,
-    } = dto
+      shares,
+      portfolioSecurityUuid,
+      note,
+    }: CreateUpdateTransactionDto,
+  ) {
+    await this.createUpdateDeleteUnits(portfolioId, uuid, units)
 
-    // this.copyDtoToTransactions(dto, transaction, partnerTransaction)
+    // let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
+    // if (partnerTransactionUuid) {
+    //   partnerTransaction = {
+    //     connect: {
+    //       portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
+    //     },
+    //   }
+    // }
 
-    if (dtoHasPartnerTransaction) {
-      // Update the partner transaction
-      await this.prisma.transaction.update({
-        data: {
-          type,
-          datetime,
-          note,
-          accountId: partnerTransaction.accountId,
-          securityId: partnerTransaction.securityId,
-          shares: partnerTransaction.shares,
-        },
-        where: { id: transaction.partnerTransactionId },
-      })
+    // let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
+    // if (securityUuid) {
+    //   portfolioSecurity = {
+    //     connect: { portfolioId_uuid: { portfolioId, uuid: securityUuid } },
+    //   }
+    // }
 
-      await this.createUpdateDeleteUnits(
-        partnerTransaction.units,
-        transaction.partnerTransactionId,
-      )
-    }
-
-    await this.createUpdateDeleteUnits(units, transaction.id)
-
-    // Update the transaction
     return await this.prisma.transaction.update({
       data: {
         type,
         datetime,
         note,
-        accountId,
-        securityId,
         shares,
+        account: {
+          connect: {
+            portfolioId_uuid: { portfolioId, uuid: accountUuid },
+          },
+        },
+        partnerTransactionUuid,
+        portfolioSecurityUuid,
       },
-      where: { id: transaction.id },
+      where: { portfolioId_uuid: { portfolioId, uuid } },
       include: { units: true },
     })
   }
@@ -255,11 +210,11 @@ export class TransactionsService {
    * or throws NotFoundException
    */
   async delete({
-    transactionId,
+    transactionUuid,
     portfolioId,
   }: TransactionParams): Promise<void> {
     const affected = await this.prisma
-      .$executeRaw`DELETE FROM portfolios_transactions WHERE id=${transactionId} AND portfolio_id=${portfolioId}`
+      .$executeRaw`DELETE FROM portfolios_transactions WHERE uuid=${transactionUuid} AND portfolio_id=${portfolioId}`
 
     if (affected == 0) {
       throw new NotFoundException('Transaction not found')

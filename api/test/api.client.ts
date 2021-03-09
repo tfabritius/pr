@@ -71,10 +71,9 @@ export class ApiClient {
     return createResponse.body.id
   }
 
-  async createSecurity(portfolioId: number, security?): Promise<number> {
+  async createSecurity(portfolioId: number, security?): Promise<string> {
     security = security ?? {
       name: 'Test security',
-      uuid: '11111111-1111-1111-1111-111111111111',
       note: '',
       currencyCode: 'EUR',
       isin: '',
@@ -92,10 +91,10 @@ export class ApiClient {
         `Failed to create security: ${JSON.stringify(createResponse.body)}`,
       )
     }
-    return createResponse.body.id
+    return createResponse.body.uuid
   }
 
-  async createAccount(portfolioId: number, account): Promise<number> {
+  async createAccount(portfolioId: number, account): Promise<string> {
     const createResponse = await this.post(
       `/portfolios/${portfolioId}/accounts`,
       account,
@@ -106,38 +105,36 @@ export class ApiClient {
         `Failed to create account: : ${JSON.stringify(createResponse.body)}`,
       )
     }
-    return createResponse.body.id
+    return createResponse.body.uuid
   }
 
   async createTestDepositSecuritiesAccounts(
-    portfolioId,
-  ): Promise<[number, number]> {
+    portfolioId: number,
+  ): Promise<[string, string]> {
     const testDepositAccount = {
       type: 'deposit',
       name: 'Test deposit account',
-      uuid: '11111111-1111-1111-1111-111111111111',
       note: '',
       currencyCode: 'EUR',
     }
-    const testDepositAccountId = await this.createAccount(
+    const testDepositAccountUuid = await this.createAccount(
       portfolioId,
       testDepositAccount,
     )
     const testSecuritiesAccount = {
       type: 'securities',
       name: 'Test securities account',
-      uuid: '11111111-1111-1111-1111-111111111111',
       note: '',
-      referenceAccountId: testDepositAccountId,
+      referenceAccountUuid: testDepositAccountUuid,
     }
-    const testSecuritiesAccountId = await this.createAccount(
+    const testSecuritiesAccountUuid = await this.createAccount(
       portfolioId,
       testSecuritiesAccount,
     )
-    return [testDepositAccountId, testSecuritiesAccountId]
+    return [testDepositAccountUuid, testSecuritiesAccountUuid]
   }
 
-  async createTransaction(portfolioId: number, transaction): Promise<number> {
+  async createTransaction(portfolioId: number, transaction): Promise<string> {
     const createResponse = await this.post(
       `/portfolios/${portfolioId}/transactions`,
       transaction,
@@ -148,7 +145,7 @@ export class ApiClient {
         `Failed to create transaction: ${JSON.stringify(createResponse.body)}`,
       )
     }
-    return createResponse.body.id
+    return createResponse.body.uuid
   }
 
   public async get(url: string) {

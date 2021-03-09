@@ -3,7 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class PortfolioSecurity {
   @Field(() => Int)
-  id: number
+  portfolioId: number
 
   name: string
 

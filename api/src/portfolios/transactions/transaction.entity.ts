@@ -83,14 +83,14 @@ registerEnumType(TransactionType, { name: 'TransactionType' })
 @ObjectType()
 export class PortfolioTransaction {
   /**
-   * Primary key
+   * UUID of transaction
    */
-  id: number
+  uuid: string
 
   /**
-   * ID of account
+   * UUID of account
    */
-  accountId: number
+  accountUuid: string
 
   /**
    * Type of transaction
@@ -123,10 +123,10 @@ export class PortfolioTransaction {
   shares: Prisma.Decimal
 
   /**
-   * ID of affected security
+   * UUID of affected security
    * (only if transaction belongs to securities account)
    */
-  securityId: number
+  portfolioSecurityUuid: string
 
   /**
    * User-defined comment to transaction
