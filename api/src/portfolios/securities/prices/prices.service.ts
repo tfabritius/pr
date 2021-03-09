@@ -7,7 +7,7 @@ import { PricesQuery } from './prices.query'
 import { PrismaService } from '../../../prisma.service'
 
 @Injectable()
-export class SecuritiesPricesService {
+export class PortfolioSecurityPricesService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
