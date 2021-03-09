@@ -20,7 +20,6 @@ import {
 
 import { DefaultAuthGuard } from '../../../auth/default-auth.guard'
 import { PortfolioGuard } from '../../portfolio.guard'
-import { PortfolioSecuritiesService } from '../securities.service'
 import { PortfolioSecurityParams } from '../security.params'
 import { PortfolioSecurityPrice } from './price.entity'
 import { CreateUpdatePortfolioSecurityPriceDto } from '../../dto/CreateUpdatePortfolioSecurityPrice.dto'
@@ -36,10 +35,7 @@ import { PricesQuery } from './prices.query'
 @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class SecuritiesPricesController {
-  constructor(
-    public securitiesService: PortfolioSecuritiesService,
-    public pricesService: SecuritiesPricesService,
-  ) {}
+  constructor(public portfolioSecuritiesPrices: SecuritiesPricesService) {}
 
   /**
    * Creates or updates prices of security
@@ -51,7 +47,7 @@ export class SecuritiesPricesController {
     @Body(new ParseArrayPipe({ items: CreateUpdatePortfolioSecurityPriceDto }))
     dtos: CreateUpdatePortfolioSecurityPriceDto[],
   ): Promise<PortfolioSecurityPrice[]> {
-    return this.pricesService.upsert(params, dtos)
+    return this.portfolioSecuritiesPrices.upsert(params, dtos)
   }
 
   /**
@@ -62,6 +58,6 @@ export class SecuritiesPricesController {
     @Param() params: PortfolioSecurityParams,
     @Query() query: PricesQuery,
   ): Promise<PortfolioSecurityPrice[]> {
-    return await this.pricesService.getAll(params, query)
+    return await this.portfolioSecuritiesPrices.getAll(params, query)
   }
 }

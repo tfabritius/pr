@@ -24,7 +24,6 @@ import { PortfolioGuard } from '../portfolio.guard'
 import { CreateUpdateAccountDto } from '../dto/CreateUpdateAccount.dto'
 import { AccountParams } from './account.params'
 import { AccountsService } from './accounts.service'
-import { AccountsKpisService } from './accounts.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
 import { generateUuid } from '../../utils/uuid'
 
@@ -37,10 +36,7 @@ import { generateUuid } from '../../utils/uuid'
 @ApiNotFoundResponse({ description: 'Portfolio or account not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class AccountsController {
-  constructor(
-    public service: AccountsService,
-    private readonly kpisService: AccountsKpisService,
-  ) {}
+  constructor(public accounts: AccountsService) {}
 
   /**
    * Creates account
@@ -50,7 +46,7 @@ export class AccountsController {
     @Param() params: PortfolioParams,
     @Body() dto: CreateUpdateAccountDto,
   ): Promise<Account> {
-    return this.service.upsert({ ...params, accountUuid: generateUuid() }, dto)
+    return this.accounts.upsert({ ...params, accountUuid: generateUuid() }, dto)
   }
 
   /**
@@ -58,7 +54,7 @@ export class AccountsController {
    */
   @Get()
   async readAll(@Param() params: PortfolioParams): Promise<Account[]> {
-    return await this.service.getAll(params)
+    return await this.accounts.getAll(params)
   }
 
   /**
@@ -66,7 +62,7 @@ export class AccountsController {
    */
   @Get(':accountUuid')
   async readOne(@Param() params: AccountParams): Promise<Account> {
-    return await this.service.getOne(params)
+    return await this.accounts.getOne(params)
   }
 
   /**
@@ -77,7 +73,7 @@ export class AccountsController {
     @Param() params: AccountParams,
     @Body() dto: CreateUpdateAccountDto,
   ): Promise<Account> {
-    return this.service.upsert(params, dto)
+    return this.accounts.upsert(params, dto)
   }
 
   /**
@@ -86,6 +82,6 @@ export class AccountsController {
   @Delete(':accountUuid')
   @HttpCode(204)
   async delete(@Param() params: AccountParams) {
-    await this.service.delete(params)
+    await this.accounts.delete(params)
   }
 }
