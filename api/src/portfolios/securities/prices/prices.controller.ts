@@ -20,8 +20,8 @@ import {
 
 import { DefaultAuthGuard } from '../../../auth/default-auth.guard'
 import { PortfolioGuard } from '../../portfolio.guard'
-import { SecuritiesService } from '../securities.service'
-import { SecurityParams } from '../security.params'
+import { PortfolioSecuritiesService } from '../securities.service'
+import { PortfolioSecurityParams } from '../security.params'
 import { PortfolioSecurityPrice } from './price.entity'
 import { CreateUpdatePortfolioSecurityPriceDto } from '../../dto/CreateUpdatePortfolioSecurityPrice.dto'
 import { SecuritiesPricesService } from './prices.service'
@@ -37,7 +37,7 @@ import { PricesQuery } from './prices.query'
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class SecuritiesPricesController {
   constructor(
-    public securitiesService: SecuritiesService,
+    public securitiesService: PortfolioSecuritiesService,
     public pricesService: SecuritiesPricesService,
   ) {}
 
@@ -47,7 +47,7 @@ export class SecuritiesPricesController {
   @Patch()
   @ApiBody({ type: CreateUpdatePortfolioSecurityPriceDto, isArray: true })
   async upsert(
-    @Param() params: SecurityParams,
+    @Param() params: PortfolioSecurityParams,
     @Body(new ParseArrayPipe({ items: CreateUpdatePortfolioSecurityPriceDto }))
     dtos: CreateUpdatePortfolioSecurityPriceDto[],
   ): Promise<PortfolioSecurityPrice[]> {
@@ -59,7 +59,7 @@ export class SecuritiesPricesController {
    */
   @Get()
   async readAll(
-    @Param() params: SecurityParams,
+    @Param() params: PortfolioSecurityParams,
     @Query() query: PricesQuery,
   ): Promise<PortfolioSecurityPrice[]> {
     return await this.pricesService.getAll(params, query)

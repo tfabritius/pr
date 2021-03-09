@@ -2,19 +2,19 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { PortfolioSecurity } from '@prisma/client'
 
 import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
-import { SecurityParams } from './security.params'
+import { PortfolioSecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
 
 @Injectable()
-export class SecuritiesService {
+export class PortfolioSecuritiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Creates or updates security
    */
   async upsert(
-    { portfolioId, securityUuid: uuid }: SecurityParams,
+    { portfolioId, securityUuid: uuid }: PortfolioSecurityParams,
     {
       name,
       currencyCode,
@@ -77,7 +77,7 @@ export class SecuritiesService {
    * Gets security identified by parameters
    * or throws NotFoundException
    */
-  async getOne({ portfolioId, securityUuid: uuid }: SecurityParams) {
+  async getOne({ portfolioId, securityUuid: uuid }: PortfolioSecurityParams) {
     const security = await this.prisma.portfolioSecurity.findFirst({
       where: {
         uuid,
@@ -137,7 +137,7 @@ export class SecuritiesService {
    * or throws NotFoundException
    */
   async update(
-    params: SecurityParams,
+    params: PortfolioSecurityParams,
     dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
     await this.getOne(params)
@@ -156,7 +156,7 @@ export class SecuritiesService {
   /**
    * Deletes security identified by parameters
    */
-  async delete(params: SecurityParams): Promise<void> {
+  async delete(params: PortfolioSecurityParams): Promise<void> {
     const affected = await this.prisma
       .$executeRaw`DELETE FROM portfolios_securities WHERE uuid=${params.securityUuid} AND portfolio_id=${params.portfolioId}`
 

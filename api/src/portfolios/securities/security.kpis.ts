@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Prisma } from '@prisma/client'
 import { Transform } from 'class-transformer'
 
-export class SecurityKpis {
+export class PortfolioSecurityKpis {
   @Transform(({ value }: { value: Prisma.Decimal }) => value.toString(), {
     toPlainOnly: true,
   })

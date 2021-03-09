@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
-import { SecurityParams } from '../security.params'
+import { PortfolioSecurityParams } from '../security.params'
 import { CreateUpdatePortfolioSecurityPriceDto } from '../../dto/CreateUpdatePortfolioSecurityPrice.dto'
 import { PricesQuery } from './prices.query'
 import { PrismaService } from '../../../prisma.service'
@@ -14,7 +14,7 @@ export class SecuritiesPricesService {
    * Creates or updates prices of security
    */
   async upsert(
-    { portfolioId, securityUuid }: SecurityParams,
+    { portfolioId, securityUuid }: PortfolioSecurityParams,
     dtos: CreateUpdatePortfolioSecurityPriceDto[],
   ) {
     const prices: { date: string; value: Prisma.Decimal }[] = dtos.map((p) => ({
@@ -41,7 +41,7 @@ export class SecuritiesPricesService {
    * Gets prices of a security
    */
   async getAll(
-    { portfolioId, securityUuid }: SecurityParams,
+    { portfolioId, securityUuid }: PortfolioSecurityParams,
     query: PricesQuery,
   ) {
     const dateFilter: Prisma.PortfolioSecurityPriceWhereInput[] = []

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
-import { SecurityKpis } from './security.kpis'
+import { PortfolioSecurityKpis } from './security.kpis'
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
 import { PortfolioSecurity } from './security.entity'
 import { PrismaService } from '../../prisma.service'
@@ -16,8 +16,8 @@ export class SecuritiesKpisService {
   public async getKpis(
     security: PortfolioSecurity,
     { baseCurrencyCode }: { baseCurrencyCode: string },
-  ): Promise<SecurityKpis> {
-    const kpis = new SecurityKpis()
+  ): Promise<PortfolioSecurityKpis> {
+    const kpis = new PortfolioSecurityKpis()
 
     kpis.shares = await this.getShares(security)
     kpis.quote = await this.getQuote(security)
