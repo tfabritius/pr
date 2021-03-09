@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { SecuritiesPricesService } from './prices.service'
-import { SecuritiesPricesController } from './prices.controller'
+import { PortfolioSecurityPricesService } from './prices.service'
+import { PortfolioSecurityPricesController } from './prices.controller'
 import { PortfoliosModule } from '../../portfolios.module'
 import { PortfolioSecuritiesModule } from '../securities.module'
 import { PrismaService } from '../../../prisma.service'
@@ -11,8 +11,8 @@ import { PrismaService } from '../../../prisma.service'
     forwardRef(() => PortfoliosModule),
     forwardRef(() => PortfolioSecuritiesModule),
   ],
-  providers: [SecuritiesPricesService, PrismaService],
-  controllers: [SecuritiesPricesController],
-  exports: [SecuritiesPricesService],
+  providers: [PortfolioSecurityPricesService, PrismaService],
+  controllers: [PortfolioSecurityPricesController],
+  exports: [PortfolioSecurityPricesService],
 })
-export class SecuritiesPricesModule {}
+export class PortfolioSecurityPricesModule {}
