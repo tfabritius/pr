@@ -8,14 +8,17 @@ export class CreateUpdateSecurityDto {
   @IsString()
   readonly currencyCode: string
 
+  @IsOptional()
   @IsString()
-  readonly isin: string
+  readonly isin?: string
 
+  @IsOptional()
   @IsString()
-  readonly wkn: string
+  readonly wkn?: string
 
+  @IsOptional()
   @IsString()
-  readonly symbol: string
+  readonly symbol?: string
 
   @IsBoolean()
   readonly active: boolean = true

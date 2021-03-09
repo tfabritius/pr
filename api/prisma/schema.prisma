@@ -155,9 +155,9 @@ model PortfolioSecurity {
   name         String                   @db.VarChar
   uuid         String                   @db.Uuid
   currencyCode String                   @map("currency_code") @db.Char(3)
-  isin         String                   @db.VarChar
-  wkn          String                   @db.VarChar
-  symbol       String                   @db.VarChar
+  isin         String                   @default("") @db.VarChar
+  wkn          String                   @default("") @db.VarChar
+  symbol       String                   @default("") @db.VarChar
   active       Boolean
   note         String                   @default("") @db.VarChar
   portfolioId  Int                      @map("portfolio_id")
