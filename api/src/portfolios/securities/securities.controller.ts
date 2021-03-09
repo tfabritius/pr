@@ -21,8 +21,8 @@ import {
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
 import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
-import { SecurityParams } from './security.params'
-import { SecuritiesService } from './securities.service'
+import { PortfolioSecurityParams } from './security.params'
+import { PortfolioSecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
 import { PortfolioSecurity } from './security.entity'
@@ -36,9 +36,9 @@ import { generateUuid } from '../../utils/uuid'
 @ApiBadRequestResponse({ description: 'Bad request' })
 @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-export class SecuritiesController {
+export class PortfolioSecuritiesController {
   constructor(
-    public securitiesService: SecuritiesService,
+    public securitiesService: PortfolioSecuritiesService,
     private readonly kpisService: SecuritiesKpisService,
   ) {}
 
@@ -70,7 +70,9 @@ export class SecuritiesController {
    * Gets security
    */
   @Get(':securityUuid')
-  async readOne(@Param() params: SecurityParams): Promise<PortfolioSecurity> {
+  async readOne(
+    @Param() params: PortfolioSecurityParams,
+  ): Promise<PortfolioSecurity> {
     return await this.securitiesService.getOne(params)
   }
 
@@ -79,7 +81,7 @@ export class SecuritiesController {
    */
   @Put(':securityUuid')
   async update(
-    @Param() params: SecurityParams,
+    @Param() params: PortfolioSecurityParams,
     @Body() dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
     return this.securitiesService.upsert(params, dto)
@@ -90,7 +92,7 @@ export class SecuritiesController {
    */
   @Delete(':securityUuid')
   @HttpCode(204)
-  async delete(@Param() params: SecurityParams) {
+  async delete(@Param() params: PortfolioSecurityParams) {
     await this.securitiesService.delete(params)
   }
 }

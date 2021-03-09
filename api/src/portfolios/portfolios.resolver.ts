@@ -10,7 +10,7 @@ import {
 
 import { Portfolio } from './portfolio.entity'
 import { PortfoliosService } from './portfolios.service'
-import { SecuritiesService } from './securities/securities.service'
+import { PortfolioSecuritiesService } from './securities/securities.service'
 import { GqlAuthGuard } from '../auth/gql-auth.guard'
 import { AuthUser } from '../auth/auth.decorator'
 import { User } from '../auth/users/user.entity'
@@ -21,7 +21,7 @@ import { PortfolioSecurity } from './securities/security.entity'
 export class PortfoliosResolver {
   constructor(
     private portfoliosService: PortfoliosService,
-    private securitiesService: SecuritiesService,
+    private securitiesService: PortfolioSecuritiesService,
   ) {}
 
   @Query(() => [Portfolio])

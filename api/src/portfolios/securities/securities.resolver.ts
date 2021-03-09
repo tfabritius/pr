@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql'
 
 import { PortfolioSecurity } from './security.entity'
-import { SecuritiesService } from './securities.service'
+import { PortfolioSecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { AuthUser } from '../../auth/auth.decorator'
 import { User } from '../../auth/users/user.entity'
@@ -17,9 +17,9 @@ import { GqlAuthGuard } from '../../auth/gql-auth.guard'
 
 @Resolver(() => PortfolioSecurity)
 @UseGuards(GqlAuthGuard)
-export class SecuritiesResolver {
+export class PortfolioSecuritiesResolver {
   constructor(
-    private securitiesService: SecuritiesService,
+    private securitiesService: PortfolioSecuritiesService,
     private securitiesKpisService: SecuritiesKpisService,
   ) {}
 

@@ -3,7 +3,7 @@ import { Transaction, TransactionUnit } from '@prisma/client'
 
 import { AccountsService } from '../accounts/accounts.service'
 import { PortfolioParams } from '../portfolio.params'
-import { SecuritiesService } from '../securities/securities.service'
+import { PortfolioSecuritiesService } from '../securities/securities.service'
 import { TransactionParams } from './transaction.params'
 import {
   CreateUpdateTransactionDto,
@@ -16,7 +16,7 @@ export class TransactionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly accountsService: AccountsService,
-    private readonly securitiesService: SecuritiesService,
+    private readonly securitiesService: PortfolioSecuritiesService,
   ) {}
 
   /**
