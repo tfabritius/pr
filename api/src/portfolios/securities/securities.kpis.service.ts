@@ -46,7 +46,10 @@ export class SecuritiesKpisService {
       sum: { shares },
     } = await this.prisma.transaction.aggregate({
       sum: { shares: true },
-      where: { securityId: security.id },
+      where: {
+        portfolioId: security.portfolioId,
+        portfolioSecurityUuid: security.uuid,
+      },
     })
 
     if (shares === null) return new Prisma.Decimal(0)
@@ -58,7 +61,10 @@ export class SecuritiesKpisService {
    */
   private async getQuote(security: PortfolioSecurity): Promise<Prisma.Decimal> {
     const price = await this.prisma.portfolioSecurityPrice.findFirst({
-      where: { securityId: security.id },
+      where: {
+        portfolioId: security.portfolioId,
+        portfolioSecurityUuid: security.uuid,
+      },
       orderBy: { date: 'desc' },
       take: 1,
     })

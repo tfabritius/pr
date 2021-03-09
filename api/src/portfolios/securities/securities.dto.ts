@@ -1,24 +1,9 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsUUID,
-} from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
-export class SecurityIdDto {
-  @IsNumber()
-  readonly id: number
-}
-
-export class SecurityDto {
+export class CreateUpdateSecurityDto {
   @IsString()
   @IsNotEmpty()
   readonly name: string
-
-  @IsString()
-  @IsUUID()
-  readonly uuid: string
 
   @IsString()
   readonly currencyCode: string
@@ -35,6 +20,7 @@ export class SecurityDto {
   @IsBoolean()
   readonly active: boolean = true
 
+  @IsOptional()
   @IsString()
-  readonly note: string
+  readonly note?: string
 }

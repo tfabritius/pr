@@ -42,7 +42,12 @@ export class AccountsKpisService {
   private async getDepositBalance(account: Account): Promise<Prisma.Decimal> {
     const { sum } = await this.prisma.transactionUnit.aggregate({
       sum: { amount: true },
-      where: { transaction: { accountId: account.id } },
+      where: {
+        transaction: {
+          portfolioId: account.portfolioId,
+          accountUuid: account.uuid,
+        },
+      },
     })
     return sum.amount
   }

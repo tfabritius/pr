@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Req,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -21,12 +20,13 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { SecurityDto } from './securities.dto'
+import { CreateUpdateSecurityDto } from './securities.dto'
 import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
 import { PortfolioSecurity } from './security.entity'
+import { generateUuid } from '../../utils/uuid'
 
 @Controller('portfolios/:portfolioId/securities')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -48,10 +48,12 @@ export class SecuritiesController {
   @Post()
   async create(
     @Param() params: PortfolioParams,
-    @Body() securityDto: SecurityDto,
-    @Req() req,
+    @Body() dto: CreateUpdateSecurityDto,
   ): Promise<PortfolioSecurity> {
-    return this.securitiesService.create(req.portfolio, securityDto)
+    return this.securitiesService.upsert(
+      { ...params, securityUuid: generateUuid() },
+      dto,
+    )
   }
 
   /**
@@ -67,26 +69,26 @@ export class SecuritiesController {
   /**
    * Gets security
    */
-  @Get(':securityId')
+  @Get(':securityUuid')
   async readOne(@Param() params: SecurityParams): Promise<PortfolioSecurity> {
     return await this.securitiesService.getOne(params)
   }
 
   /**
-   * Updates security
+   * Creates or updates security in portfolio
    */
-  @Put(':securityId')
+  @Put(':securityUuid')
   async update(
     @Param() params: SecurityParams,
-    @Body() securityDto: SecurityDto,
+    @Body() dto: CreateUpdateSecurityDto,
   ): Promise<PortfolioSecurity> {
-    return this.securitiesService.update(params, securityDto)
+    return this.securitiesService.upsert(params, dto)
   }
 
   /**
    * Delets security
    */
-  @Delete(':securityId')
+  @Delete(':securityUuid')
   @HttpCode(204)
   async delete(@Param() params: SecurityParams) {
     await this.securitiesService.delete(params)

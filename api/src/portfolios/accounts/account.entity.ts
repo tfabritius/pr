@@ -9,7 +9,7 @@ registerEnumType(AccountType, { name: 'AccountType' })
 
 @ObjectType()
 export class Account {
-  id: number
+  portfolioId: number
 
   type: string
 
@@ -19,7 +19,7 @@ export class Account {
 
   currencyCode: string
 
-  referenceAccountId: number
+  referenceAccountUuid: string
 
   active: boolean
 

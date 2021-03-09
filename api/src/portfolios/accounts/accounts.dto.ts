@@ -2,7 +2,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateIf,
@@ -10,7 +10,7 @@ import {
 
 import { AccountType } from './account.entity'
 
-export class AccountDto {
+export class CreateUpdateAccountDto {
   @IsEnum(AccountType)
   readonly type: AccountType
 
@@ -18,21 +18,18 @@ export class AccountDto {
   @IsNotEmpty()
   readonly name: string
 
-  @IsString()
-  @IsUUID()
-  readonly uuid: string
-
   @ValidateIf((o) => o.type === AccountType.DEPOSIT)
   @IsString()
   readonly currencyCode: string
 
   @ValidateIf((o) => o.type === AccountType.SECURITIES)
-  @IsNumber()
-  readonly referenceAccountId: number
+  @IsUUID()
+  readonly referenceAccountUuid: string
 
   @IsBoolean()
   readonly active: boolean = true
 
+  @IsOptional()
   @IsString()
-  readonly note: string
+  readonly note?: string
 }

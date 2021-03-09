@@ -39,21 +39,21 @@ enum TransactionUnitType {
 }
 
 model Account {
-  id                  Int           @id @default(autoincrement())
-  type                AccountType
-  name                String        @db.VarChar
-  uuid                String        @db.Uuid
-  currencyCode        String?       @map("currency_code") @db.Char(3)
-  referenceAccountId  Int?          @map("reference_account_id")
-  active              Boolean
-  note                String        @db.VarChar
-  portfolioId         Int           @map("portfolio_id")
-  currency            Currency?     @relation("accounts_currency", fields: [currencyCode], references: [code])
-  portfolios          Portfolio     @relation(fields: [portfolioId], references: [id])
-  referenceAccount    Account?      @relation("accounts_reference_accounts", fields: [referenceAccountId], references: [id])
-  referencingAccounts Account[]     @relation("accounts_reference_accounts")
-  transactions        Transaction[]
+  uuid                 String        @db.Uuid
+  type                 AccountType
+  name                 String        @db.VarChar
+  currencyCode         String?       @map("currency_code") @db.Char(3)
+  referenceAccountUuid String?       @map("reference_account_uuid") @db.Uuid
+  active               Boolean
+  note                 String        @default("") @db.VarChar
+  portfolioId          Int           @map("portfolio_id")
+  currency             Currency?     @relation("accounts_currency", fields: [currencyCode], references: [code])
+  portfolio            Portfolio     @relation(fields: [portfolioId], references: [id])
+  // referenceAccount     Account?      @relation("accounts_reference_accounts", fields: [portfolioId, referenceAccountUuid], references: [portfolioId, uuid])
+  // referencingAccounts  Account[]     @relation("accounts_reference_accounts")
+  transactions         Transaction[]
 
+  @@id([portfolioId, uuid])
   @@index([portfolioId])
   @@map("portfolios_accounts")
 }
@@ -152,7 +152,6 @@ model Portfolio {
 }
 
 model PortfolioSecurity {
-  id           Int                      @id @default(autoincrement())
   name         String                   @db.VarChar
   uuid         String                   @db.Uuid
   currencyCode String                   @map("currency_code") @db.Char(3)
@@ -160,25 +159,27 @@ model PortfolioSecurity {
   wkn          String                   @db.VarChar
   symbol       String                   @db.VarChar
   active       Boolean
-  note         String                   @db.VarChar
+  note         String                   @default("") @db.VarChar
   portfolioId  Int                      @map("portfolio_id")
   currency     Currency                 @relation(fields: [currencyCode], references: [code])
   portfolio    Portfolio                @relation(fields: [portfolioId], references: [id])
   prices       PortfolioSecurityPrice[]
-  transactions Transaction[]
+  // transactions Transaction[]
 
+  @@id([portfolioId, uuid])
   @@index([portfolioId])
   @@map("portfolios_securities")
 }
 
 model PortfolioSecurityPrice {
-  securityId        Int               @map("security_id")
-  date              DateTime          @db.Date
-  value             Decimal           @db.Decimal(16, 8)
-  portfolioSecurity PortfolioSecurity @relation(fields: [securityId], references: [id])
+  portfolioId           Int               @map("portfolio_id")
+  portfolioSecurityUuid String            @map("portfolio_security_uuid") @db.Uuid
+  date                  DateTime          @db.Date
+  value                 Decimal           @db.Decimal(16, 8)
+  portfolioSecurity     PortfolioSecurity @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid])
 
-  @@id([securityId, date])
-  @@index([securityId])
+  @@id([portfolioId, portfolioSecurityUuid, date])
+  @@index([portfolioId, portfolioSecurityUuid])
   @@map("portfolios_securities_prices")
 }
 
@@ -278,25 +279,27 @@ model Taxonomy {
 }
 
 model Transaction {
-  id                        Int                @id @default(autoincrement())
-  accountId                 Int                @map("account_id")
-  type                      TransactionType
-  datetime                  DateTime           @db.Timestamptz
-  partnerTransactionId      Int?               @unique @map("partner_transaction_id")
-  shares                    Decimal?           @db.Decimal(16, 8)
-  securityId                Int?               @map("security_id")
-  note                      String             @db.VarChar
-  portfolioId               Int                @map("portfolio_id")
-  account                   Account            @relation(fields: [accountId], references: [id])
-  partnerTransaction        Transaction?       @relation("transactions_partner_transaction", fields: [partnerTransactionId], references: [id])
-  partnerTransactionReverse Transaction?       @relation("transactions_partner_transaction")
-  portfolio                 Portfolio          @relation(fields: [portfolioId], references: [id])
-  portfolioSecurity         PortfolioSecurity? @relation(fields: [securityId], references: [id])
-  units                     TransactionUnit[]
+  uuid                   String            @db.Uuid
+  accountUuid            String            @map("account_uuid") @db.Uuid
+  type                   TransactionType
+  datetime               DateTime          @db.Timestamptz
+  partnerTransactionUuid String?           @map("partner_transaction_uuid") @db.Uuid
+  shares                 Decimal?          @db.Decimal(16, 8)
+  portfolioSecurityUuid  String?           @map("portfolio_security_uuid") @db.Uuid
+  note                   String            @default("") @db.VarChar
+  portfolioId            Int               @map("portfolio_id")
+  account                Account           @relation(fields: [portfolioId, accountUuid], references: [portfolioId, uuid])
+  // partnerTransaction        Transaction?      @relation("transactions_partner_transaction", fields: [portfolioId, partnerTransactionUuid], references: [portfolioId, uuid])
+  // partnerTransactionReverse Transaction?      @relation("transactions_partner_transaction")
+  portfolio              Portfolio         @relation(fields: [portfolioId], references: [id])
+  // portfolioSecurity         PortfolioSecurity? @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid])
+  units                  TransactionUnit[]
 
-  @@index([accountId])
+  @@id([portfolioId, uuid])
+  @@unique([portfolioId, partnerTransactionUuid])
   @@index([portfolioId])
-  @@index([securityId])
+  @@index([portfolioId, accountUuid])
+  @@index([portfolioId, portfolioSecurityUuid])
   @@map("portfolios_transactions")
 }
 
@@ -308,12 +311,13 @@ model TransactionUnit {
   originalAmount       Decimal?            @map("original_amount") @db.Decimal(10, 2)
   originalCurrencyCode String?             @map("original_currency_code") @db.Char(3)
   exchangeRate         Decimal?            @map("exchange_rate") @db.Decimal(16, 8)
-  transactionId        Int                 @map("transaction_id")
+  transactionUuid      String              @map("transaction_uuid") @db.Uuid
+  portfolioId          Int                 @map("portfolio_id")
   currency             Currency            @relation("transactions_units_currency", fields: [currencyCode], references: [code])
   originalCurrency     Currency?           @relation("transactions_units_original_currency", fields: [originalCurrencyCode], references: [code])
-  transaction          Transaction         @relation(fields: [transactionId], references: [id])
+  transaction          Transaction         @relation(fields: [portfolioId, transactionUuid], references: [portfolioId, uuid])
 
-  @@index([transactionId])
+  @@index([portfolioId, transactionUuid])
   @@map("portfolios_transactions_units")
 }
 

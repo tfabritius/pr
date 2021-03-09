@@ -25,10 +25,15 @@ export class SecuritiesResolver {
 
   @Query(() => PortfolioSecurity)
   async security(
-    @Args('id', { type: () => Int }) securityId: number,
+    @Args('portfolioId', { type: () => Int }) portfolioId: number,
+    @Args('uuid') securityUuid: string,
     @AuthUser() user: User,
   ) {
-    return this.securitiesService.getOneOfUser(securityId, user.id)
+    return this.securitiesService.getOneOfUser(
+      portfolioId,
+      securityUuid,
+      user.id,
+    )
   }
 
   @ResolveField(() => String)

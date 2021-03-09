@@ -2,12 +2,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Prisma } from '@prisma/client'
 import { Transform, Type } from 'class-transformer'
 import {
+  IsDate,
   IsDefined,
   IsEnum,
-  IsISO8601,
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator'
 
@@ -49,40 +50,20 @@ export class TransactionUnitDto {
   readonly exchangeRate?: Prisma.Decimal
 }
 
-class PartnerTransactionDto {
-  @IsNumber()
-  readonly accountId: number
-
-  @IsDefined()
-  @ValidateNested({ each: true })
-  @Type(() => TransactionUnitDto)
-  readonly units: TransactionUnitDto[]
-
-  @IsOptional()
-  @Transform(parseDecimal)
-  @IsValidDecimal()
-  @ApiPropertyOptional({ type: String, example: '1.0' })
-  readonly shares?: Prisma.Decimal
-
-  @IsOptional()
-  @IsNumber()
-  readonly securityId?: number
-}
-
-export class TransactionDto {
-  @IsNumber()
-  readonly accountId: number
+export class CreateUpdateTransactionDto {
+  @IsUUID()
+  readonly accountUuid: string
 
   @IsEnum(TransactionType)
   readonly type: TransactionType
 
-  @IsISO8601()
+  @Type(() => Date)
+  @IsDate()
   readonly datetime: Date
 
   @IsOptional()
-  @ValidateNested()
-  @Type(() => PartnerTransactionDto)
-  readonly partnerTransaction?: PartnerTransactionDto
+  @IsUUID()
+  readonly partnerTransactionUuid?: string
 
   @IsDefined()
   @ValidateNested({ each: true })
@@ -96,9 +77,10 @@ export class TransactionDto {
   readonly shares?: Prisma.Decimal
 
   @IsOptional()
-  @IsNumber()
-  readonly securityId?: number
+  @IsUUID()
+  readonly portfolioSecurityUuid?: string
 
+  @IsOptional()
   @IsString()
-  readonly note: string
+  readonly note?: string
 }

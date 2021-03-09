@@ -3,9 +3,11 @@
  */
 export function getObjectsWithMissingAttribute<T>(
   object: T,
+  attributesToBeRemoved?: string[],
 ): Array<[string, T]> {
   const ret = []
-  for (const missingAttribute of Object.keys(object)) {
+  attributesToBeRemoved = attributesToBeRemoved ?? Object.keys(object)
+  for (const missingAttribute of attributesToBeRemoved) {
     const objectCopy = { ...object }
     delete objectCopy[missingAttribute]
     ret.push([missingAttribute, objectCopy])

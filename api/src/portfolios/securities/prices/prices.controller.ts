@@ -27,7 +27,7 @@ import { SecurityPriceDto } from './prices.dto'
 import { SecuritiesPricesService } from './prices.service'
 import { PricesQuery } from './prices.query'
 
-@Controller('portfolios/:portfolioId/securities/:securityId/prices')
+@Controller('portfolios/:portfolioId/securities/:securityUuid/prices')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
 @ApiTags('portfolios/securities')
 @ApiBearerAuth()
@@ -47,14 +47,11 @@ export class SecuritiesPricesController {
   @Patch()
   @ApiBody({ type: SecurityPriceDto, isArray: true })
   async upsert(
-    @Param()
-    params: SecurityParams,
-
+    @Param() params: SecurityParams,
     @Body(new ParseArrayPipe({ items: SecurityPriceDto }))
     dtos: SecurityPriceDto[],
   ): Promise<PortfolioSecurityPrice[]> {
-    const security = await this.securitiesService.getOne(params)
-    return this.pricesService.upsert(security.id, dtos)
+    return this.pricesService.upsert(params, dtos)
   }
 
   /**

@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Req,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -22,11 +21,12 @@ import {
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { Account } from './account.entity'
 import { PortfolioGuard } from '../portfolio.guard'
-import { AccountDto } from './accounts.dto'
+import { CreateUpdateAccountDto } from './accounts.dto'
 import { AccountParams } from './account.params'
 import { AccountsService } from './accounts.service'
 import { AccountsKpisService } from './accounts.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
+import { generateUuid } from '../../utils/uuid'
 
 @Controller('portfolios/:portfolioId/accounts')
 @UseGuards(DefaultAuthGuard, PortfolioGuard)
@@ -48,10 +48,9 @@ export class AccountsController {
   @Post()
   async create(
     @Param() params: PortfolioParams,
-    @Body() dto: AccountDto,
-    @Req() req,
+    @Body() dto: CreateUpdateAccountDto,
   ): Promise<Account> {
-    return this.service.create(req.portfolio, dto)
+    return this.service.upsert({ ...params, accountUuid: generateUuid() }, dto)
   }
 
   /**
@@ -65,23 +64,26 @@ export class AccountsController {
   /**
    * Gets account
    */
-  @Get(':accountId')
+  @Get(':accountUuid')
   async readOne(@Param() params: AccountParams): Promise<Account> {
     return await this.service.getOne(params)
   }
 
   /**
-   * Updates account
+   * Creates or updates account
    */
-  @Put(':accountId')
-  async update(@Param() params: AccountParams, @Body() dto: AccountDto) {
-    return this.service.update(params, dto)
+  @Put(':accountUuid')
+  async update(
+    @Param() params: AccountParams,
+    @Body() dto: CreateUpdateAccountDto,
+  ): Promise<Account> {
+    return this.service.upsert(params, dto)
   }
 
   /**
    * Deletes account
    */
-  @Delete(':accountId')
+  @Delete(':accountUuid')
   @HttpCode(204)
   async delete(@Param() params: AccountParams) {
     await this.service.delete(params)

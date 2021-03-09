@@ -22,12 +22,12 @@ describe('Transactions (e2e)', () => {
   })
 
   let portfolioId: number
-  let depositAccountId: number
-  let securitiesAccountId: number
-  let securityId: number
+  let depositAccountUuid: string
+  let securitiesAccountUuid: string
+  let securityUuid: string
 
   const testTransactionMinimal = {
-    accountId: undefined,
+    accountUuid: undefined,
     type: 'Payment',
     datetime: '2020-11-01T08:00:00.000Z',
     units: [],
@@ -37,7 +37,7 @@ describe('Transactions (e2e)', () => {
   const testTransactionFull = {
     ...testTransactionMinimal,
     shares: '1.23',
-    securityId: undefined,
+    portfolioSecurityUuid: undefined,
     units: [
       {
         type: 'base',
@@ -58,12 +58,12 @@ describe('Transactions (e2e)', () => {
     portfolioId = await api.createPortfolio()
     const ids = await api.createTestDepositSecuritiesAccounts(portfolioId)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ;[depositAccountId, securitiesAccountId] = ids
-    securityId = await api.createSecurity(portfolioId)
+    ;[depositAccountUuid, securitiesAccountUuid] = ids
+    securityUuid = await api.createSecurity(portfolioId)
 
-    testTransactionMinimal.accountId = depositAccountId
-    testTransactionFull.accountId = depositAccountId
-    testTransactionFull.securityId = securityId
+    testTransactionMinimal.accountUuid = depositAccountUuid
+    testTransactionFull.accountUuid = depositAccountUuid
+    testTransactionFull.portfolioSecurityUuid = securityUuid
   })
 
   afterAll(async () => {
@@ -96,12 +96,13 @@ describe('Transactions (e2e)', () => {
 
     test.each([
       ['GET', undefined],
-      ['PUT', testTransactionMinimal],
       ['DELETE', undefined],
     ])(
       '%s .../transactions/42 returns 404 Transaction not found',
       async (method, payload) => {
-        const args: any[] = [`/portfolios/${portfolioId}/transactions/42`]
+        const args: any[] = [
+          `/portfolios/${portfolioId}/transactions/11111111-1111-1111-1111-111111111111`,
+        ]
         if (payload) {
           args.push(payload)
         }
@@ -129,7 +130,7 @@ describe('Transactions (e2e)', () => {
       },
     )
 
-    it('returns minimal transaction with id', async () => {
+    it('returns minimal transaction with uuid', async () => {
       const createResponse = await api.post(
         `/portfolios/${portfolioId}/transactions`,
         testTransactionMinimal,
@@ -137,10 +138,10 @@ describe('Transactions (e2e)', () => {
 
       expect(createResponse.status).toBe(201)
       expect(createResponse.body).toMatchObject(testTransactionMinimal)
-      expect(typeof createResponse.body.id).toBe('number')
+      expect(typeof createResponse.body.uuid).toBe('string')
     })
 
-    it('returns full transaction with id', async () => {
+    it('returns full transaction with uuid', async () => {
       const createResponse = await api.post(
         `/portfolios/${portfolioId}/transactions`,
         testTransactionFull,
@@ -148,21 +149,21 @@ describe('Transactions (e2e)', () => {
 
       expect(createResponse.status).toBe(201)
       expect(createResponse.body).toMatchObject(testTransactionFull)
-      expect(typeof createResponse.body.id).toBe('number')
+      expect(typeof createResponse.body.uuid).toBe('string')
     })
   })
 
   describe('GET/PUT/DELETE .../transactions', () => {
-    let minTransactionId: number
-    let fullTransactionId: number
+    let minTransactionUuid: string
+    let fullTransactionUuid: string
 
     beforeEach(async () => {
-      minTransactionId = await api.createTransaction(
+      minTransactionUuid = await api.createTransaction(
         portfolioId,
         testTransactionMinimal,
       )
 
-      fullTransactionId = await api.createTransaction(
+      fullTransactionUuid = await api.createTransaction(
         portfolioId,
         testTransactionFull,
       )
@@ -175,7 +176,7 @@ describe('Transactions (e2e)', () => {
       expect(response.body).toContainEqual(
         expect.objectContaining({
           ...testTransactionMinimal,
-          id: minTransactionId,
+          uuid: minTransactionUuid,
         }),
       )
     })
@@ -187,7 +188,7 @@ describe('Transactions (e2e)', () => {
       expect(response.body).toContainEqual(
         expect.objectContaining({
           ...testTransactionFull,
-          id: fullTransactionId,
+          uuid: fullTransactionUuid,
           units: expect.arrayContaining(
             testTransactionFull.units.map((u) => expect.objectContaining(u)),
           ),
@@ -195,35 +196,35 @@ describe('Transactions (e2e)', () => {
       )
     })
 
-    test('GET .../transactions/$id returns minimal transaction', async () => {
+    test('GET .../transactions/$uuid returns minimal transaction', async () => {
       const response = await api.get(
-        `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+        `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
       )
 
       expect(response.status).toBe(200)
       expect(response.body).toMatchObject(testTransactionMinimal)
     })
 
-    test('GET .../transactions/$id returns full transaction', async () => {
+    test('GET .../transactions/$uuid returns full transaction', async () => {
       const response = await api.get(
-        `/portfolios/${portfolioId}/transactions/${fullTransactionId}`,
+        `/portfolios/${portfolioId}/transactions/${fullTransactionUuid}`,
       )
 
       expect(response.status).toBe(200)
       expect(response.body).toMatchObject(testTransactionFull)
     })
 
-    describe('PUT .../transactions/$id', () => {
-      let otherSecurityId
+    describe('PUT .../transactions/$uuid', () => {
+      let otherSecurityUuid: string
       beforeAll(async () => {
-        otherSecurityId = await api.createSecurity(portfolioId)
+        otherSecurityUuid = await api.createSecurity(portfolioId)
       })
 
       it.each(getObjectsWithMissingAttribute(testTransactionMinimal))(
         'fails if attribute %p is missing',
         async (missingAttribute, transaction) => {
           const response = await api.put(
-            `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+            `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
             transaction,
           )
 
@@ -243,7 +244,7 @@ describe('Transactions (e2e)', () => {
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           changedTransaction,
         )
 
@@ -251,7 +252,7 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
@@ -259,17 +260,17 @@ describe('Transactions (e2e)', () => {
       })
 
       it('updates account of transaction', async () => {
-        const [otherAccountId] = await api.createTestDepositSecuritiesAccounts(
-          portfolioId,
-        )
+        const [
+          otherAccountUuid,
+        ] = await api.createTestDepositSecuritiesAccounts(portfolioId)
 
         const changedTransaction = {
           ...testTransactionMinimal,
-          accountId: otherAccountId,
+          accountUuid: otherAccountUuid,
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           changedTransaction,
         )
 
@@ -277,7 +278,7 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
@@ -288,11 +289,11 @@ describe('Transactions (e2e)', () => {
         const changedTransaction = {
           ...testTransactionMinimal,
           shares: '5.55',
-          securityId: otherSecurityId,
+          portfolioSecurityUuid: otherSecurityUuid,
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           changedTransaction,
         )
 
@@ -300,7 +301,7 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
@@ -311,11 +312,11 @@ describe('Transactions (e2e)', () => {
         const changedTransaction = {
           ...testTransactionFull,
           shares: '11.22',
-          securityId: otherSecurityId,
+          portfolioSecurityUuid: otherSecurityUuid,
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           changedTransaction,
         )
 
@@ -323,7 +324,7 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
@@ -337,7 +338,7 @@ describe('Transactions (e2e)', () => {
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           changedTransaction,
         )
 
@@ -345,7 +346,7 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
@@ -359,7 +360,7 @@ describe('Transactions (e2e)', () => {
         }
 
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           changedTransaction,
         )
 
@@ -367,7 +368,7 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.body).toMatchObject(changedTransaction)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
 
         expect(getResponse.status).toBe(200)
@@ -377,35 +378,35 @@ describe('Transactions (e2e)', () => {
         )
       })
 
-      it('does not update "id"', async () => {
+      it('does not update "uuid"', async () => {
         const updateResponse = await api.put(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
           {
             ...testTransactionMinimal,
-            id: minTransactionId + 666,
+            uuid: '11111111-1111-1111-1111-111111111111',
           },
         )
 
         expect(updateResponse.status).toBe(200)
-        expect(updateResponse.body.id).toBe(minTransactionId)
+        expect(updateResponse.body.uuid).toBe(minTransactionUuid)
 
         const getResponse = await api.get(
-          `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
         expect(getResponse.status).toBe(200)
       })
     })
 
-    test('DELETE .../transactions/$id removes transaction', async () => {
+    test('DELETE .../transactions/$uuid removes transaction', async () => {
       const deleteResponse = await api.delete(
-        `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+        `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
       )
 
       expect(deleteResponse.status).toBe(204)
       expect(deleteResponse.body).toStrictEqual({})
 
       const getResponse = await api.get(
-        `/portfolios/${portfolioId}/transactions/${minTransactionId}`,
+        `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
       )
 
       expect(getResponse.status).toBe(404)

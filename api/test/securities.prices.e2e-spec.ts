@@ -32,15 +32,15 @@ describe('Securities (e2e)', () => {
   })
 
   describe('GET/PATCH .../securities/.../prices', () => {
-    let securityId: number
+    let securityUuid: string
 
     beforeEach(async () => {
-      securityId = await api.createSecurity(portfolioId)
+      securityUuid = await api.createSecurity(portfolioId)
     })
 
-    test('GET .../securities/$id/prices returns prices', async () => {
+    test('GET .../securities/$uuid/prices returns prices', async () => {
       const response = await api.get(
-        `/portfolios/${portfolioId}/securities/${securityId}/prices`,
+        `/portfolios/${portfolioId}/securities/${securityUuid}/prices`,
       )
 
       expect(response.status).toBe(200)
@@ -48,9 +48,9 @@ describe('Securities (e2e)', () => {
       expect(response.body).toHaveLength(0)
     })
 
-    test('GET .../securities/$id returns no latestPriceDate', async () => {
+    test('GET .../securities/$uuid returns no latestPriceDate', async () => {
       const response = await api.get(
-        `/portfolios/${portfolioId}/securities/${securityId}`,
+        `/portfolios/${portfolioId}/securities/${securityUuid}`,
       )
 
       expect(response.status).toBe(200)
@@ -59,7 +59,7 @@ describe('Securities (e2e)', () => {
 
     test('PATCH .../prices returns prices', async () => {
       const response = await api.patch(
-        `/portfolios/${portfolioId}/securities/${securityId}/prices`,
+        `/portfolios/${portfolioId}/securities/${securityUuid}/prices`,
         [
           { date: '2020-12-01', value: '100.00' },
           { date: '2020-12-02', value: '101.01' },
@@ -82,7 +82,7 @@ describe('Securities (e2e)', () => {
     describe('with prices', () => {
       beforeEach(async () => {
         const response = await api.patch(
-          `/portfolios/${portfolioId}/securities/${securityId}/prices`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}/prices`,
           [
             { date: '2020-12-01', value: '100.00' },
             { date: '2020-12-02', value: '101.01' },
@@ -92,9 +92,9 @@ describe('Securities (e2e)', () => {
         expect(response.status).toBe(200)
       })
 
-      test('GET .../securities/$id/prices returns prices', async () => {
+      test('GET .../securities/$uuid/prices returns prices', async () => {
         const response = await api.get(
-          `/portfolios/${portfolioId}/securities/${securityId}/prices`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}/prices`,
         )
 
         expect(response.status).toBe(200)
@@ -114,9 +114,9 @@ describe('Securities (e2e)', () => {
         })
       })
 
-      test('GET .../securities/$id/prices?startDate=2020-12-02 returns filtered prices', async () => {
+      test('GET .../securities/$uuid/prices?startDate=2020-12-02 returns filtered prices', async () => {
         const response = await api.get(
-          `/portfolios/${portfolioId}/securities/${securityId}/prices?startDate=2020-12-02`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}/prices?startDate=2020-12-02`,
         )
 
         expect(response.status).toBe(200)
@@ -134,9 +134,9 @@ describe('Securities (e2e)', () => {
         )
       })
 
-      test('GET .../securities/$id/prices?endDate=2020-12-02 returns filtered prices', async () => {
+      test('GET .../securities/$uuid/prices?endDate=2020-12-02 returns filtered prices', async () => {
         const response = await api.get(
-          `/portfolios/${portfolioId}/securities/${securityId}/prices?endDate=2020-12-02`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}/prices?endDate=2020-12-02`,
         )
 
         expect(response.status).toBe(200)
@@ -154,9 +154,9 @@ describe('Securities (e2e)', () => {
         )
       })
 
-      test('GET .../securities/$id returns latestPriceDate', async () => {
+      test('GET .../securities/$uuid returns latestPriceDate', async () => {
         const response = await api.get(
-          `/portfolios/${portfolioId}/securities/${securityId}`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}`,
         )
 
         expect(response.status).toBe(200)
@@ -165,7 +165,7 @@ describe('Securities (e2e)', () => {
 
       test('PATCH .../prices returns prices', async () => {
         const response = await api.patch(
-          `/portfolios/${portfolioId}/securities/${securityId}/prices`,
+          `/portfolios/${portfolioId}/securities/${securityUuid}/prices`,
           [
             { date: '2020-12-03', value: '103.03' },
             { date: '2020-12-04', value: '104.04' },
