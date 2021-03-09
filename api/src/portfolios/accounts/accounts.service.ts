@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Account } from '@prisma/client'
 
-import { CreateUpdateAccountDto } from './accounts.dto'
+import { CreateUpdateAccountDto } from '../dto/CreateUpdateAccount.dto'
 import { AccountType } from './account.entity'
 import { AccountParams } from './account.params'
 import { PortfolioParams } from '../portfolio.params'

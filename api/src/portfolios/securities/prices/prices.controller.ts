@@ -23,7 +23,7 @@ import { PortfolioGuard } from '../../portfolio.guard'
 import { SecuritiesService } from '../securities.service'
 import { SecurityParams } from '../security.params'
 import { PortfolioSecurityPrice } from './price.entity'
-import { SecurityPriceDto } from './prices.dto'
+import { CreateUpdatePortfolioSecurityPriceDto } from '../../dto/CreateUpdatePortfolioSecurityPrice.dto'
 import { SecuritiesPricesService } from './prices.service'
 import { PricesQuery } from './prices.query'
 
@@ -45,11 +45,11 @@ export class SecuritiesPricesController {
    * Creates or updates prices of security
    */
   @Patch()
-  @ApiBody({ type: SecurityPriceDto, isArray: true })
+  @ApiBody({ type: CreateUpdatePortfolioSecurityPriceDto, isArray: true })
   async upsert(
     @Param() params: SecurityParams,
-    @Body(new ParseArrayPipe({ items: SecurityPriceDto }))
-    dtos: SecurityPriceDto[],
+    @Body(new ParseArrayPipe({ items: CreateUpdatePortfolioSecurityPriceDto }))
+    dtos: CreateUpdatePortfolioSecurityPriceDto[],
   ): Promise<PortfolioSecurityPrice[]> {
     return this.pricesService.upsert(params, dtos)
   }

@@ -3,10 +3,10 @@ import { Prisma } from '@prisma/client'
 import { IsDate } from 'class-validator'
 import { Transform, Type } from 'class-transformer'
 
-import { parseDecimal } from '../../../utils/decimal.parser'
-import { IsValidDecimal } from '../../../utils/decimal.validator'
+import { parseDecimal } from '../../utils/decimal.parser'
+import { IsValidDecimal } from '../../utils/decimal.validator'
 
-export class SecurityPriceDto {
+export class CreateUpdatePortfolioSecurityPriceDto {
   @ApiProperty({ type: String, example: 'YYYY-MM-DD' })
   @Type(() => Date)
   @IsDate()

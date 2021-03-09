@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
-export class CreateUpdateSecurityDto {
+export class CreateUpdatePortfolioSecurityDto {
   @IsString()
   @IsNotEmpty()
   readonly name: string

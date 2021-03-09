@@ -8,7 +8,7 @@ import { TransactionParams } from './transaction.params'
 import {
   CreateUpdateTransactionDto,
   TransactionUnitDto,
-} from './transactions.dto'
+} from '../dto/CreateUpdateTransaction.dto'
 import { PrismaService } from '../../prisma.service'
 
 @Injectable()

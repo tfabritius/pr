@@ -8,7 +8,7 @@ import {
   ValidateIf,
 } from 'class-validator'
 
-import { AccountType } from './account.entity'
+import { AccountType } from '../accounts/account.entity'
 
 export class CreateUpdateAccountDto {
   @IsEnum(AccountType)

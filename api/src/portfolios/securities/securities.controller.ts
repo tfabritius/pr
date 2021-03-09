@@ -20,7 +20,7 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { CreateUpdateSecurityDto } from './securities.dto'
+import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
 import { SecurityParams } from './security.params'
 import { SecuritiesService } from './securities.service'
 import { SecuritiesKpisService } from './securities.kpis.service'
@@ -48,7 +48,7 @@ export class SecuritiesController {
   @Post()
   async create(
     @Param() params: PortfolioParams,
-    @Body() dto: CreateUpdateSecurityDto,
+    @Body() dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
     return this.securitiesService.upsert(
       { ...params, securityUuid: generateUuid() },
@@ -80,7 +80,7 @@ export class SecuritiesController {
   @Put(':securityUuid')
   async update(
     @Param() params: SecurityParams,
-    @Body() dto: CreateUpdateSecurityDto,
+    @Body() dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
     return this.securitiesService.upsert(params, dto)
   }
