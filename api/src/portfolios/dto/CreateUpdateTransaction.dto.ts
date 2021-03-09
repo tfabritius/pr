@@ -14,8 +14,8 @@ import {
 
 import { parseDecimal } from '../../utils/decimal.parser'
 import { IsValidDecimal } from '../../utils/decimal.validator'
-import { TransactionType } from './transaction.entity'
-import { UnitType } from './unit.entity'
+import { TransactionType } from '../transactions/transaction.entity'
+import { UnitType } from '../transactions/unit.entity'
 
 export class TransactionUnitDto {
   @IsOptional()

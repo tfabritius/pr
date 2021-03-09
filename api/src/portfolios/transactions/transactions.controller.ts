@@ -20,7 +20,7 @@ import {
 
 import { DefaultAuthGuard } from '../../auth/default-auth.guard'
 import { PortfolioGuard } from '../portfolio.guard'
-import { CreateUpdateTransactionDto } from './transactions.dto'
+import { CreateUpdateTransactionDto } from '../dto/CreateUpdateTransaction.dto'
 import { TransactionParams } from './transaction.params'
 import { TransactionsService } from './transactions.service'
 import { PortfolioParams } from '../portfolio.params'

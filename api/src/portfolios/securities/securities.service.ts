@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PortfolioSecurity } from '@prisma/client'
 
-import { CreateUpdateSecurityDto } from './securities.dto'
+import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
 import { SecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
@@ -23,7 +23,7 @@ export class SecuritiesService {
       symbol,
       active,
       note,
-    }: CreateUpdateSecurityDto,
+    }: CreateUpdatePortfolioSecurityDto,
   ) {
     return await this.prisma.portfolioSecurity.upsert({
       create: {
@@ -138,7 +138,7 @@ export class SecuritiesService {
    */
   async update(
     params: SecurityParams,
-    dto: CreateUpdateSecurityDto,
+    dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
     await this.getOne(params)
 
