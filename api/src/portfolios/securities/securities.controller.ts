@@ -23,7 +23,6 @@ import { PortfolioGuard } from '../portfolio.guard'
 import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
 import { PortfolioSecurityParams } from './security.params'
 import { PortfolioSecuritiesService } from './securities.service'
-import { SecuritiesKpisService } from './securities.kpis.service'
 import { PortfolioParams } from '../portfolio.params'
 import { PortfolioSecurity } from './security.entity'
 import { generateUuid } from '../../utils/uuid'
@@ -37,10 +36,7 @@ import { generateUuid } from '../../utils/uuid'
 @ApiNotFoundResponse({ description: 'Portfolio or security not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class PortfolioSecuritiesController {
-  constructor(
-    public securitiesService: PortfolioSecuritiesService,
-    private readonly kpisService: SecuritiesKpisService,
-  ) {}
+  constructor(public portfolioSecurities: PortfolioSecuritiesService) {}
 
   /**
    * Creates security in portfolio
@@ -50,7 +46,7 @@ export class PortfolioSecuritiesController {
     @Param() params: PortfolioParams,
     @Body() dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
-    return this.securitiesService.upsert(
+    return this.portfolioSecurities.upsert(
       { ...params, securityUuid: generateUuid() },
       dto,
     )
@@ -63,7 +59,7 @@ export class PortfolioSecuritiesController {
   async readAll(
     @Param() params: PortfolioParams,
   ): Promise<PortfolioSecurity[]> {
-    return await this.securitiesService.getAll(params)
+    return await this.portfolioSecurities.getAll(params)
   }
 
   /**
@@ -73,7 +69,7 @@ export class PortfolioSecuritiesController {
   async readOne(
     @Param() params: PortfolioSecurityParams,
   ): Promise<PortfolioSecurity> {
-    return await this.securitiesService.getOne(params)
+    return await this.portfolioSecurities.getOne(params)
   }
 
   /**
@@ -84,7 +80,7 @@ export class PortfolioSecuritiesController {
     @Param() params: PortfolioSecurityParams,
     @Body() dto: CreateUpdatePortfolioSecurityDto,
   ): Promise<PortfolioSecurity> {
-    return this.securitiesService.upsert(params, dto)
+    return this.portfolioSecurities.upsert(params, dto)
   }
 
   /**
@@ -93,6 +89,6 @@ export class PortfolioSecuritiesController {
   @Delete(':securityUuid')
   @HttpCode(204)
   async delete(@Param() params: PortfolioSecurityParams) {
-    await this.securitiesService.delete(params)
+    await this.portfolioSecurities.delete(params)
   }
 }

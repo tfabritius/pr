@@ -36,7 +36,7 @@ import { generateUuid } from '../../utils/uuid'
 @ApiNotFoundResponse({ description: 'Portfolio or transaction not found' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class TransactionsController {
-  constructor(public transactionsService: TransactionsService) {}
+  constructor(public transactions: TransactionsService) {}
 
   /**
    * Creates transaction
@@ -46,7 +46,7 @@ export class TransactionsController {
     @Param() params: PortfolioParams,
     @Body() dto: CreateUpdateTransactionDto,
   ): Promise<PortfolioTransaction> {
-    return this.transactionsService.upsert(
+    return this.transactions.upsert(
       { ...params, transactionUuid: generateUuid() },
       dto,
     )
@@ -59,7 +59,7 @@ export class TransactionsController {
   async readAll(
     @Param() params: PortfolioParams,
   ): Promise<PortfolioTransaction[]> {
-    return await this.transactionsService.getAll(params)
+    return await this.transactions.getAll(params)
   }
 
   /**
@@ -69,7 +69,7 @@ export class TransactionsController {
   async readOne(
     @Param() params: TransactionParams,
   ): Promise<PortfolioTransaction> {
-    return await this.transactionsService.getOne(params)
+    return await this.transactions.getOne(params)
   }
 
   /**
@@ -80,7 +80,7 @@ export class TransactionsController {
     @Param() params: TransactionParams,
     @Body() dto: CreateUpdateTransactionDto,
   ): Promise<PortfolioTransaction> {
-    return this.transactionsService.upsert(params, dto)
+    return this.transactions.upsert(params, dto)
   }
 
   /**
@@ -89,6 +89,6 @@ export class TransactionsController {
   @Delete(':transactionUuid')
   @HttpCode(204)
   async delete(@Param() params: TransactionParams) {
-    await this.transactionsService.delete(params)
+    await this.transactions.delete(params)
   }
 }

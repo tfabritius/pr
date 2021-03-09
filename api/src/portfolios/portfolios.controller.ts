@@ -35,7 +35,7 @@ import { User } from '../auth/users/user.entity'
 @ApiBadRequestResponse({ description: 'Bad request' })
 @ApiInternalServerErrorResponse({ description: 'Internal server error' })
 export class PortfoliosController {
-  constructor(private readonly portfoliosService: PortfoliosService) {}
+  constructor(private readonly portfolios: PortfoliosService) {}
 
   /**
    * Creates portfolio
@@ -45,7 +45,7 @@ export class PortfoliosController {
     @AuthUser() user: User,
     @Body() portfolioDto: PortfolioDto,
   ): Promise<Portfolio> {
-    return this.portfoliosService.create(user, portfolioDto)
+    return this.portfolios.create(user, portfolioDto)
   }
 
   /**
@@ -53,7 +53,7 @@ export class PortfoliosController {
    */
   @Get()
   async readAll(@AuthUser() user: User): Promise<Portfolio[]> {
-    return await this.portfoliosService.getAllOfUser(user)
+    return await this.portfolios.getAllOfUser(user)
   }
 
   /**
@@ -63,7 +63,7 @@ export class PortfoliosController {
   @UseGuards(PortfolioGuard)
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
   async readOne(@Param() params: PortfolioParams): Promise<Portfolio> {
-    return await this.portfoliosService.getOne(params)
+    return await this.portfolios.getOne(params)
   }
 
   /**
@@ -76,7 +76,7 @@ export class PortfoliosController {
     @Param() params: PortfolioParams,
     @Body() portfolioDto: PortfolioDto,
   ): Promise<Portfolio> {
-    return this.portfoliosService.update(params, portfolioDto)
+    return this.portfolios.update(params, portfolioDto)
   }
 
   /**
@@ -87,6 +87,6 @@ export class PortfoliosController {
   @UseGuards(PortfolioGuard)
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
   async delete(@Param() params: PortfolioParams) {
-    await this.portfoliosService.delete(params)
+    await this.portfolios.delete(params)
   }
 }
