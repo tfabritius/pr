@@ -1,5 +1,7 @@
+import { Type } from 'class-transformer'
 import {
   IsBoolean,
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -32,4 +34,9 @@ export class CreateUpdateAccountDto {
   @IsOptional()
   @IsString()
   readonly note?: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  readonly updatedAt?: Date = new Date()
 }

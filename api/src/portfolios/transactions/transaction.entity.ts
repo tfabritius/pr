@@ -132,4 +132,9 @@ export class PortfolioTransaction {
    * User-defined comment to transaction
    */
   note: string
+
+  /**
+   * Date and time at which transaction was updated last by a user
+   */
+  updatedAt: Date
 }

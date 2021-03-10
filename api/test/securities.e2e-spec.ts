@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common'
+import { differenceInMilliseconds, differenceInSeconds } from 'date-fns'
 
 import { createApp } from '../src/app.factory'
 import { ApiClient } from './api.client'
@@ -104,6 +105,19 @@ describe('Securities (e2e)', () => {
       expect(createResponse.body).toMatchObject(testSecurity)
       expect(typeof createResponse.body.uuid).toBe('string')
     })
+
+    it('sets updatedAt to current date/time (if not given)', async () => {
+      const createResponse = await api.post(
+        `/portfolios/${portfolioId}/securities`,
+        testSecurity,
+      )
+
+      expect(createResponse.status).toBe(201)
+      expect(typeof createResponse.body.updatedAt).toBe('string')
+      const updatedAt = new Date(createResponse.body.updatedAt)
+      expect(differenceInMilliseconds(new Date(), updatedAt)).toBeGreaterThan(0)
+      expect(differenceInSeconds(new Date(), updatedAt)).toBeLessThan(2)
+    })
   })
 
   describe('GET/PUT/DELETE .../securities', () => {
@@ -193,6 +207,21 @@ describe('Securities (e2e)', () => {
           `/portfolios/${portfolioId}/securities/${securityUuid}`,
         )
         expect(getResponse.status).toBe(200)
+      })
+
+      it('sets updatedAt to current date/time (if not given)', async () => {
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/securities/${securityUuid}`,
+          testSecurity,
+        )
+
+        expect(updateResponse.status).toBe(200)
+        expect(typeof updateResponse.body.updatedAt).toBe('string')
+        const updatedAt = new Date(updateResponse.body.updatedAt)
+        expect(differenceInMilliseconds(new Date(), updatedAt)).toBeGreaterThan(
+          0,
+        )
+        expect(differenceInSeconds(new Date(), updatedAt)).toBeLessThan(2)
       })
     })
 

@@ -1,4 +1,11 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 export class CreateUpdatePortfolioSecurityDto {
   @IsString()
@@ -26,4 +33,9 @@ export class CreateUpdatePortfolioSecurityDto {
   @IsOptional()
   @IsString()
   readonly note?: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  readonly updatedAt?: Date = new Date()
 }

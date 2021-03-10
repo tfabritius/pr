@@ -23,6 +23,7 @@ export class PortfolioSecuritiesService {
       symbol,
       active,
       note,
+      updatedAt,
     }: CreateUpdatePortfolioSecurityDto,
   ) {
     return await this.prisma.portfolioSecurity.upsert({
@@ -34,6 +35,7 @@ export class PortfolioSecuritiesService {
         symbol,
         active,
         note,
+        updatedAt,
         currency: { connect: { code: currencyCode } },
         portfolio: { connect: { id: portfolioId } },
       },
@@ -44,6 +46,7 @@ export class PortfolioSecuritiesService {
         symbol,
         active,
         note,
+        updatedAt,
         currency: { connect: { code: currencyCode } },
       },
       where: { portfolioId_uuid: { portfolioId, uuid } },
