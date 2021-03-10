@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Transaction, TransactionUnit } from '@prisma/client'
+import { Prisma, Transaction, TransactionUnit } from '@prisma/client'
 
 import { AccountsService } from '../accounts/accounts.service'
 import { PortfolioParams } from '../portfolio.params'
@@ -10,6 +10,18 @@ import {
   TransactionUnitDto,
 } from '../dto/CreateUpdateTransaction.dto'
 import { PrismaService } from '../../prisma.service'
+import { matchArrays } from '../../utils/match-arrays'
+
+const defaultUnitsQuery: Prisma.TransactionUnitFindManyArgs = {
+  select: {
+    type: true,
+    amount: true,
+    currencyCode: true,
+    originalAmount: true,
+    originalCurrencyCode: true,
+    exchangeRate: true,
+  },
+}
 
 @Injectable()
 export class TransactionsService {
@@ -86,7 +98,7 @@ export class TransactionsService {
         portfolio: { connect: { id: portfolioId } },
         units: { createMany: { data: units } },
       },
-      include: { units: true },
+      include: { units: defaultUnitsQuery },
     })
   }
 
@@ -96,7 +108,7 @@ export class TransactionsService {
   async getAll({ portfolioId }: PortfolioParams) {
     return await this.prisma.transaction.findMany({
       where: { portfolioId },
-      include: { units: true },
+      include: { units: defaultUnitsQuery },
     })
   }
 
@@ -108,7 +120,7 @@ export class TransactionsService {
     const transaction = await this.prisma.transaction.findUnique({
       where: { portfolioId_uuid: { portfolioId, uuid: transactionUuid } },
       include: {
-        units: true,
+        units: defaultUnitsQuery,
       },
     })
 
@@ -125,31 +137,49 @@ export class TransactionsService {
   private async createUpdateDeleteUnits(
     portfolioId: number,
     transactionUuid: string,
-    unitDtos: TransactionUnitDto[],
+    dtos: TransactionUnitDto[],
   ) {
-    // Delete units which are not in the DTO
+    const dbs = await this.prisma.transactionUnit.findMany({
+      where: { portfolioId, transactionUuid },
+    })
+
+    // Match elements of both arrays
+    const {
+      unmatchedLefts: unmatchedDtos,
+      unmatchedRights: unmatchedDbs,
+    } = matchArrays(
+      dtos,
+      dbs,
+      (left, right) =>
+        JSON.stringify([
+          left.type,
+          left.amount,
+          left.currencyCode,
+          left.originalAmount,
+          left.originalCurrencyCode,
+          left.exchangeRate,
+        ]) ===
+        JSON.stringify([
+          right.type,
+          right.amount,
+          right.currencyCode,
+          right.originalAmount,
+          right.originalCurrencyCode,
+          right.exchangeRate,
+        ]),
+    )
+
+    // Delete removed units
     await this.prisma.transactionUnit.deleteMany({
       where: {
-        id: { notIn: unitDtos.map((u) => u.id) },
-        portfolioId,
-        transactionUuid,
+        id: { in: unmatchedDbs.map((u) => u.id) },
       },
     })
 
-    // Create units without id
+    // Create new units
     await this.prisma.transactionUnit.createMany({
-      data: unitDtos
-        .filter((u) => !u.id)
-        .map((u) => ({ ...u, portfolioId, transactionUuid })),
+      data: unmatchedDtos.map((u) => ({ ...u, portfolioId, transactionUuid })),
     })
-
-    // Update units with id
-    for (const unit of unitDtos.filter((u) => u.id)) {
-      await this.prisma.transactionUnit.update({
-        data: unit,
-        where: { id: unit.id },
-      })
-    }
   }
 
   /**
@@ -205,7 +235,7 @@ export class TransactionsService {
         portfolioSecurityUuid,
       },
       where: { portfolioId_uuid: { portfolioId, uuid } },
-      include: { units: true },
+      include: { units: defaultUnitsQuery },
     })
   }
 
