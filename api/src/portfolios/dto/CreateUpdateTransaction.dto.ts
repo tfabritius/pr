@@ -5,7 +5,6 @@ import {
   IsDate,
   IsDefined,
   IsEnum,
-  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -18,10 +17,6 @@ import { TransactionType } from '../transactions/transaction.entity'
 import { UnitType } from '../transactions/unit.entity'
 
 export class TransactionUnitDto {
-  @IsOptional()
-  @IsNumber()
-  readonly id?: number
-
   @IsEnum(UnitType)
   readonly type: UnitType
 
@@ -37,17 +32,17 @@ export class TransactionUnitDto {
   @Transform(parseDecimal)
   @IsValidDecimal()
   @ApiPropertyOptional({ type: String, example: '1.0' })
-  readonly originalAmount?: Prisma.Decimal
+  readonly originalAmount?: Prisma.Decimal = null
 
   @IsOptional()
   @IsString()
-  readonly originalCurrencyCode?: string
+  readonly originalCurrencyCode?: string = null
 
   @IsOptional()
   @Transform(parseDecimal)
   @IsValidDecimal()
   @ApiPropertyOptional({ type: String, example: '1.0' })
-  readonly exchangeRate?: Prisma.Decimal
+  readonly exchangeRate?: Prisma.Decimal = null
 }
 
 export class CreateUpdateTransactionDto {

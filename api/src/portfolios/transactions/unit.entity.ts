@@ -1,5 +1,5 @@
 import { ObjectType, registerEnumType, Field } from '@nestjs/graphql'
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { Prisma } from '@prisma/client'
 
 /**
@@ -15,9 +15,6 @@ registerEnumType(UnitType, { name: 'TransactionUnitType' })
 
 @ObjectType()
 export class TransactionUnit {
-  @ApiHideProperty()
-  id: number
-
   type: string
 
   /**
