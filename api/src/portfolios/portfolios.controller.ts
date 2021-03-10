@@ -19,7 +19,7 @@ import {
 
 import { DefaultAuthGuard } from '../auth/default-auth.guard'
 import { AuthUser } from '../auth/auth.decorator'
-import { PortfolioDto } from './portfolios.dto'
+import { CreateUpdatePortfolioDto } from './dto/CreateUpdatePortfolio.dto'
 import { Portfolio } from './portfolio.entity'
 import { PortfolioGuard } from './portfolio.guard'
 import { PortfolioParams } from './portfolio.params'
@@ -42,7 +42,7 @@ export class PortfoliosController {
   @Post()
   async create(
     @AuthUser() user: User,
-    @Body() portfolioDto: PortfolioDto,
+    @Body() portfolioDto: CreateUpdatePortfolioDto,
   ): Promise<Portfolio> {
     return this.portfolios.create(user, portfolioDto)
   }
@@ -73,7 +73,7 @@ export class PortfoliosController {
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
   async update(
     @Param() params: PortfolioParams,
-    @Body() portfolioDto: PortfolioDto,
+    @Body() portfolioDto: CreateUpdatePortfolioDto,
   ): Promise<Portfolio> {
     return this.portfolios.update(params, portfolioDto)
   }

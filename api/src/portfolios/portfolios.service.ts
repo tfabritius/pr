@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { Portfolio } from '@prisma/client'
 
 import { User } from '../auth/users/user.entity'
-import { PortfolioDto } from './portfolios.dto'
+import { CreateUpdatePortfolioDto } from './dto/CreateUpdatePortfolio.dto'
 import { PortfolioParams } from './portfolio.params'
 import { PrismaService } from '../prisma.service'
 
@@ -15,7 +15,7 @@ export class PortfoliosService {
    */
   async create(
     user: User,
-    { name, note, baseCurrencyCode }: PortfolioDto,
+    { name, note, baseCurrencyCode }: CreateUpdatePortfolioDto,
   ): Promise<Portfolio> {
     return await this.prisma.portfolio.create({
       data: { name, note, baseCurrencyCode, userId: user.id },
@@ -69,7 +69,7 @@ export class PortfoliosService {
    */
   async update(
     params: PortfolioParams,
-    { name, note, baseCurrencyCode }: PortfolioDto,
+    { name, note, baseCurrencyCode }: CreateUpdatePortfolioDto,
   ): Promise<Portfolio> {
     await this.getOne(params)
     return await this.prisma.portfolio.update({
