@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator'
 
-export class PortfolioDto {
+export class CreateUpdatePortfolioDto {
   @IsString()
   @IsNotEmpty()
   readonly name: string
