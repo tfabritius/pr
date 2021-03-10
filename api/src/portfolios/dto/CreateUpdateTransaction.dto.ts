@@ -83,4 +83,9 @@ export class CreateUpdateTransactionDto {
   @IsOptional()
   @IsString()
   readonly note?: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  readonly updatedAt?: Date = new Date()
 }

@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common'
+import { differenceInMilliseconds, differenceInSeconds } from 'date-fns'
 
 import { createApp } from '../src/app.factory'
 import { ApiClient } from './api.client'
@@ -38,6 +39,7 @@ describe('Transactions (e2e)', () => {
     shares: '1.23',
     note: 'comment',
     portfolioSecurityUuid: undefined,
+    updatedAt: '2021-03-01T09:00:00.000Z',
     units: [
       {
         type: 'base',
@@ -139,6 +141,19 @@ describe('Transactions (e2e)', () => {
       expect(createResponse.status).toBe(201)
       expect(createResponse.body).toMatchObject(testTransactionMinimal)
       expect(typeof createResponse.body.uuid).toBe('string')
+    })
+
+    it('sets updatedAt to current date/time (if not given)', async () => {
+      const createResponse = await api.post(
+        `/portfolios/${portfolioId}/transactions`,
+        testTransactionMinimal,
+      )
+
+      expect(createResponse.status).toBe(201)
+      expect(typeof createResponse.body.updatedAt).toBe('string')
+      const updatedAt = new Date(createResponse.body.updatedAt)
+      expect(differenceInMilliseconds(new Date(), updatedAt)).toBeGreaterThan(0)
+      expect(differenceInSeconds(new Date(), updatedAt)).toBeLessThan(2)
     })
 
     it('returns full transaction with uuid', async () => {
@@ -394,6 +409,21 @@ describe('Transactions (e2e)', () => {
           `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
         )
         expect(getResponse.status).toBe(200)
+      })
+
+      it('sets updatedAt to current date/time (if not given)', async () => {
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${fullTransactionUuid}`,
+          testTransactionMinimal,
+        )
+
+        expect(updateResponse.status).toBe(200)
+        expect(typeof updateResponse.body.updatedAt).toBe('string')
+        const updatedAt = new Date(updateResponse.body.updatedAt)
+        expect(differenceInMilliseconds(new Date(), updatedAt)).toBeGreaterThan(
+          0,
+        )
+        expect(differenceInSeconds(new Date(), updatedAt)).toBeLessThan(2)
       })
     })
 

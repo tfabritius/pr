@@ -47,6 +47,7 @@ model Account {
   active               Boolean
   note                 String        @default("") @db.VarChar
   portfolioId          Int           @map("portfolio_id")
+  updatedAt            DateTime      @default(now()) @map("updated_at") @db.Timestamptz
   currency             Currency?     @relation("accounts_currency", fields: [currencyCode], references: [code])
   portfolio            Portfolio     @relation(fields: [portfolioId], references: [id])
   // referenceAccount     Account?      @relation("accounts_reference_accounts", fields: [portfolioId, referenceAccountUuid], references: [portfolioId, uuid])
@@ -161,6 +162,7 @@ model PortfolioSecurity {
   active       Boolean
   note         String                   @default("") @db.VarChar
   portfolioId  Int                      @map("portfolio_id")
+  updatedAt    DateTime                 @default(now()) @map("updated_at") @db.Timestamptz
   currency     Currency                 @relation(fields: [currencyCode], references: [code])
   portfolio    Portfolio                @relation(fields: [portfolioId], references: [id])
   prices       PortfolioSecurityPrice[]
@@ -288,6 +290,7 @@ model Transaction {
   portfolioSecurityUuid  String?           @map("portfolio_security_uuid") @db.Uuid
   note                   String            @default("") @db.VarChar
   portfolioId            Int               @map("portfolio_id")
+  updatedAt              DateTime          @default(now()) @map("updated_at") @db.Timestamptz
   account                Account           @relation(fields: [portfolioId, accountUuid], references: [portfolioId, uuid])
   // partnerTransaction        Transaction?      @relation("transactions_partner_transaction", fields: [portfolioId, partnerTransactionUuid], references: [portfolioId, uuid])
   // partnerTransactionReverse Transaction?      @relation("transactions_partner_transaction")

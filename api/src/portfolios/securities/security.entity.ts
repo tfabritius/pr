@@ -22,4 +22,9 @@ export class PortfolioSecurity {
   note: string
 
   latestPriceDate?: string
+
+  /**
+   * Date and time at which security was updated last by a user
+   */
+  updatedAt: Date
 }

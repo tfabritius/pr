@@ -24,4 +24,9 @@ export class Account {
   active: boolean
 
   note: string
+
+  /**
+   * Date and time at which account was updated last by a user
+   */
+  updatedAt: Date
 }

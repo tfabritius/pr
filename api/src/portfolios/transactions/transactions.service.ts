@@ -49,6 +49,7 @@ export class TransactionsService {
       shares,
       portfolioSecurityUuid,
       note,
+      updatedAt,
     }: CreateUpdateTransactionDto,
   ) {
     // let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
@@ -74,6 +75,7 @@ export class TransactionsService {
         datetime,
         note,
         shares,
+        updatedAt,
         account: {
           connect: {
             portfolioId_uuid: { portfolioId, uuid: accountUuid },
@@ -166,6 +168,7 @@ export class TransactionsService {
       shares,
       portfolioSecurityUuid,
       note,
+      updatedAt,
     }: CreateUpdateTransactionDto,
   ) {
     await this.createUpdateDeleteUnits(portfolioId, uuid, units)
@@ -192,6 +195,7 @@ export class TransactionsService {
         datetime,
         note,
         shares,
+        updatedAt,
         account: {
           connect: {
             portfolioId_uuid: { portfolioId, uuid: accountUuid },
