@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   Post,
   Put,
@@ -87,8 +86,9 @@ export class TransactionsController {
    * Deletes transaction
    */
   @Delete(':transactionUuid')
-  @HttpCode(204)
-  async delete(@Param() params: TransactionParams) {
-    await this.transactions.delete(params)
+  async delete(
+    @Param() params: TransactionParams,
+  ): Promise<PortfolioTransaction> {
+    return await this.transactions.delete(params)
   }
 }

@@ -402,8 +402,8 @@ describe('Transactions (e2e)', () => {
         `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
       )
 
-      expect(deleteResponse.status).toBe(204)
-      expect(deleteResponse.body).toStrictEqual({})
+      expect(deleteResponse.status).toBe(200)
+      expect(deleteResponse.body).toMatchObject(testTransactionMinimal)
 
       const getResponse = await api.get(
         `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,

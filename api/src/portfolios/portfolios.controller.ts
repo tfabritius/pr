@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Put,
-  HttpCode,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -83,10 +82,9 @@ export class PortfoliosController {
    * Deletes portfolio
    */
   @Delete(':portfolioId')
-  @HttpCode(204)
   @UseGuards(PortfolioGuard)
   @ApiNotFoundResponse({ description: 'Portfolio not found' })
-  async delete(@Param() params: PortfolioParams) {
-    await this.portfolios.delete(params)
+  async delete(@Param() params: PortfolioParams): Promise<Portfolio> {
+    return await this.portfolios.delete(params)
   }
 }

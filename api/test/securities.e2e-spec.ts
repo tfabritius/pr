@@ -201,8 +201,8 @@ describe('Securities (e2e)', () => {
         `/portfolios/${portfolioId}/securities/${securityUuid}`,
       )
 
-      expect(deleteResponse.status).toBe(204)
-      expect(deleteResponse.body).toStrictEqual({})
+      expect(deleteResponse.status).toBe(200)
+      expect(deleteResponse.body).toMatchObject(testSecurity)
 
       const getResponse = await api.get(
         `/portfolios/${portfolioId}/securites/${securityUuid}`,

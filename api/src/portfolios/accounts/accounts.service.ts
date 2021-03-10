@@ -139,12 +139,12 @@ export class AccountsService {
   /**
    * Deletes account identified by parameters
    */
-  async delete(params: AccountParams): Promise<void> {
-    const affected = await this.prisma
+  async delete(params: AccountParams) {
+    const account = await this.getOne(params)
+
+    await this.prisma
       .$executeRaw`DELETE FROM portfolios_accounts WHERE uuid=${params.accountUuid} AND portfolio_id=${params.portfolioId}`
 
-    if (affected == 0) {
-      throw new NotFoundException('Account not found')
-    }
+    return account
   }
 }

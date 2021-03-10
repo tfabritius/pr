@@ -209,15 +209,12 @@ export class TransactionsService {
    * Deletes transaction identified by parameters
    * or throws NotFoundException
    */
-  async delete({
-    transactionUuid,
-    portfolioId,
-  }: TransactionParams): Promise<void> {
-    const affected = await this.prisma
+  async delete({ transactionUuid, portfolioId }: TransactionParams) {
+    const transaction = await this.getOne({ portfolioId, transactionUuid })
+
+    await this.prisma
       .$executeRaw`DELETE FROM portfolios_transactions WHERE uuid=${transactionUuid} AND portfolio_id=${portfolioId}`
 
-    if (affected == 0) {
-      throw new NotFoundException('Transaction not found')
-    }
+    return transaction
   }
 }
