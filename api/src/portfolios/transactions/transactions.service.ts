@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Prisma, Transaction, TransactionUnit } from '@prisma/client'
 
-import { AccountsService } from '../accounts/accounts.service'
 import { PortfolioParams } from '../portfolio.params'
-import { PortfolioSecuritiesService } from '../securities/securities.service'
 import { TransactionParams } from './transaction.params'
 import {
   CreateUpdateTransactionDto,
@@ -25,11 +23,7 @@ const defaultUnitsQuery: Prisma.TransactionUnitFindManyArgs = {
 
 @Injectable()
 export class TransactionsService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly accountsService: AccountsService,
-    private readonly securitiesService: PortfolioSecuritiesService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Creates or updates transaction
