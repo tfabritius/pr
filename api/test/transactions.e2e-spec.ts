@@ -31,12 +31,12 @@ describe('Transactions (e2e)', () => {
     type: 'Payment',
     datetime: '2020-11-01T08:00:00.000Z',
     units: [],
-    note: 'comment',
   }
 
   const testTransactionFull = {
     ...testTransactionMinimal,
     shares: '1.23',
+    note: 'comment',
     portfolioSecurityUuid: undefined,
     units: [
       {
