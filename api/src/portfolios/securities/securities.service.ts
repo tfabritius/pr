@@ -156,12 +156,12 @@ export class PortfolioSecuritiesService {
   /**
    * Deletes security identified by parameters
    */
-  async delete(params: PortfolioSecurityParams): Promise<void> {
-    const affected = await this.prisma
+  async delete(params: PortfolioSecurityParams) {
+    const security = await this.getOne(params)
+
+    await this.prisma
       .$executeRaw`DELETE FROM portfolios_securities WHERE uuid=${params.securityUuid} AND portfolio_id=${params.portfolioId}`
 
-    if (affected == 0) {
-      throw new NotFoundException('Security not found')
-    }
+    return security
   }
 }

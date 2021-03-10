@@ -140,8 +140,8 @@ describe('Portfolios (e2e)', () => {
 
     test('DELETE /portfolios/$id removes portfolio', async () => {
       const response = await api.delete(`/portfolios/${portfolioId}`)
-      expect(response.status).toBe(204)
-      expect(response.body).toStrictEqual({})
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject(testPortfolio)
 
       const getResponse = await api.get(`/portfolios/${portfolioId}`)
       expect(getResponse.status).toBe(404)

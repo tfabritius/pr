@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   Post,
   Put,
@@ -87,8 +86,9 @@ export class PortfolioSecuritiesController {
    * Delets security
    */
   @Delete(':securityUuid')
-  @HttpCode(204)
-  async delete(@Param() params: PortfolioSecurityParams) {
-    await this.portfolioSecurities.delete(params)
+  async delete(
+    @Param() params: PortfolioSecurityParams,
+  ): Promise<PortfolioSecurity> {
+    return await this.portfolioSecurities.delete(params)
   }
 }

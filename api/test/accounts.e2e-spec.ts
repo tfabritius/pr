@@ -211,8 +211,8 @@ describe('Accounts (e2e)', () => {
           `/portfolios/${portfolioId}/accounts/${depositAccountUuid}`,
         )
 
-        expect(deleteResponse.status).toBe(204)
-        expect(deleteResponse.body).toStrictEqual({})
+        expect(deleteResponse.status).toBe(200)
+        expect(deleteResponse.body).toMatchObject(testDepositAccount)
 
         const getResponse = await api.get(
           `/portfolios/${portfolioId}/accounts/${depositAccountUuid}`,
@@ -400,8 +400,8 @@ describe('Accounts (e2e)', () => {
           `/portfolios/${portfolioId}/accounts/${securitiesAccountUuid}`,
         )
 
-        expect(deleteResponse.status).toBe(204)
-        expect(deleteResponse.body).toStrictEqual({})
+        expect(deleteResponse.status).toBe(200)
+        expect(deleteResponse.body).toMatchObject(testSecuritiesAccount)
 
         const getResponse = await api.get(
           `/portfolios/${portfolioId}/accounts/${securitiesAccountUuid}`,

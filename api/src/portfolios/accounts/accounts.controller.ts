@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   Post,
   Put,
@@ -80,8 +79,7 @@ export class AccountsController {
    * Deletes account
    */
   @Delete(':accountUuid')
-  @HttpCode(204)
-  async delete(@Param() params: AccountParams) {
-    await this.accounts.delete(params)
+  async delete(@Param() params: AccountParams): Promise<Account> {
+    return await this.accounts.delete(params)
   }
 }

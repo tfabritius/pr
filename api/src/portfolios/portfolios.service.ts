@@ -82,11 +82,12 @@ export class PortfoliosService {
    * Deletes portfolio identified by parameters
    * or throws NotFoundException
    */
-  async delete(params: PortfolioParams): Promise<void> {
-    const affected = await this.prisma
+  async delete(params: PortfolioParams) {
+    const portfolio = await this.getOne(params)
+
+    await this.prisma
       .$executeRaw`DELETE FROM portfolios WHERE id=${params.portfolioId}`
-    if (affected == 0) {
-      throw new NotFoundException('Portfolio not found')
-    }
+
+    return portfolio
   }
 }
