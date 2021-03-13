@@ -162,10 +162,12 @@ model PortfolioSecurity {
   active       Boolean
   note         String                   @default("") @db.VarChar
   portfolioId  Int                      @map("portfolio_id")
+  securityUuid String?                  @db.Uuid
   updatedAt    DateTime                 @default(now()) @map("updated_at") @db.Timestamptz
   currency     Currency                 @relation(fields: [currencyCode], references: [code])
   portfolio    Portfolio                @relation(fields: [portfolioId], references: [id])
   prices       PortfolioSecurityPrice[]
+  security     Security?                @relation(fields: [securityUuid], references: [uuid])
   // transactions Transaction[]
 
   @@id([portfolioId, uuid])
@@ -186,17 +188,18 @@ model PortfolioSecurityPrice {
 }
 
 model Security {
-  uuid               String             @id @db.Uuid
-  name               String?            @db.Text
-  isin               String?            @db.VarChar(12)
-  wkn                String?            @db.VarChar(6)
-  symbolXfra         String?            @map("symbol_xfra") @db.VarChar(10)
-  symbolXnas         String?            @map("symbol_xnas") @db.VarChar(10)
-  symbolXnys         String?            @map("symbol_xnys") @db.VarChar(10)
-  securityType       String?            @map("security_type") @db.Text
-  events             Event[]            @relation("events_security_uuid")
-  securityMarkets    SecurityMarket[]   @relation("securities_markets_security_uuid")
-  securityTaxonomies SecurityTaxonomy[] @relation("securities_taxonomies_security_uuid")
+  uuid                String              @id @db.Uuid
+  name                String?             @db.Text
+  isin                String?             @db.VarChar(12)
+  wkn                 String?             @db.VarChar(6)
+  symbolXfra          String?             @map("symbol_xfra") @db.VarChar(10)
+  symbolXnas          String?             @map("symbol_xnas") @db.VarChar(10)
+  symbolXnys          String?             @map("symbol_xnys") @db.VarChar(10)
+  securityType        String?             @map("security_type") @db.Text
+  events              Event[]             @relation("events_security_uuid")
+  securityMarkets     SecurityMarket[]    @relation("securities_markets_security_uuid")
+  securityTaxonomies  SecurityTaxonomy[]  @relation("securities_taxonomies_security_uuid")
+  portfolioSecurities PortfolioSecurity[] @relation
 
   @@index([isin], name: "securities_isin")
   @@index([name], name: "securities_name")
