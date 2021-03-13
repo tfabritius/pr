@@ -1,5 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { PortfolioSecurity } from '@prisma/client'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { PortfolioSecurity, Prisma } from '@prisma/client'
 
 import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
 import { PortfolioSecurityParams } from './security.params'
@@ -23,34 +27,48 @@ export class PortfolioSecuritiesService {
       symbol,
       active,
       note,
+      securityUuid,
       updatedAt,
     }: CreateUpdatePortfolioSecurityDto,
   ) {
-    return await this.prisma.portfolioSecurity.upsert({
-      create: {
-        uuid,
-        name,
-        isin,
-        wkn,
-        symbol,
-        active,
-        note,
-        updatedAt,
-        currency: { connect: { code: currencyCode } },
-        portfolio: { connect: { id: portfolioId } },
-      },
-      update: {
-        name,
-        isin,
-        wkn,
-        symbol,
-        active,
-        note,
-        updatedAt,
-        currency: { connect: { code: currencyCode } },
-      },
-      where: { portfolioId_uuid: { portfolioId, uuid } },
-    })
+    try {
+      return await this.prisma.portfolioSecurity.upsert({
+        create: {
+          uuid,
+          name,
+          isin,
+          wkn,
+          symbol,
+          active,
+          note,
+          securityUuid,
+          updatedAt,
+          currencyCode,
+          portfolioId,
+        },
+        update: {
+          name,
+          isin,
+          wkn,
+          symbol,
+          active,
+          note,
+          securityUuid,
+          updatedAt,
+          currencyCode,
+        },
+        where: { portfolioId_uuid: { portfolioId, uuid } },
+      })
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2003'
+      ) {
+        throw new BadRequestException('securityUuid not found')
+      } else {
+        throw e
+      }
+    }
   }
 
   /**

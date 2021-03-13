@@ -24,6 +24,11 @@ export class PortfolioSecurity {
   latestPriceDate?: string
 
   /**
+   * UUID of (central) security
+   */
+  securityUuid?: string
+
+  /**
    * Date and time at which security was updated last by a user
    */
   updatedAt: Date

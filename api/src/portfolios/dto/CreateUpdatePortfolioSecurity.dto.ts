@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator'
 
 export class CreateUpdatePortfolioSecurityDto {
@@ -33,6 +34,10 @@ export class CreateUpdatePortfolioSecurityDto {
   @IsOptional()
   @IsString()
   readonly note?: string
+
+  @IsOptional()
+  @IsUUID()
+  readonly securityUuid?: string = null
 
   @IsOptional()
   @Type(() => Date)
