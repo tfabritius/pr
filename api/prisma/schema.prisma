@@ -162,7 +162,7 @@ model PortfolioSecurity {
   active       Boolean
   note         String                   @default("") @db.VarChar
   portfolioId  Int                      @map("portfolio_id")
-  securityUuid String?                  @db.Uuid
+  securityUuid String?                  @map("security_uuid") @db.Uuid
   updatedAt    DateTime                 @default(now()) @map("updated_at") @db.Timestamptz
   currency     Currency                 @relation(fields: [currencyCode], references: [code])
   portfolio    Portfolio                @relation(fields: [portfolioId], references: [id])
