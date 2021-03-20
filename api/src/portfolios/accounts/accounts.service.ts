@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { Account } from '@prisma/client'
 
 import { CreateUpdateAccountDto } from '../dto/CreateUpdateAccount.dto'
@@ -49,6 +53,11 @@ export class AccountsService {
         where: { portfolioId_uuid: { portfolioId, uuid } },
       })
     } else if (type === AccountType.SECURITIES) {
+      try {
+        await this.getOne({ portfolioId, accountUuid: referenceAccountUuid })
+      } catch (e) {
+        throw new BadRequestException('referenceAccountUuid not found')
+      }
       return await this.prisma.account.upsert({
         create: {
           uuid,
