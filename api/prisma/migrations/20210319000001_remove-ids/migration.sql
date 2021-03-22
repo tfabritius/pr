@@ -64,7 +64,7 @@ ADD COLUMN "transaction_uuid" UUID NOT NULL;
 CREATE INDEX "portfolios_transactions_units.portfolio_id_transaction_uuid_index" ON "portfolios_transactions_units"("portfolio_id", "transaction_uuid");
 
 -- Add foreign keys
-ALTER TABLE "portfolios_accounts" ADD FOREIGN KEY ("portfolio_id", "reference_account_uuid") REFERENCES "portfolios_accounts"("portfolio_id", "uuid") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "portfolios_accounts" ADD FOREIGN KEY ("portfolio_id", "reference_account_uuid") REFERENCES "portfolios_accounts"("portfolio_id", "uuid") ON UPDATE CASCADE;
 ALTER TABLE "portfolios_securities_prices" ADD FOREIGN KEY ("portfolio_id", "portfolio_security_uuid") REFERENCES "portfolios_securities"("portfolio_id", "uuid") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "portfolios_transactions" ADD FOREIGN KEY ("portfolio_id", "account_uuid") REFERENCES "portfolios_accounts"("portfolio_id", "uuid") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "portfolios_transactions" ADD FOREIGN KEY ("portfolio_id", "partner_transaction_uuid") REFERENCES "portfolios_transactions"("portfolio_id", "uuid") ON UPDATE CASCADE;
