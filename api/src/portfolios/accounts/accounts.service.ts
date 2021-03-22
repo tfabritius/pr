@@ -10,10 +10,14 @@ import { AccountType } from './account.entity'
 import { AccountParams } from './account.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
+import { TransactionsService } from '../transactions/transactions.service'
 
 @Injectable()
 export class AccountsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactions: TransactionsService,
+  ) {}
 
   /**
    * Creates or updates account
@@ -164,6 +168,15 @@ export class AccountsService {
         referenceAccountUuid: params.accountUuid,
       },
     })
+
+    // Delete transactions of account
+    const transactions = await this.transactions.getAllOfAccount(params)
+    for (const { portfolioId, uuid } of transactions) {
+      await this.transactions.delete({
+        portfolioId: portfolioId,
+        transactionUuid: uuid,
+      })
+    }
 
     await this.prisma
       .$executeRaw`DELETE FROM portfolios_accounts WHERE uuid=${params.accountUuid} AND portfolio_id=${params.portfolioId}`
