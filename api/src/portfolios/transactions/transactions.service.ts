@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { Prisma, Transaction, TransactionUnit } from '@prisma/client'
 
 import { PortfolioParams } from '../portfolio.params'
@@ -34,6 +38,17 @@ export class TransactionsService {
     { portfolioId, transactionUuid: uuid }: TransactionParams,
     dto: CreateUpdateTransactionDto,
   ): Promise<Transaction & { units: TransactionUnit[] }> {
+    if (dto.partnerTransactionUuid) {
+      try {
+        await this.getOne({
+          portfolioId,
+          transactionUuid: dto.partnerTransactionUuid,
+        })
+      } catch (e) {
+        throw new BadRequestException('partnerTransactionUuid not found')
+      }
+    }
+
     const transaction = await this.prisma.transaction.findUnique({
       where: { portfolioId_uuid: { portfolioId, uuid } },
     })
