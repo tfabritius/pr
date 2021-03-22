@@ -239,5 +239,28 @@ describe('Securities (e2e)', () => {
 
       expect(getResponse.status).toBe(404)
     })
+
+    test('DELETE .../securities/$uuid removes security and transactions', async () => {
+      const [accountUuid] = await api.createTestDepositSecuritiesAccounts(
+        portfolioId,
+      )
+      const transactionUuid = await api.createTransaction(portfolioId, {
+        accountUuid,
+        portfolioSecurityUuid: securityUuid,
+        type: 'Payment',
+        datetime: '2021-03-01T08:00:00.000Z',
+        units: [],
+      })
+
+      const deleteResponse = await api.delete(
+        `/portfolios/${portfolioId}/securities/${securityUuid}`,
+      )
+      expect(deleteResponse.status).toBe(200)
+
+      const getResponse = await api.get(
+        `/portfolios/${portfolioId}/transactions/${transactionUuid}`,
+      )
+      expect(getResponse.status).toBe(404)
+    })
   })
 })

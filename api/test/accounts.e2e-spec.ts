@@ -251,6 +251,26 @@ describe('Accounts (e2e)', () => {
 
         expect(getResponse.status).toBe(404)
       })
+
+      test('DELETE .../accounts/$uuid removes account and transactions', async () => {
+        const transactionUuid = await api.createTransaction(portfolioId, {
+          accountUuid: depositAccountUuid,
+          type: 'Payment',
+          datetime: '2021-03-01T08:00:00.000Z',
+          units: [],
+        })
+
+        const deleteResponse = await api.delete(
+          `/portfolios/${portfolioId}/accounts/${depositAccountUuid}`,
+        )
+
+        expect(deleteResponse.status).toBe(200)
+
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/transactions/${transactionUuid}`,
+        )
+        expect(getResponse.status).toBe(404)
+      })
     })
   })
 
@@ -439,6 +459,19 @@ describe('Accounts (e2e)', () => {
         )
 
         expect(getResponse.status).toBe(404)
+      })
+
+      test('DELETE .../accounts/$uuid removes account and unlinks reference account', async () => {
+        const deleteResponse = await api.delete(
+          `/portfolios/${portfolioId}/accounts/${depositAccountUuid}`,
+        )
+        expect(deleteResponse.status).toBe(200)
+
+        const getResponse = await api.get(
+          `/portfolios/${portfolioId}/accounts/${securitiesAccountUuid}`,
+        )
+        expect(getResponse.status).toBe(200)
+        expect(getResponse.body.referenceAccountUuid).toBe(null)
       })
     })
   })
