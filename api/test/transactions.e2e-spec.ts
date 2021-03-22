@@ -425,6 +425,40 @@ describe('Transactions (e2e)', () => {
         )
         expect(differenceInSeconds(new Date(), updatedAt)).toBeLessThan(2)
       })
+
+      it('creates and removes link to partner transaction', async () => {
+        const changedTransaction = {
+          ...testTransactionMinimal,
+          partnerTransactionUuid: fullTransactionUuid,
+        }
+
+        const addResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
+          changedTransaction,
+        )
+        expect(addResponse.status).toBe(200)
+        expect(addResponse.body).toMatchObject(changedTransaction)
+
+        const removeResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
+          { ...testTransactionMinimal, partnerTransactionUuid: null },
+        )
+        expect(removeResponse.status).toBe(200)
+        expect(removeResponse.body).toMatchObject(testTransactionMinimal)
+      })
+
+      it('fails if partnerTransaction does not exist', async () => {
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
+          {
+            ...testTransactionMinimal,
+            partnerTransactionUuid: '11111111-1111-1111-1111-111111111111',
+          },
+        )
+
+        expect(updateResponse.status).toBe(400)
+        expect(updateResponse.body.message).toMatch('partnerTransaction')
+      })
     })
 
     test('DELETE .../transactions/$uuid removes transaction', async () => {
@@ -440,6 +474,31 @@ describe('Transactions (e2e)', () => {
       )
 
       expect(getResponse.status).toBe(404)
+    })
+
+    test('DELETE .../transactions/$uuid removes link from partner transaction', async () => {
+      const changedTransaction = {
+        ...testTransactionMinimal,
+        partnerTransactionUuid: fullTransactionUuid,
+      }
+
+      const addResponse = await api.put(
+        `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
+        changedTransaction,
+      )
+      expect(addResponse.status).toBe(200)
+      expect(addResponse.body).toMatchObject(changedTransaction)
+
+      const deleteResponse = await api.delete(
+        `/portfolios/${portfolioId}/transactions/${fullTransactionUuid}`,
+      )
+      expect(deleteResponse.status).toBe(200)
+
+      const getResponse = await api.get(
+        `/portfolios/${portfolioId}/transactions/${minTransactionUuid}`,
+      )
+      expect(getResponse.status).toBe(200)
+      expect(getResponse.body.partnerTransactionUuid).toBe(null)
     })
   })
 })
