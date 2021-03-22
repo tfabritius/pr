@@ -9,10 +9,14 @@ import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSe
 import { PortfolioSecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
+import { TransactionsService } from '../transactions/transactions.service'
 
 @Injectable()
 export class PortfolioSecuritiesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactions: TransactionsService,
+  ) {}
 
   /**
    * Creates or updates security
@@ -179,6 +183,15 @@ export class PortfolioSecuritiesService {
    */
   async delete(params: PortfolioSecurityParams) {
     const security = await this.getOne(params)
+
+    // Delete transactions of security
+    const transactions = await this.transactions.getAllOfSecurity(params)
+    for (const { portfolioId, uuid } of transactions) {
+      await this.transactions.delete({
+        portfolioId: portfolioId,
+        transactionUuid: uuid,
+      })
+    }
 
     await this.prisma
       .$executeRaw`DELETE FROM portfolios_securities WHERE uuid=${params.securityUuid} AND portfolio_id=${params.portfolioId}`

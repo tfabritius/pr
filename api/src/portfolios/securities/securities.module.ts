@@ -8,6 +8,7 @@ import { PortfoliosModule } from '../portfolios.module'
 import { PortfolioSecurityPricesModule } from './prices/prices.module'
 import { CurrenciesModule } from '../../currencies/currencies.module'
 import { PrismaService } from '../../prisma.service'
+import { TransactionsService } from '../transactions/transactions.service'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PrismaService } from '../../prisma.service'
     PortfolioSecuritiesResolver,
     PortfolioSecuritiesService,
     SecuritiesKpisService,
+    TransactionsService,
   ],
   controllers: [PortfolioSecuritiesController],
   exports: [PortfolioSecuritiesService],
