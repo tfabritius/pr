@@ -240,6 +240,15 @@ export class TransactionsService {
   async delete({ transactionUuid, portfolioId }: TransactionParams) {
     const transaction = await this.getOne({ portfolioId, transactionUuid })
 
+    // Remove link from partner transaction (if exists)
+    await this.prisma.transaction.updateMany({
+      data: { partnerTransactionUuid: null },
+      where: {
+        portfolioId,
+        partnerTransactionUuid: transactionUuid,
+      },
+    })
+
     await this.prisma
       .$executeRaw`DELETE FROM portfolios_transactions WHERE uuid=${transactionUuid} AND portfolio_id=${portfolioId}`
 
