@@ -10,6 +10,7 @@ import {
 import { PrismaService } from '../../prisma.service'
 import { matchArrays } from '../../utils/match-arrays'
 import { AccountParams } from '../accounts/account.params'
+import { PortfolioSecurityParams } from '../securities/security.params'
 
 const defaultUnitsQuery: Prisma.TransactionUnitFindManyArgs = {
   select: {
@@ -113,6 +114,19 @@ export class TransactionsService {
   async getAllOfAccount({ portfolioId, accountUuid }: AccountParams) {
     return await this.prisma.transaction.findMany({
       where: { portfolioId, accountUuid },
+      include: { units: defaultUnitsQuery },
+    })
+  }
+
+  /**
+   * Gets all transactions of security
+   */
+  async getAllOfSecurity({
+    portfolioId,
+    securityUuid,
+  }: PortfolioSecurityParams) {
+    return await this.prisma.transaction.findMany({
+      where: { portfolioId, portfolioSecurityUuid: securityUuid },
       include: { units: defaultUnitsQuery },
     })
   }
