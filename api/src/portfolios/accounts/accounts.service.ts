@@ -156,6 +156,15 @@ export class AccountsService {
   async delete(params: AccountParams) {
     const account = await this.getOne(params)
 
+    // Remove links as reference account (if exists)
+    await this.prisma.account.updateMany({
+      data: { referenceAccountUuid: null },
+      where: {
+        portfolioId: params.portfolioId,
+        referenceAccountUuid: params.accountUuid,
+      },
+    })
+
     await this.prisma
       .$executeRaw`DELETE FROM portfolios_accounts WHERE uuid=${params.accountUuid} AND portfolio_id=${params.portfolioId}`
 
