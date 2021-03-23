@@ -22,7 +22,6 @@
     "security": "Wertpapier | Wertpapiere",
     "select portfolio": "Portfolio auswählen",
     "share": "Anteil | Anteile",
-    "sync client": "Synchronisierungstool",
     "too-short": "Zu kurz",
     "username": "Benutzername",
     "value": "Wert",
@@ -38,8 +37,7 @@
     "invalid-credentials": "Benutzername/Passwort ungültig"
   },
   "portfolios": {
-    "confirm-delete-msg": "Soll das Portfolio \"{name}\" wirklich gelöscht werden?",
-    "sync-client-msg": "Benutze das {link} um ein Portfolio hochzuladen."
+    "confirm-delete-msg": "Soll das Portfolio \"{name}\" wirklich gelöscht werden?"
   },
   "register": {
     "confirm-password": "Bestätige Passwort",
@@ -60,15 +58,5 @@
     "delete-account": "Benutzerkonto löschen",
     "delete-account-text": "Das Benutzerkonto wird sofort und dauerhaft gelöscht. Die Daten können nicht wiederhergestellt werden.",
     "im-sure": "Ich bin mir sicher"
-  },
-  "sync": {
-    "download sync client": "Synchronisierungstool runterladen",
-    "download-sync-client-msg": "Lade das Synchronisierungstool von folgender Adresse runter:",
-    "latest version": "Aktuelle Version",
-    "replace-portfolio-msg": "Ersetze {id} durch die ID des {portfolio}, das aktualisiert werden soll.",
-    "replace-portfolio-hint-msg": "Dein aktuell ausgewähltes Portfolio hat die ID {id}.",
-    "select os": "Wähle dein Betriebssystem",
-    "upload portfolio": "Lade Portfolio hoch",
-    "upload-portfolio-msg": "Starte das Synchronisierungstool auf der Kommandozeile."
   }
 }
