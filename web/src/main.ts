@@ -7,6 +7,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import i18n from './plugins/i18n'
+import apolloProvider from './plugins/apollo'
 
 import axios from 'axios'
 import { isAxiosError } from './utils'
@@ -31,5 +32,6 @@ new Vue({
   store,
   vuetify,
   i18n,
+  apolloProvider,
   render: (h) => h(App),
 }).$mount('#app')
