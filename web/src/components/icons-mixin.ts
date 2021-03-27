@@ -1,6 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import {
   mdiAccount,
+  mdiAccountLock,
   mdiApple,
   mdiBank,
   mdiBookMultiple,
@@ -17,6 +18,7 @@ import {
   mdiPencil,
   mdiPlaylistEdit,
   mdiPlus,
+  mdiRefresh,
   mdiTranslate,
   mdiViewDashboard,
 } from '@mdi/js'
@@ -24,6 +26,7 @@ import {
 @Component
 export class IconsMixin extends Vue {
   mdiAccount = mdiAccount
+  mdiAccountLock = mdiAccountLock
   mdiApple = mdiApple
   mdiBank = mdiBank
   mdiBookMultiple = mdiBookMultiple
@@ -40,6 +43,7 @@ export class IconsMixin extends Vue {
   mdiPencil = mdiPencil
   mdiPlaylistEdit = mdiPlaylistEdit
   mdiPlus = mdiPlus
+  mdiRefresh = mdiRefresh
   mdiTranslate = mdiTranslate
   mdiViewDashboard = mdiViewDashboard
 }
