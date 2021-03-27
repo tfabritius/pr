@@ -38,6 +38,26 @@ export class TransactionsService {
     { portfolioId, transactionUuid: uuid }: TransactionParams,
     dto: CreateUpdateTransactionDto,
   ): Promise<Transaction & { units: TransactionUnit[] }> {
+    const account = await this.prisma.account.findUnique({
+      where: { portfolioId_uuid: { portfolioId, uuid: dto.accountUuid } },
+    })
+
+    if (!account) {
+      throw new BadRequestException('accountUuid not found')
+    }
+
+    if (dto.portfolioSecurityUuid) {
+      const security = await this.prisma.portfolioSecurity.findUnique({
+        where: {
+          portfolioId_uuid: { portfolioId, uuid: dto.portfolioSecurityUuid },
+        },
+      })
+
+      if (!security) {
+        throw new BadRequestException('portfolioSecurityUuid not found')
+      }
+    }
+
     if (dto.partnerTransactionUuid) {
       try {
         await this.getOne({
