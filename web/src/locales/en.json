@@ -2,10 +2,14 @@
   "common": {
     "balance": "Balance",
     "cancel": "Cancel",
+    "close": "Close",
+    "created": "Created",
     "currency": "Currency | Currencies",
     "delete": "Delete",
     "deposit account": "Deposit account | Deposit accounts",
     "id": "ID",
+    "key": "Key",
+    "latest activity": "Latest activity",
     "log-out": "Log out",
     "manage portfolios": "Manage portfolios",
     "name": "Name",
@@ -16,11 +20,13 @@
     "portfolio": "Portfolio | Portfolios",
     "profile": "Profile",
     "quote": "Quote | Quotes",
+    "refresh": "Refresh",
     "required": "Required",
     "save": "Save",
     "securities account": "Securities account | Securities accounts",
     "security": "Security | Securities",
     "select portfolio": "Select portfolio",
+    "sessions": "Sessions",
     "share": "Share | Shares",
     "too-short": "Too short",
     "username": "Username",
@@ -46,6 +52,10 @@
     "sign-in": "Sign in",
     "invalid-chars": "Invalid characters",
     "confirm-password-mismatch": "Passwords don't match"
+  },
+  "sessions": {
+    "confirm-delete-msg": "Are you sure you want to delete session \"{note}\"?",
+    "save-token-msg": "Please copy and save this created key:"
   },
   "profile": {
     "username-change-text": "Username cannot be changed.",

@@ -50,6 +50,12 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "loggedIn" */ '../views/Profile.vue'),
   },
+  {
+    path: '/sessions',
+    name: 'Sessions',
+    component: () =>
+      import(/* webpackChunkName: "loggedIn" */ '../views/Sessions.vue'),
+  },
 ]
 
 const router = new VueRouter({

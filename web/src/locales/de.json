@@ -2,10 +2,14 @@
   "common": {
     "balance": "Kontostand",
     "cancel": "Abbrechen",
+    "close": "Schließen",
+    "created": "Erstellt",
     "currency": "Währung | Währungen",
     "delete": "Löschen",
     "deposit account": "Konto | Konten",
     "id": "ID",
+    "key": "Schlüssel",
+    "latest activity": "Letzte Aktivität",
     "log-out": "Abmelden",
     "manage portfolios": "Portfolios verwalten",
     "name": "Name",
@@ -16,11 +20,13 @@
     "portfolio": "Portfolio | Portfolios",
     "profile": "Profil",
     "quote": "Kurs | Kurse",
+    "refresh": "Aktualisieren",
     "required": "Erforderlich",
     "save": "Speichern",
     "securities account": "Depot | Depots",
     "security": "Wertpapier | Wertpapiere",
     "select portfolio": "Portfolio auswählen",
+    "sessions": "Sessions",
     "share": "Anteil | Anteile",
     "too-short": "Zu kurz",
     "username": "Benutzername",
@@ -46,6 +52,10 @@
     "sign-in": "Anmelden",
     "invalid-chars": "Ungültige Zeichen",
     "confirm-password-mismatch": "Passwörter stimmen nicht überein"
+  },
+  "sessions": {
+    "confirm-delete-msg": "Soll die Sitzung \"{note}\" wirklich gelöscht werden?",
+    "save-token-msg": "Bitte kopiere bzw. speichere diesen erzeugten Schlüssel:"
   },
   "profile": {
     "username-change-text": "Der Benutzername kann nicht geändert werden.",
