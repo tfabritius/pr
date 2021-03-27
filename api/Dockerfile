@@ -20,4 +20,4 @@ RUN yarn api build
 
 EXPOSE 3000
 
-CMD yarn api prisma migrate deploy --preview-feature && yarn api start:prod
+CMD yarn api prisma migrate deploy && yarn api start:prod
