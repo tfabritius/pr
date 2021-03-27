@@ -90,18 +90,18 @@ describe('Portfolio Guards (e2e)', () => {
       securityTwo = await apiTwo.createSecurity(portfolioTwo)
       transactionOne = await apiOne.createTransaction(portfolioOne, {
         type: 'Payment',
-        accountId: accountOne,
+        accountUuid: accountOne,
         datetime: '2020-01-01T00:00:00.000Z',
         units: [],
         note: '',
       })
       transactionTwo = await apiTwo.createTransaction(portfolioTwo, {
         type: 'Payment',
-        accountId: accountTwo,
+        accountUuid: accountTwo,
         datetime: '2020-01-01T00:00:00.000Z',
         units: [],
         note: '',
-        securityId: securityTwo,
+        portfolioSecurityUuid: securityTwo,
       })
 
       urls = [
@@ -141,26 +141,6 @@ describe('Portfolio Guards (e2e)', () => {
           }
         },
       )
-
-      test('PUT foreign object returns 404', async () => {
-        for (const url of urls) {
-          // Get valid object to pass global validation
-          const getResponse = await apiOne.get(
-            `/portfolios/${portfolioOne}${url}`,
-          )
-          expect(getResponse.status).toBe(200)
-          const validObject = getResponse.body
-
-          const updateResponse = await apiTwo.put(
-            `/portfolios/${portfolioTwo}${url}`,
-            validObject,
-          )
-          expect(updateResponse.status).toBe(404)
-          expect(updateResponse.body.message).toMatch(
-            /(Account)|(Security)|(Transaction) not found/,
-          )
-        }
-      })
     })
 
     describe('References across users', () => {
@@ -172,7 +152,7 @@ describe('Portfolio Guards (e2e)', () => {
             name: '...',
             uuid: '11111111-1111-1111-1111-111111111111',
             note: '',
-            referenceAccountId: accountOne,
+            referenceAccountUuid: accountOne,
           },
         )
         expect(response.status).toBe(400)
@@ -187,7 +167,7 @@ describe('Portfolio Guards (e2e)', () => {
             name: '...',
             uuid: '11111111-1111-1111-1111-111111111111',
             note: '',
-            referenceAccountId: accountOne,
+            referenceAccountUuid: accountOne,
           },
         )
         expect(response.status).toBe(400)
@@ -199,7 +179,7 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions`,
           {
             type: 'Payment',
-            accountId: accountOne,
+            accountUuid: accountOne,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
@@ -214,7 +194,7 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions/${transactionTwo}`,
           {
             type: 'Payment',
-            accountId: accountOne,
+            accountUuid: accountOne,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
@@ -229,11 +209,11 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions`,
           {
             type: 'Payment',
-            accountId: accountTwo,
+            accountUuid: accountTwo,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
-            securityId: securityOne,
+            portfolioSecurityUuid: securityOne,
           },
         )
         expect(response.status).toBe(400)
@@ -245,11 +225,11 @@ describe('Portfolio Guards (e2e)', () => {
           `/portfolios/${portfolioTwo}/transactions/${transactionTwo}`,
           {
             type: 'Payment',
-            accountId: accountTwo,
+            accountUuid: accountTwo,
             datetime: '2020-01-01T00:00:00.000Z',
             units: [],
             note: '',
-            securityId: securityOne,
+            portfolioSecurityUuid: securityOne,
           },
         )
         expect(response.status).toBe(400)
