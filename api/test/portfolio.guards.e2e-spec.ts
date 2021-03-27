@@ -70,12 +70,12 @@ describe('Portfolio Guards (e2e)', () => {
   })
 
   describe('Objects within portfolio', () => {
-    let accountOne: number
-    let accountTwo: number
-    let securityOne: number
-    let securityTwo: number
-    let transactionOne: number
-    let transactionTwo: number
+    let accountOne: string
+    let accountTwo: string
+    let securityOne: string
+    let securityTwo: string
+    let transactionOne: string
+    let transactionTwo: string
 
     let urls = []
 
