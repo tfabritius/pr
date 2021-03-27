@@ -156,7 +156,7 @@ describe('Portfolio Guards (e2e)', () => {
           },
         )
         expect(response.status).toBe(400)
-        expect(response.body.message).toBe('referenceAccount not found')
+        expect(response.body.message).toBe('referenceAccountUuid not found')
       })
 
       test('Updating account with referenceAccount in foreign portfolio fails', async () => {
@@ -171,7 +171,7 @@ describe('Portfolio Guards (e2e)', () => {
           },
         )
         expect(response.status).toBe(400)
-        expect(response.body.message).toBe('referenceAccount not found')
+        expect(response.body.message).toBe('referenceAccountUuid not found')
       })
 
       test('Creating transaction with account in foreign portfolio fails', async () => {
@@ -186,7 +186,7 @@ describe('Portfolio Guards (e2e)', () => {
           },
         )
         expect(response.status).toBe(400)
-        expect(response.body.message).toBe('Account not found')
+        expect(response.body.message).toBe('accountUuid not found')
       })
 
       test('Updating transaction with account in foreign portfolio fails', async () => {
@@ -201,7 +201,7 @@ describe('Portfolio Guards (e2e)', () => {
           },
         )
         expect(response.status).toBe(400)
-        expect(response.body.message).toBe('Account not found')
+        expect(response.body.message).toBe('accountUuid not found')
       })
 
       test('Creating transaction with security in foreign portfolio fails', async () => {
@@ -217,7 +217,7 @@ describe('Portfolio Guards (e2e)', () => {
           },
         )
         expect(response.status).toBe(400)
-        expect(response.body.message).toBe('Security not found')
+        expect(response.body.message).toBe('portfolioSecurityUuid not found')
       })
 
       test('Updating transaction with security in foreign portfolio fails', async () => {
@@ -233,7 +233,7 @@ describe('Portfolio Guards (e2e)', () => {
           },
         )
         expect(response.status).toBe(400)
-        expect(response.body.message).toBe('Security not found')
+        expect(response.body.message).toBe('portfolioSecurityUuid not found')
       })
     })
   })
