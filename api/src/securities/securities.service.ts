@@ -152,7 +152,10 @@ export class SecuritiesService implements OnModuleInit {
 
   async delete(uuid: string) {
     this.logger.log(`Deleting ${uuid}`)
-    return await this.prisma.security.delete({ where: { uuid } })
+
+    const security = await this.getOne(uuid)
+    await this.prisma.$executeRaw`DELETE FROM securities WHERE uuid=${uuid}`
+    return security
   }
 
   async getOne(uuid: string) {
