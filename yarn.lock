@@ -450,10 +450,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.1.0.tgz#76c4082568e0b5bfbd0034a7bb0fd07f84342704"
   integrity sha512-VMp/YwmeSYLaGhWUb/ui3o4X/Y3JDNLnqOQ7nONOUbNDzCJ4NfwVfTSOCPCiJWw0F8nd/RYvDvdoKGvP2MkVeg==
 
-"@fontsource/roboto-condensed@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.1.0.tgz#a18f087efd33d4f660d0e506cd3afd823fdfcb09"
-  integrity sha512-ZTiDr6ukblzIWXnlu8dhPVsCAiy1noIdJFZis9h2bx0wNzHes5XmentfR3r/zmROoH4jur9Fjaot0FME5t0pxg==
+"@fontsource/roboto-condensed@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.2.2.tgz#6950a29bb07cf2db7787e095650a62b787a840e7"
+  integrity sha512-dnV/LIyYkGM4BBaFRJglJsr4pNXga1oWRKeK7n+wk/R/MDMWoC7YAjsahL5Rp1akquGpbSRyJi713N/ps/lqnQ==
 
 "@graphql-tools/merge@6.2.7":
   version "6.2.7"
