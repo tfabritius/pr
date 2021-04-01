@@ -30,7 +30,7 @@
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/serve-static": "^2.1.4",
     "@nestjs/swagger": "^4.8.0",
-    "@nestjs/testing": "^7.6.7",
+    "@nestjs/testing": "^7.6.15",
     "@prisma/client": "^2.20.1",
     "adm-zip": "^0.5.2",
     "apollo-server-express": "^2.21.0",
