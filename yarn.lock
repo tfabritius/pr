@@ -444,10 +444,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fontsource/eczar@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.1.0.tgz#76c4082568e0b5bfbd0034a7bb0fd07f84342704"
-  integrity sha512-VMp/YwmeSYLaGhWUb/ui3o4X/Y3JDNLnqOQ7nONOUbNDzCJ4NfwVfTSOCPCiJWw0F8nd/RYvDvdoKGvP2MkVeg==
+"@fontsource/eczar@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.2.2.tgz#dcd179f14ac5054d56c3367a6459989272cbd7fc"
+  integrity sha512-+GI1VJZQUF31AXOnZS66tf20HXSIaVfk1z4ePVsQSbnGQTwwCwlj8CnhExrOuFLTdCm8ATkp8QzCVNPbdYEgLA==
 
 "@fontsource/roboto-condensed@^4.2.2":
   version "4.2.2"
