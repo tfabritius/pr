@@ -6,20 +6,20 @@
         :items-per-page="-1"
         :headers="[
           { text: $t('common.name'), value: 'name' },
-          { text: $tc('common.share', 2), value: 'kpis.shares' },
-          { text: $tc('common.quote', 1), value: 'kpis.quote' },
-          { text: $t('common.value'), value: 'kpis.value' },
+          { text: $tc('common.share', 2), value: 'shares' },
+          { text: $tc('common.quote', 1), value: 'quote' },
+          { text: $t('common.value'), value: 'value' },
         ]"
         hide-default-footer
       >
-        <template #item.kpis.shares="{ item: security }">
-          <n :value="security.kpis.shares" />
+        <template #item.shares="{ item: security }">
+          <n :value="security.shares" />
         </template>
-        <template #item.kpis.quote="{ item: security }">
-          <n :value="security.kpis.quote" :currency="security.currencyCode" />
+        <template #item.quote="{ item: security }">
+          <n :value="security.quote" :currency="security.currencyCode" />
         </template>
-        <template #item.kpis.value="{ item: security }">
-          <n :value="security.kpis.value" :currency="security.currencyCode" />
+        <template #item.value="{ item: security }">
+          <n :value="0" :currency="security.currencyCode" />
         </template>
       </v-data-table>
     </div>
@@ -28,23 +28,34 @@
 
 <script lang="ts">
 import { Component, Mixins, Vue } from 'vue-property-decorator'
-import axios from 'axios'
+import gql from 'graphql-tag'
 
 import FormattedNumber from '@/components/FormattedNumber.vue'
 import { IconsMixin } from '@/components/icons-mixin'
 import { Security } from '@/store/security.model'
+import store from '@/store'
+
+const SecuritiesAll = gql`
+  query securities($id: Int!) {
+    securities(portfolioId: $id) {
+      uuid
+      name
+      shares
+      quote
+    }
+  }
+`
 
 @Component({
+  apollo: {
+    securities: {
+      query: SecuritiesAll,
+      variables: { id: store.state.portfolio?.id },
+    },
+  },
   components: { N: FormattedNumber },
 })
 export default class SecuritiesPage extends Mixins(Vue, IconsMixin) {
   securities: Security[] = []
-
-  async mounted(): Promise<void> {
-    const response = await axios.get<Security[]>(
-      `/portfolios/${this.$store.state.portfolio.id}/securities?kpis=true`,
-    )
-    this.securities = response.data
-  }
 }
 </script>
