@@ -1,7 +1,6 @@
 export interface Security {
-  id: number
-  name: string
   uuid: string
+  name: string
   currencyCode: string
   note: string
 }
