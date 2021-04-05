@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Vue } from 'vue-property-decorator'
-import { supportedLocales } from '@/plugins/i18n.ts'
+import { supportedLocales } from '@/plugins/i18n'
 import { IconsMixin } from '@/components/icons-mixin'
 
 @Component
