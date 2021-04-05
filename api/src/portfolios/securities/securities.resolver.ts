@@ -14,14 +14,25 @@ import { SecuritiesKpisService } from './securities.kpis.service'
 import { AuthUser } from '../../auth/auth.decorator'
 import { User } from '../../auth/users/user.entity'
 import { GqlAuthGuard } from '../../auth/gql-auth.guard'
+import { PortfoliosService } from '../portfolios.service'
 
 @Resolver(() => PortfolioSecurity)
 @UseGuards(GqlAuthGuard)
 export class PortfolioSecuritiesResolver {
   constructor(
+    private portfoliosService: PortfoliosService,
     private securitiesService: PortfolioSecuritiesService,
     private securitiesKpisService: SecuritiesKpisService,
   ) {}
+
+  @Query(() => [PortfolioSecurity])
+  async securities(
+    @Args('portfolioId', { type: () => Int }) portfolioId: number,
+    @AuthUser() user: User,
+  ) {
+    await this.portfoliosService.getOneOfUser(user, { portfolioId })
+    return await this.securitiesService.getAll({ portfolioId })
+  }
 
   @Query(() => PortfolioSecurity)
   async security(
