@@ -34,7 +34,7 @@
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.7",
     "vue-class-component": "^7.2.3",
-    "vue-cli-plugin-i18n": "~1.0.1",
+    "vue-cli-plugin-i18n": "~2.0.3",
     "vue-cli-plugin-vuetify": "~2.0.9",
     "vue-cli-plugin-vuetify-preset-rally": "~1.0.4",
     "vue-i18n": "^8.24.2",
