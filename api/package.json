@@ -33,7 +33,7 @@
     "@nestjs/testing": "^7.6.15",
     "@prisma/client": "^2.20.1",
     "adm-zip": "^0.5.5",
-    "apollo-server-express": "^2.21.0",
+    "apollo-server-express": "^2.22.2",
     "argon2": "^0.27.2",
     "axios": "^0.21.1",
     "class-transformer": "^0.4.0",
