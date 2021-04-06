@@ -51,7 +51,7 @@
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.5.1",
-    "prisma": "^2.20.0",
+    "prisma": "^2.20.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
@@ -59,7 +59,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.5.4",
+    "@nestjs/cli": "^7.6.0",
     "@nestjs/schematics": "^7.3.1",
     "@types/adm-zip": "^0.4.34",
     "@types/express": "^4.17.11",
