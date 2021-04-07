@@ -6,7 +6,7 @@
         :items-per-page="-1"
         :headers="[
           { text: $t('common.name'), value: 'name' },
-          { text: $t('common.balance'), value: 'kpis.balance' },
+          { text: $t('common.balance'), value: 'balance' },
           { text: $tc('common.currency', 1), value: 'currencyCode' },
           { text: $t('common.note'), value: 'note' },
         ]"
@@ -14,7 +14,7 @@
       >
         <template #item.kpis.balance="{ item: depositAccount }">
           <n
-            :value="depositAccount.kpis.balance"
+            :value="depositAccount.balance"
             :currency="depositAccount.currencyCode"
           />
         </template>
@@ -25,23 +25,35 @@
 
 <script lang="ts">
 import { Component, Mixins, Vue } from 'vue-property-decorator'
-import axios from 'axios'
+import gql from 'graphql-tag'
 
 import FormattedNumber from '@/components/FormattedNumber.vue'
 import { IconsMixin } from '@/components/icons-mixin'
 import { Account } from '@/store/account.model'
+import store from '@/store'
+
+const DepositAccountsAll = gql`
+  query accounts($id: Int!) {
+    accounts(portfolioId: $id, type: "deposit") {
+      uuid
+      name
+      balance
+      currencyCode
+      note
+    }
+  }
+`
 
 @Component({
+  apollo: {
+    accounts: {
+      query: DepositAccountsAll,
+      variables: { id: store.state.portfolio?.id },
+    },
+  },
   components: { N: FormattedNumber },
 })
 export default class DepositAccountsPage extends Mixins(Vue, IconsMixin) {
   accounts: Account[] = []
-
-  async mounted(): Promise<void> {
-    const response = await axios.get<Account[]>(
-      `/portfolios/${this.$store.state.portfolio.id}/accounts?kpis=true`,
-    )
-    this.accounts = response.data.filter((a) => a.type === 'deposit')
-  }
 }
 </script>
