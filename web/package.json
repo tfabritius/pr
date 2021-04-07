@@ -44,6 +44,6 @@
     "vuetify": "^2.4.9",
     "vuetify-loader": "^1.7.2",
     "vuex": "^3.6.2",
-    "vuex-persistedstate": "^4.0.0-beta.2"
+    "vuex-persistedstate": "^4.0.0-beta.3"
   }
 }
