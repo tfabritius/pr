@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Account, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
-import { AccountType } from './account.entity'
+import { Account, AccountType } from './account.entity'
 import { AccountKpis } from './account.kpis'
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
 import { PrismaService } from '../../prisma.service'
