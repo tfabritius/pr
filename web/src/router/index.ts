@@ -39,6 +39,14 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "loggedIn" */ '../views/Securities.vue'),
   },
   {
+    path: '/securities-accounts',
+    name: 'SecuritiesAccounts',
+    component: () =>
+      import(
+        /* webpackChunkName: "loggedIn" */ '../views/SecuritiesAccounts.vue'
+      ),
+  },
+  {
     path: '/portfolios',
     name: 'Portfolios',
     component: () =>
