@@ -35,7 +35,8 @@ jobs:
       uses: actions/setup-node@v2.1.5
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn install --frozen-lockfile
+    - name: Install node modules
+      uses: bahmutov/npm-install@v1
     - run: yarn api prisma generate
     - run: yarn api build
     - name: Run unit tests
