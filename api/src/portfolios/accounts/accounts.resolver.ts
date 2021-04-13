@@ -39,9 +39,16 @@ export class AccountsResolver {
 
   @ResolveField(() => String)
   async balance(@Parent() account: Account) {
-    const kpis = await this.accountsKpisService.getKpis(account, {
-      baseCurrencyCode: 'EUR',
+    return await this.accountsKpisService.getDepositBalance(account)
+  }
+
+  @ResolveField(() => String)
+  async value(
+    @Parent() account: Account,
+    @Args('currencyCode', { nullable: true }) currencyCode: string,
+  ) {
+    return await this.accountsKpisService.getValue(account, {
+      currencyCode,
     })
-    return kpis.balance
   }
 }

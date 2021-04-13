@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
 import { Account, AccountType } from './account.entity'
-import { AccountKpis } from './account.kpis'
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
 import { PrismaService } from '../../prisma.service'
 
@@ -14,32 +13,35 @@ export class AccountsKpisService {
     private readonly currenciesConversionService: CurrenciesConversionService,
   ) {}
 
-  public async getKpis(
+  /**
+   * Gets current value of account
+   */
+  public async getValue(
     account: Account,
-    { baseCurrencyCode }: { baseCurrencyCode: string },
-  ): Promise<AccountKpis> {
-    const kpis = new AccountKpis()
+    { currencyCode }: { currencyCode: string },
+  ): Promise<Prisma.Decimal> {
+    let value: Prisma.Decimal
 
     if (account.type === AccountType.DEPOSIT) {
-      const balance = await this.getDepositBalance(account)
-      kpis.balance = balance
-
-      if (baseCurrencyCode) {
-        kpis.valueInBaseCurrency = await this.currenciesConversionService.convertCurrencyAmount(
-          kpis.balance,
-          account.currencyCode,
-          baseCurrencyCode,
-        )
-      }
+      value = await this.getDepositBalance(account)
+    } else {
+      // Handling of SecuritiesAccount is not implemented yet
+      value = new Prisma.Decimal(0)
     }
 
-    return kpis
+    if (currencyCode) {
+      return await this.currenciesConversionService.convertCurrencyAmount(
+        value,
+        account.currencyCode,
+        currencyCode,
+      )
+    }
   }
 
   /**
    * Gets balance of deposit account
    */
-  private async getDepositBalance(account: Account): Promise<Prisma.Decimal> {
+  public async getDepositBalance(account: Account): Promise<Prisma.Decimal> {
     const { sum } = await this.prisma.transactionUnit.aggregate({
       sum: { amount: true },
       where: {
