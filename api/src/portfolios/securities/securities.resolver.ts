@@ -49,10 +49,7 @@ export class PortfolioSecuritiesResolver {
 
   @ResolveField(() => String)
   async shares(@Parent() security: PortfolioSecurity) {
-    const kpis = await this.securitiesKpisService.getKpis(security, {
-      baseCurrencyCode: 'EUR',
-    })
-    return kpis.shares
+    return await this.securitiesKpisService.getShares(security)
   }
 
   @ResolveField(() => String)
@@ -60,9 +57,8 @@ export class PortfolioSecuritiesResolver {
     @Parent() security: PortfolioSecurity,
     @Args('currencyCode', { nullable: true }) currencyCode: string,
   ) {
-    const kpis = await this.securitiesKpisService.getKpis(security, {
-      baseCurrencyCode: currencyCode || 'EUR',
+    return await this.securitiesKpisService.getQuote(security, {
+      currencyCode,
     })
-    return kpis.quoteInBaseCurrency
   }
 }
