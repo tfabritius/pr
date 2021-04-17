@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -152,21 +152,29 @@ model Portfolio {
 }
 
 model PortfolioSecurity {
-  name         String                   @db.VarChar
-  uuid         String                   @db.Uuid
-  currencyCode String                   @map("currency_code") @db.Char(3)
-  isin         String                   @default("") @db.VarChar
-  wkn          String                   @default("") @db.VarChar
-  symbol       String                   @default("") @db.VarChar
-  active       Boolean
-  note         String                   @default("") @db.VarChar
-  portfolioId  Int                      @map("portfolio_id")
-  securityUuid String?                  @map("security_uuid") @db.Uuid
-  updatedAt    DateTime                 @default(now()) @map("updated_at") @db.Timestamptz
-  currency     Currency                 @relation(fields: [currencyCode], references: [code])
-  portfolio    Portfolio                @relation(fields: [portfolioId], references: [id])
-  prices       PortfolioSecurityPrice[]
-  security     Security?                @relation(fields: [securityUuid], references: [uuid])
+  name          String                   @db.VarChar
+  uuid          String                   @db.Uuid
+  currencyCode  String                   @map("currency_code") @db.Char(3)
+  isin          String                   @default("") @db.VarChar
+  wkn           String                   @default("") @db.VarChar
+  symbol        String                   @default("") @db.VarChar
+  active        Boolean
+  note          String                   @default("") @db.VarChar
+  portfolioId   Int                      @map("portfolio_id")
+  securityUuid  String?                  @map("security_uuid") @db.Uuid
+  updatedAt     DateTime                 @default(now()) @map("updated_at") @db.Timestamptz
+  calendar      String?                  @db.Text
+  feed          String?                  @db.Text
+  feedUrl       String?                  @map("feed_url") @db.Text
+  latestFeed    String?                  @map("latest_feed") @db.Text
+  latestFeedUrl String?                  @map("latest_feed_url") @db.Text
+  attributes    Json?                    @db.JsonB
+  events        Json?                    @db.JsonB
+  properties    Json?                    @db.JsonB
+  currency      Currency                 @relation(fields: [currencyCode], references: [code])
+  portfolio     Portfolio                @relation(fields: [portfolioId], references: [id])
+  prices        PortfolioSecurityPrice[]
+  security      Security?                @relation(fields: [securityUuid], references: [uuid])
   // transactions Transaction[]
 
   @@id([portfolioId, uuid])

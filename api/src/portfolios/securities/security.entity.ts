@@ -32,4 +32,10 @@ export class PortfolioSecurity {
    * Date and time at which security was updated last by a user
    */
   updatedAt: Date
+
+  calendar?: string
+  feed?: string
+  feedUrl?: string
+  latestFeed?: string
+  latestFeedUrl?: string
 }

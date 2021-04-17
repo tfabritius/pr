@@ -43,4 +43,24 @@ export class CreateUpdatePortfolioSecurityDto {
   @Type(() => Date)
   @IsDate()
   readonly updatedAt?: Date = new Date()
+
+  @IsOptional()
+  @IsString()
+  readonly calendar?: string
+
+  @IsOptional()
+  @IsString()
+  readonly feed?: string
+
+  @IsOptional()
+  @IsString()
+  readonly feedUrl?: string
+
+  @IsOptional()
+  @IsString()
+  readonly latestFeed?: string
+
+  @IsOptional()
+  @IsString()
+  readonly latestFeedUrl?: string
 }
