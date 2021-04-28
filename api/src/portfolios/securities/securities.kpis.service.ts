@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { Prisma, TransactionType } from '@prisma/client'
 
 import { CurrenciesConversionService } from '../../currencies/currencies.conversion.service'
 import { PortfolioSecurity } from './security.entity'
@@ -23,6 +23,12 @@ export class SecuritiesKpisService {
       where: {
         portfolioId: security.portfolioId,
         portfolioSecurityUuid: security.uuid,
+        type: {
+          in: [
+            TransactionType.SecuritiesOrder,
+            TransactionType.SecuritiesTransfer,
+          ],
+        },
       },
     })
 
