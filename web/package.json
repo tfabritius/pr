@@ -23,7 +23,7 @@
     "@vue/eslint-config-typescript": "^7.0.0",
     "apollo-boost": "^0.4.9",
     "axios": "^0.21.1",
-    "big.js": "^6.0.3",
+    "big.js": "^6.1.0",
     "cross-env": "^7.0.3",
     "eslint-plugin-vue": "^7.9.0",
     "graphql": "^15.5.0",
