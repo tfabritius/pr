@@ -95,7 +95,7 @@ export class TransactionsService {
       updatedAt,
     }: CreateUpdateTransactionDto,
   ) {
-    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
+    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = undefined
     if (partnerTransactionUuid) {
       partnerTransaction = {
         connect: {
@@ -104,7 +104,7 @@ export class TransactionsService {
       }
     }
 
-    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
+    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = undefined
     if (portfolioSecurityUuid) {
       portfolioSecurity = {
         connect: {
@@ -259,7 +259,7 @@ export class TransactionsService {
   ) {
     await this.createUpdateDeleteUnits(portfolioId, uuid, units)
 
-    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
+    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = undefined
     if (partnerTransactionUuid) {
       partnerTransaction = {
         connect: {
@@ -268,7 +268,7 @@ export class TransactionsService {
       }
     }
 
-    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
+    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = undefined
     if (portfolioSecurityUuid) {
       portfolioSecurity = {
         connect: {
