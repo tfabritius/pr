@@ -49,8 +49,8 @@ model Account {
   updatedAt            DateTime      @default(now()) @map("updated_at") @db.Timestamptz
   currency             Currency?     @relation("accounts_currency", fields: [currencyCode], references: [code])
   portfolio            Portfolio     @relation(fields: [portfolioId], references: [id])
-  // referenceAccount     Account?      @relation("accounts_reference_accounts", fields: [portfolioId, referenceAccountUuid], references: [portfolioId, uuid])
-  // referencingAccounts  Account[]     @relation("accounts_reference_accounts")
+  referenceAccount     Account?      @relation("accounts_reference_accounts", fields: [portfolioId, referenceAccountUuid], references: [portfolioId, uuid])
+  referencingAccounts  Account[]     @relation("accounts_reference_accounts")
   transactions         Transaction[]
 
   @@id([portfolioId, uuid])
@@ -175,7 +175,7 @@ model PortfolioSecurity {
   portfolio     Portfolio                @relation(fields: [portfolioId], references: [id])
   prices        PortfolioSecurityPrice[]
   security      Security?                @relation(fields: [securityUuid], references: [uuid])
-  // transactions Transaction[]
+  transactions  Transaction[]
 
   @@id([portfolioId, uuid])
   @@index([portfolioId])
@@ -291,22 +291,22 @@ model Taxonomy {
 }
 
 model Transaction {
-  uuid                   String            @db.Uuid
-  accountUuid            String            @map("account_uuid") @db.Uuid
-  type                   TransactionType
-  datetime               DateTime          @db.Timestamptz
-  partnerTransactionUuid String?           @map("partner_transaction_uuid") @db.Uuid
-  shares                 Decimal?          @db.Decimal(16, 8)
-  portfolioSecurityUuid  String?           @map("portfolio_security_uuid") @db.Uuid
-  note                   String            @default("") @db.VarChar
-  portfolioId            Int               @map("portfolio_id")
-  updatedAt              DateTime          @default(now()) @map("updated_at") @db.Timestamptz
-  account                Account           @relation(fields: [portfolioId, accountUuid], references: [portfolioId, uuid])
-  // partnerTransaction        Transaction?      @relation("transactions_partner_transaction", fields: [portfolioId, partnerTransactionUuid], references: [portfolioId, uuid])
-  // partnerTransactionReverse Transaction?      @relation("transactions_partner_transaction")
-  portfolio              Portfolio         @relation(fields: [portfolioId], references: [id])
-  // portfolioSecurity         PortfolioSecurity? @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid])
-  units                  TransactionUnit[]
+  uuid                      String             @db.Uuid
+  accountUuid               String             @map("account_uuid") @db.Uuid
+  type                      TransactionType
+  datetime                  DateTime           @db.Timestamptz
+  partnerTransactionUuid    String?            @map("partner_transaction_uuid") @db.Uuid
+  shares                    Decimal?           @db.Decimal(16, 8)
+  portfolioSecurityUuid     String?            @map("portfolio_security_uuid") @db.Uuid
+  note                      String             @default("") @db.VarChar
+  portfolioId               Int                @map("portfolio_id")
+  updatedAt                 DateTime           @default(now()) @map("updated_at") @db.Timestamptz
+  account                   Account            @relation(fields: [portfolioId, accountUuid], references: [portfolioId, uuid])
+  partnerTransaction        Transaction?       @relation("transactions_partner_transaction", fields: [portfolioId, partnerTransactionUuid], references: [portfolioId, uuid])
+  partnerTransactionReverse Transaction?       @relation("transactions_partner_transaction")
+  portfolio                 Portfolio          @relation(fields: [portfolioId], references: [id])
+  portfolioSecurity         PortfolioSecurity? @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid])
+  units                     TransactionUnit[]
 
   @@id([portfolioId, uuid])
   @@unique([portfolioId, partnerTransactionUuid])

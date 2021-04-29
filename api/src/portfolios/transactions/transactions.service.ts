@@ -95,21 +95,23 @@ export class TransactionsService {
       updatedAt,
     }: CreateUpdateTransactionDto,
   ) {
-    // let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
-    // if (partnerTransactionUuid) {
-    //   partnerTransaction = {
-    //     connect: {
-    //       portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
-    //     },
-    //   }
-    // }
+    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
+    if (partnerTransactionUuid) {
+      partnerTransaction = {
+        connect: {
+          portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
+        },
+      }
+    }
 
-    // let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
-    // if (securityUuid) {
-    //   portfolioSecurity = {
-    //     connect: { portfolioId_uuid: { portfolioId, uuid: securityUuid } },
-    //   }
-    // }
+    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
+    if (portfolioSecurityUuid) {
+      portfolioSecurity = {
+        connect: {
+          portfolioId_uuid: { portfolioId, uuid: portfolioSecurityUuid },
+        },
+      }
+    }
 
     return await this.prisma.transaction.create({
       data: {
@@ -124,8 +126,8 @@ export class TransactionsService {
             portfolioId_uuid: { portfolioId, uuid: accountUuid },
           },
         },
-        partnerTransactionUuid,
-        portfolioSecurityUuid,
+        partnerTransaction,
+        portfolioSecurity,
         portfolio: { connect: { id: portfolioId } },
         units: { createMany: { data: units } },
       },
@@ -257,21 +259,23 @@ export class TransactionsService {
   ) {
     await this.createUpdateDeleteUnits(portfolioId, uuid, units)
 
-    // let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
-    // if (partnerTransactionUuid) {
-    //   partnerTransaction = {
-    //     connect: {
-    //       portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
-    //     },
-    //   }
-    // }
+    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = null
+    if (partnerTransactionUuid) {
+      partnerTransaction = {
+        connect: {
+          portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
+        },
+      }
+    }
 
-    // let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
-    // if (securityUuid) {
-    //   portfolioSecurity = {
-    //     connect: { portfolioId_uuid: { portfolioId, uuid: securityUuid } },
-    //   }
-    // }
+    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = null
+    if (portfolioSecurityUuid) {
+      portfolioSecurity = {
+        connect: {
+          portfolioId_uuid: { portfolioId, uuid: portfolioSecurityUuid },
+        },
+      }
+    }
 
     return await this.prisma.transaction.update({
       data: {
@@ -285,8 +289,8 @@ export class TransactionsService {
             portfolioId_uuid: { portfolioId, uuid: accountUuid },
           },
         },
-        partnerTransactionUuid,
-        portfolioSecurityUuid,
+        partnerTransaction,
+        portfolioSecurity,
       },
       where: { portfolioId_uuid: { portfolioId, uuid } },
       include: { units: defaultUnitsQuery },

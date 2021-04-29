@@ -45,7 +45,7 @@ export class AccountsService {
           updatedAt,
           currency: { connect: { code: currencyCode } },
           portfolio: { connect: { id: portfolioId } },
-          referenceAccountUuid: null,
+          referenceAccount: undefined,
         },
         update: {
           name,
@@ -71,7 +71,7 @@ export class AccountsService {
           note,
           updatedAt,
           referenceAccountUuid,
-          portfolio: { connect: { id: portfolioId } },
+          portfolioId,
         },
         update: {
           name,
