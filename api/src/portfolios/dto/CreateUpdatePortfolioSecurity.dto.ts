@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsNotEmpty,
@@ -63,4 +64,12 @@ export class CreateUpdatePortfolioSecurityDto {
   @IsOptional()
   @IsString()
   readonly latestFeedUrl?: string
+
+  @IsOptional()
+  @IsArray()
+  readonly properties?: any[]
+
+  @IsOptional()
+  @IsArray()
+  readonly events?: any[]
 }
