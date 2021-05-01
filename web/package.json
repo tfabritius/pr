@@ -28,7 +28,7 @@
     "eslint-plugin-vue": "^7.9.0",
     "graphql": "^15.5.0",
     "sass": "^1.32.12",
-    "sass-loader": "^8.0.2",
+    "sass-loader": "^11.0.1",
     "serve": "^11.3.2",
     "typescript": "~3.9.3",
     "vue": "^2.6.11",
