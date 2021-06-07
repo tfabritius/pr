@@ -31,7 +31,7 @@
     "@nestjs/serve-static": "^2.1.4",
     "@nestjs/swagger": "^4.8.0",
     "@nestjs/testing": "^7.6.17",
-    "@prisma/client": "^2.21.2",
+    "@prisma/client": "^2.24.1",
     "adm-zip": "^0.5.5",
     "apollo-server-express": "^2.21.0",
     "argon2": "^0.27.2",
