@@ -60,16 +60,16 @@ export class StatsController {
   async getStatistics(): Promise<StatsVersionResponseDto[]> {
     const versions = await this.prisma.clientupdate.groupBy({
       by: ['version'],
-      count: { _all: true },
-      min: { timestamp: true },
-      max: { timestamp: true },
+      _count: { _all: true },
+      _min: { timestamp: true },
+      _max: { timestamp: true },
     })
 
     return versions.map((el) => ({
       version: el.version,
-      count: el.count._all,
-      firstUpdate: el.min.timestamp,
-      lastUpdate: el.max.timestamp,
+      count: el._count._all,
+      firstUpdate: el._min.timestamp,
+      lastUpdate: el._max.timestamp,
     }))
   }
 
