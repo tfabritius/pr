@@ -25,7 +25,7 @@
     "axios": "^0.21.1",
     "big.js": "^6.1.1",
     "cross-env": "^7.0.3",
-    "eslint-plugin-vue": "^7.9.0",
+    "eslint-plugin-vue": "^7.12.1",
     "graphql": "^15.5.0",
     "sass": "^1.32.12",
     "sass-loader": "^8.0.2",
