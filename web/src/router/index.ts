@@ -71,7 +71,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.public || store.getters.loggedIn) {
+  if (to.meta?.public || store.getters.loggedIn) {
     next()
   } else {
     next({ path: '/login' })
