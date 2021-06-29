@@ -450,15 +450,15 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fontsource/eczar@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.2.2.tgz#dcd179f14ac5054d56c3367a6459989272cbd7fc"
-  integrity sha512-+GI1VJZQUF31AXOnZS66tf20HXSIaVfk1z4ePVsQSbnGQTwwCwlj8CnhExrOuFLTdCm8ATkp8QzCVNPbdYEgLA==
+"@fontsource/eczar@^4.4.5":
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.4.5.tgz#d03d5026cd223043c3ca13c78b65bd2709c302be"
+  integrity sha512-HD4n/Ip5V5YSkaGyIPQN1pWcZOVUc6YOsiGwFip2SaTipyGLdWAZyMyIxaqAHgt5lRwj2HklScg/+duzuyxleg==
 
-"@fontsource/roboto-condensed@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.2.2.tgz#6950a29bb07cf2db7787e095650a62b787a840e7"
-  integrity sha512-dnV/LIyYkGM4BBaFRJglJsr4pNXga1oWRKeK7n+wk/R/MDMWoC7YAjsahL5Rp1akquGpbSRyJi713N/ps/lqnQ==
+"@fontsource/roboto-condensed@^4.4.5":
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.4.5.tgz#de4afbddeaa80dfdbf1f87fcb0a3a16b3a0d057d"
+  integrity sha512-NXCKZfeXe0ledj42JXQI2tUs70BGnUthvqodhIYpr5QK0VUORL7dduxO+nbyHlz44qWuv8Dai5wSLK4zh+h/zg==
 
 "@graphql-tools/merge@6.2.7":
   version "6.2.7"
