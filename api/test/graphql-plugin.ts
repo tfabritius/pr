@@ -18,6 +18,6 @@ module.exports.factory = (cs) => {
         '.model.ts',
       ],
     },
-    cs.tsCompiler.program,
+    cs.program,
   )
 }
