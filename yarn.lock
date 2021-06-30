@@ -7352,10 +7352,10 @@ ip-regex@^2.1.0:
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-2.1.0.tgz#fa78bf5d2e6913c911ce9f819ee5146bb6d844e9"
   integrity sha1-+ni/XS5pE8kRzp+BnuUUa7bYROk=
 
-ip2location-nodejs@^8.4.0:
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-8.4.0.tgz#65efb526adb171c4e51fa962c3165f957831530d"
-  integrity sha512-wTw+pcw9wRcybMqm0nInzl4xDy2NjYRJ8UkLXfyL8W4Cy6+Id4A8E+Hlx+1yKEyzD4kGNlILgX6xnI1PwxlESA==
+ip2location-nodejs@^8.5.0:
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-8.5.0.tgz#e311ddfd6422cc5d4f66eefbdb99954afa9ba428"
+  integrity sha512-CKppnihNIO5hrL9/K1N0AWLhUi9CCzDn1u6BiR80iMLjJRClzyZdaoOX7HxrVVasOoi/cde0yGoBrEFwrsKp2g==
   dependencies:
     big-integer "^1.6.47"
 
