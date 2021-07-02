@@ -25,7 +25,7 @@
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.18",
     "@nestjs/graphql": "^7.9.11",
-    "@nestjs/passport": "^7.1.5",
+    "@nestjs/passport": "^7.1.6",
     "@nestjs/platform-express": "^7.6.17",
     "@nestjs/schedule": "^0.4.3",
     "@nestjs/serve-static": "^2.1.4",
