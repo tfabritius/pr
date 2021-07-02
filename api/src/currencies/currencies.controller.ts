@@ -79,12 +79,13 @@ export class CurrenciesController {
   @HttpCode(200)
   async convert(@Body() dto: ConvertCurrenciesDto): Promise<any> {
     try {
-      const targetAmount = await this.currenciesConversionService.convertCurrencyAmount(
-        dto.sourceAmount,
-        dto.sourceCurrencyCode,
-        dto.targetCurrencyCode,
-        dto.date,
-      )
+      const targetAmount =
+        await this.currenciesConversionService.convertCurrencyAmount(
+          dto.sourceAmount,
+          dto.sourceCurrencyCode,
+          dto.targetCurrencyCode,
+          dto.date,
+        )
 
       return {
         ...dto,

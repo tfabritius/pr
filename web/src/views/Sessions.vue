@@ -179,7 +179,7 @@ export default class SessionsPage extends Mixins(Vue, IconsMixin) {
       } else {
         const { data } = await this.$apollo.mutate({
           mutation: gql`
-            mutation($note: String!) {
+            mutation ($note: String!) {
               createSession(note: $note) {
                 token
                 note
@@ -214,7 +214,7 @@ export default class SessionsPage extends Mixins(Vue, IconsMixin) {
   async deleteSession(): Promise<void> {
     await this.$apollo.mutate({
       mutation: gql`
-        mutation($token: String!) {
+        mutation ($token: String!) {
           deleteSession(token: $token) {
             token
           }

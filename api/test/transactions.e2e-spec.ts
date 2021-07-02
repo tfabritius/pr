@@ -275,9 +275,8 @@ describe('Transactions (e2e)', () => {
       })
 
       it('updates account of transaction', async () => {
-        const [
-          otherAccountUuid,
-        ] = await api.createTestDepositSecuritiesAccounts(portfolioId)
+        const [otherAccountUuid] =
+          await api.createTestDepositSecuritiesAccounts(portfolioId)
 
         const changedTransaction = {
           ...testTransactionMinimal,

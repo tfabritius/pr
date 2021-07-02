@@ -95,7 +95,8 @@ export class TransactionsService {
       updatedAt,
     }: CreateUpdateTransactionDto,
   ) {
-    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = undefined
+    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput =
+      undefined
     if (partnerTransactionUuid) {
       partnerTransaction = {
         connect: {
@@ -104,7 +105,8 @@ export class TransactionsService {
       }
     }
 
-    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = undefined
+    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput =
+      undefined
     if (portfolioSecurityUuid) {
       portfolioSecurity = {
         connect: {
@@ -200,30 +202,28 @@ export class TransactionsService {
     })
 
     // Match elements of both arrays
-    const {
-      unmatchedLefts: unmatchedDtos,
-      unmatchedRights: unmatchedDbs,
-    } = matchArrays(
-      dtos,
-      dbs,
-      (left, right) =>
-        JSON.stringify([
-          left.type,
-          left.amount,
-          left.currencyCode,
-          left.originalAmount,
-          left.originalCurrencyCode,
-          left.exchangeRate,
-        ]) ===
-        JSON.stringify([
-          right.type,
-          right.amount,
-          right.currencyCode,
-          right.originalAmount,
-          right.originalCurrencyCode,
-          right.exchangeRate,
-        ]),
-    )
+    const { unmatchedLefts: unmatchedDtos, unmatchedRights: unmatchedDbs } =
+      matchArrays(
+        dtos,
+        dbs,
+        (left, right) =>
+          JSON.stringify([
+            left.type,
+            left.amount,
+            left.currencyCode,
+            left.originalAmount,
+            left.originalCurrencyCode,
+            left.exchangeRate,
+          ]) ===
+          JSON.stringify([
+            right.type,
+            right.amount,
+            right.currencyCode,
+            right.originalAmount,
+            right.originalCurrencyCode,
+            right.exchangeRate,
+          ]),
+      )
 
     // Delete removed units
     await this.prisma.transactionUnit.deleteMany({
@@ -259,7 +259,8 @@ export class TransactionsService {
   ) {
     await this.createUpdateDeleteUnits(portfolioId, uuid, units)
 
-    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput = undefined
+    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput =
+      undefined
     if (partnerTransactionUuid) {
       partnerTransaction = {
         connect: {
@@ -268,7 +269,8 @@ export class TransactionsService {
       }
     }
 
-    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput = undefined
+    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput =
+      undefined
     if (portfolioSecurityUuid) {
       portfolioSecurity = {
         connect: {
