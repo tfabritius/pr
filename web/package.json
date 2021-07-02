@@ -14,7 +14,7 @@
     "@fontsource/roboto-condensed": "^4.4.5",
     "@mdi/js": "^5.9.55",
     "@types/big.js": "^6.0.2",
-    "@vue/cli-plugin-eslint": "~4.5.12",
+    "@vue/cli-plugin-eslint": "~4.5.13",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.12",
     "@vue/cli-plugin-vuex": "~4.5.12",
