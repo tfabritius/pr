@@ -59,7 +59,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.6.0",
+    "@nestjs/cli": "^8.0.2",
     "@nestjs/schematics": "^7.3.1",
     "@types/adm-zip": "^0.4.34",
     "@types/express": "^4.17.12",
