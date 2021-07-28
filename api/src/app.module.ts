@@ -25,6 +25,7 @@ import { TaxonomiesModule } from './taxonomies/taxonomies.module'
       playground: process.env.NODE_ENV === 'development',
     }),
     MailerModule.forRootAsync({
+      imports: undefined,
       useFactory: () => {
         if (process.env.MAILER_TRANSPORT) {
           return {
