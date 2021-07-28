@@ -6,6 +6,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
