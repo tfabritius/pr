@@ -23,6 +23,7 @@
       "web"
     ],
     "nohoist": [
+      "**",
       "**/@vue/cli-service",
       "**/typeorm",
       "**/@nestjs/",
