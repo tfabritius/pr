@@ -17,7 +17,6 @@ import { PortfoliosService } from './portfolios.service'
 @Injectable()
 export class PortfolioGuard implements CanActivate {
   constructor(
-    @Inject('PortfoliosService')
     private readonly portfoliosService: PortfoliosService,
   ) {}
 
