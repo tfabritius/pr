@@ -48,9 +48,6 @@ export async function createApp(
     }),
   )
 
-  /* Use class-transformer on output objects */
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
-
   /* Add OpenAPI */
   const options = new DocumentBuilder()
     .setTitle('Portfolio Report API')
