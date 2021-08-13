@@ -15,9 +15,7 @@ import { PortfoliosService } from './portfolios.service'
  */
 @Injectable()
 export class PortfolioGuard implements CanActivate {
-  constructor(
-    private readonly portfoliosService: PortfoliosService,
-  ) {}
+  constructor(private readonly portfoliosService: PortfoliosService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest()
