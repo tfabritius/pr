@@ -8,8 +8,11 @@
   - Use a [cloud service](https://www.postgresql.org/support/professional_hosting/)
 - Clone the repo
 
-### Install and run
+### Install and run backend
 ```bash
+# Switch working directory
+$ cd api
+
 # Install dependencies
 $ yarn install --frozen-lockfile
 
@@ -17,21 +20,33 @@ $ yarn install --frozen-lockfile
 $ DATABASE_URL="postgresql://user:password@host:5432/database"
 
 # Run DB migrations (development mode, using shadow database)
-$ yarn api prisma migrate dev
+$ yarn prisma migrate dev
 
 # Run DB migrations (production mode, without shadow database)
-$ yarn api prisma migrate deploy
+$ yarn prisma migrate deploy
 
 # Start backend in watch mode
-$ yarn api dev
-
-# Start frontend in watch mode
-$ yarn web dev
+$ yarn dev
 ```
 
 The backend provides a SwaggerUI for the REST API on `/doc`.
 
-## Executing tests
+### Install and run frontend
+
+```bash
+# Switch working directory
+$ cd web
+
+# Install dependencies
+$ yarn install --frozen-lockfile
+
+# Start frontend in watch mode
+$ yarn dev
+```
+
+## Execute tests
+
+### Backend
 
 ```bash
 # lint
@@ -44,20 +59,26 @@ $ yarn api test
 $ yarn api test:e2e
 ```
 
+### Frontend
+
+```bash
+# lint
+$ yarn lint
+```
 
 ## Build for single deployment
 
 Backend and frontend are served from the same domain. `/` shows frontend, `/api` leads to backend.
 
 ```bash
-# Build backend
-$ yarn api build
-
 # Build frontend
-$ yarn web build
+$ cd web
+$ yarn build
 
-# Run backend and serve frontend
-$ SERVE_STATIC_PATH=../web/dist/ yarn api start
+# Build and run backend serving frontend
+$ cd api
+$ yarn build
+$ SERVE_STATIC_PATH=../web/dist/ yarn start
 ```
 
 ## Build for separate deployment
@@ -65,17 +86,15 @@ $ SERVE_STATIC_PATH=../web/dist/ yarn api start
 Backend and frontend are served from different domains.
 
 ```bash
-# Build backend
-$ yarn api build
-
-# Build frontend
-$ VUE_APP_API_URL=http://localhost:3000/ yarn web build
-
-# Run backend - without serving frontend code
+# Build and run backend - without serving frontend code
+$ cd api
+$ yarn build
 $ yarn api start
 
-# Serve frontend
-$ yarn web serve
+# Build and serve frontend
+$ cd web
+$ VUE_APP_API_URL=http://localhost:3000/ yarn build
+$ yarn serve
 ```
 
 ## Production
@@ -140,6 +159,12 @@ To be placed in `.vscode/settings.json`.
 
 ```jsonc
 {
+  // Use separate working directories
+  "eslint.workingDirectories": [
+    "./api",
+    "./web",
+  ]
+
   "editor.codeActionsOnSave": {
     // Fix eslint issues on save
     "source.fixAll.eslint": true
