@@ -1,4 +1,4 @@
-name: CI
+name: CI-API
 
 on:
   push:
@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: api
 
 jobs:
   build:
@@ -37,16 +41,17 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install node modules
       uses: bahmutov/npm-install@v1
+      with:
+        working-directory: api
     - run: yarn lint
-    - run: yarn api prisma generate
-    - run: yarn api build
+    - run: yarn prisma generate
+    - run: yarn build
     - name: Run unit tests
-      run: yarn api test
-    - run: yarn api prisma migrate deploy
+      run: yarn test
+    - run: yarn prisma migrate deploy
       env:
         DATABASE_URL: postgresql://pr:password@localhost:5432/pr
     - name: Run E2E tests
-      run: yarn api test:e2e
+      run: yarn test:e2e
       env:
         DATABASE_URL: postgresql://pr:password@localhost:5432/pr
-    - run: yarn web build

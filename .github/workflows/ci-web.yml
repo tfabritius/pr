@@ -1,0 +1,33 @@
+name: CI-WEB
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2.3.0
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install node modules
+      uses: bahmutov/npm-install@v1
+      with:
+        working-directory: web
+    - run: yarn lint
+    - run: yarn build
