@@ -101,7 +101,7 @@ $ yarn serve
 
 ```bash
 # Build docker image (backend)
-$ docker build . -f api/Dockerfile
+$ docker build api/ -f api/Dockerfile
 
 # Build docker image (backend + frontend)
 $ docker build . -f Dockerfile
@@ -119,14 +119,14 @@ Backend Configuration is *not* relevant during build phase, only when actually r
 # api/.env
 
 # PostgreSQL database
-DATABASE_URL="postgresql://user:password@host:5432/database"
+DATABASE_URL=postgresql://user:password@host:5432/database
 
 # E-mail address used as recipient in contact endpoint
-CONTACT_RECIPIENT_EMAIL="me@example.com"
+CONTACT_RECIPIENT_EMAIL=me@example.com
 
 # Transport configuration for sending emails, https://nodemailer.com/smtp/
 # Default: use local sendmail (if available)
-MAILER_TRANSPORT="smtps://username:password@smtp.example.com/"
+MAILER_TRANSPORT=smtps://username:password@smtp.example.com/
 
 # Maximum score of results to be shown from fuzzy search
 SECURITIES_SEARCH_MAX_SCORE=0.001
@@ -135,13 +135,13 @@ SECURITIES_SEARCH_MAX_SCORE=0.001
 SECURITIES_SEARCH_MIN_RESULTS=10
 
 # Serve static files from this path under / and move api endpoints to /api
-SERVE_STATIC_PATH="../web/dist"
+SERVE_STATIC_PATH=../web/dist
 
 # Allowed period of inactivity for sessions in seconds
 SESSION_TIMEOUT=86400
 
 # Token to download GeoIP database from www.ip2location.com (optional)
-IP2LOCATION_TOKEN="..."
+IP2LOCATION_TOKEN=...
 ```
 
 ### Frontend (web)

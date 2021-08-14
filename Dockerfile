@@ -1,29 +1,30 @@
 FROM node:14 AS builder
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-COPY api/package.json api/
-COPY web/package.json web/
-RUN yarn install --frozen-lockfile
+COPY api/package.json api/yarn.lock api/
+RUN cd api; yarn install --frozen-lockfile
+
+COPY web/package.json web/yarn.lock web/
+RUN cd web; yarn install --frozen-lockfile
 
 COPY api api
-RUN yarn api prisma generate
-RUN yarn api build
+RUN cd api; yarn prisma generate
+RUN cd api; yarn build
 
 COPY web web
-RUN yarn web build
+RUN cd web; yarn build
 
-#FROM node:14-alpine
-#WORKDIR /app
+FROM node:14-alpine
+WORKDIR /app
 
-#COPY package.json yarn.lock ./
-#COPY api/package.json api/
-#RUN yarn install --frozen-lockfile --production
+COPY api/package.json api/yarn.lock api/
+RUN cd api; yarn install --frozen-lockfile --production
 
-#COPY --from=builder /app/api/dist ./api/dist
-#COPY --from=builder /app/web/dist ./web/dist
+COPY --from=builder /app/api/prisma ./api/prisma
+COPY --from=builder /app/api/dist ./api/dist
+COPY --from=builder /app/web/dist ./web/dist
 
 EXPOSE 3000
 ENV SERVE_STATIC_PATH "../web/dist"
 
-CMD yarn api prisma migrate deploy && yarn api start:prod
+CMD cd api; yarn prisma migrate deploy && yarn start:prod

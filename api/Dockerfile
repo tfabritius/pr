@@ -2,22 +2,23 @@ FROM node:14 AS builder
 WORKDIR /app
 
 COPY package.json yarn.lock tsconfig.json ./
-COPY api/package.json api/
 RUN yarn install --frozen-lockfile
 
-COPY api api
-RUN yarn api prisma generate
-RUN yarn api build
+COPY . .
+RUN yarn prisma generate
+RUN yarn build
 
-#FROM node:14-alpine
-#WORKDIR /app
+FROM node:14-alpine
+WORKDIR /app
 
-#COPY package.json yarn.lock ./
-#COPY api/package.json api/
-#RUN yarn install --frozen-lockfile --production
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production
 
-#COPY --from=builder /app/api/dist ./api/dist
+COPY --from=builder /app/prisma ./prisma
+RUN yarn prisma generate
+
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
 
-CMD yarn api prisma migrate deploy && yarn api start:prod
+CMD yarn prisma migrate deploy && yarn start:prod
