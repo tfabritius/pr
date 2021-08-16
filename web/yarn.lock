@@ -59,10 +59,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fontsource/eczar@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.4.5.tgz#d03d5026cd223043c3ca13c78b65bd2709c302be"
-  integrity sha512-HD4n/Ip5V5YSkaGyIPQN1pWcZOVUc6YOsiGwFip2SaTipyGLdWAZyMyIxaqAHgt5lRwj2HklScg/+duzuyxleg==
+"@fontsource/eczar@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.5.0.tgz#5ea01d43ed526f92209fee6979c9d1df8bbe24bf"
+  integrity sha512-LlJ6AGITXZjLmVDfjbOQ1h9XSu1+/N7SgM53xDZvY00ZQK88+/cqbda4k7eSBYtNgbVzA43VqSL+lwaVC9RtVQ==
 
 "@fontsource/roboto-condensed@^4.5.0":
   version "4.5.0"
