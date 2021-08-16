@@ -1,4 +1,4 @@
-FROM node:14 AS builder
+FROM node:16 AS builder
 WORKDIR /app
 
 COPY package.json yarn.lock tsconfig.json ./
@@ -8,7 +8,7 @@ COPY . .
 RUN yarn prisma generate
 RUN yarn build
 
-FROM node:14-alpine
+FROM node:16-alpine
 WORKDIR /app
 
 COPY package.json yarn.lock ./

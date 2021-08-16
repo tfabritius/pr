@@ -1,4 +1,4 @@
-FROM node:14 AS builder
+FROM node:16 AS builder
 WORKDIR /app
 
 COPY api/package.json api/yarn.lock api/
@@ -14,7 +14,7 @@ RUN cd api; yarn build
 COPY web web
 RUN cd web; yarn build
 
-FROM node:14-alpine
+FROM node:16-alpine
 WORKDIR /app
 
 COPY api/package.json api/yarn.lock api/
