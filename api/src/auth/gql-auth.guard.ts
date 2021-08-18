@@ -9,3 +9,14 @@ export class GqlAuthGuard extends AuthGuard('bearer-session') {
     return ctx.getContext().req
   }
 }
+
+@Injectable()
+export class GqlAuthGuardOptional extends AuthGuard([
+  'bearer-session',
+  'anonymous',
+]) {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context)
+    return ctx.getContext().req
+  }
+}

@@ -7,9 +7,16 @@ import { UsersModule } from './users/users.module'
 import { SessionsModule } from './sessions/sessions.module'
 import { LocalStrategy } from './local.strategy'
 import { BearerSessionStrategy } from './bearer-session.strategy'
+import { AnonymousStrategy } from './anonymous.strategy'
 
 @Module({
-  providers: [AuthResolver, AuthService, LocalStrategy, BearerSessionStrategy],
+  providers: [
+    AuthResolver,
+    AuthService,
+    LocalStrategy,
+    BearerSessionStrategy,
+    AnonymousStrategy,
+  ],
   controllers: [AuthController],
   imports: [UsersModule, SessionsModule],
 })
