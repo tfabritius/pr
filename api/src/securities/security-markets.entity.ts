@@ -1,4 +1,6 @@
-import { ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+
+import { permitAdminMiddleware } from '../auth/permit-admin.middleware'
 
 @ObjectType()
 export class SecurityMarket {
@@ -8,4 +10,7 @@ export class SecurityMarket {
   firstPriceDate?: Date
   lastPriceDate?: Date
   symbol?: string
+
+  @Field({ middleware: [permitAdminMiddleware] })
+  updatePrices: boolean
 }

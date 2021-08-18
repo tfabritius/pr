@@ -1,6 +1,7 @@
-import { NotFoundException } from '@nestjs/common'
+import { NotFoundException, UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
+import { GqlAuthGuardOptional } from '../auth/gql-auth.guard'
 import { PrismaService } from '../prisma.service'
 import { Event } from './events.entity'
 import { Security } from './securities.entity'
@@ -8,6 +9,7 @@ import { SecurityMarket } from './security-markets.entity'
 import { SecurityTaxonomy } from './security-taxonomies.entity'
 
 @Resolver(() => Security)
+@UseGuards(GqlAuthGuardOptional)
 export class SecuritiesResolver {
   constructor(private prisma: PrismaService) {}
 
