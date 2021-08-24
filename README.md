@@ -128,6 +128,9 @@ CONTACT_RECIPIENT_EMAIL=me@example.com
 # Default: use local sendmail (if available)
 MAILER_TRANSPORT=smtps://username:password@smtp.example.com/
 
+# URL of Portfolio Report instance used as proxy
+PR_PROXY=https://api.portfolio-report.net
+
 # Maximum score of results to be shown from fuzzy search
 SECURITIES_SEARCH_MAX_SCORE=0.001
 

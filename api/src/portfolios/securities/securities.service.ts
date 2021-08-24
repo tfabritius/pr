@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PortfolioSecurity, Prisma } from '@prisma/client'
 
 import { CreateUpdatePortfolioSecurityDto } from '../dto/CreateUpdatePortfolioSecurity.dto'
@@ -10,12 +11,15 @@ import { PortfolioSecurityParams } from './security.params'
 import { PortfolioParams } from '../portfolio.params'
 import { PrismaService } from '../../prisma.service'
 import { TransactionsService } from '../transactions/transactions.service'
+import { SecuritiesService } from '../../securities/securities.service'
 
 @Injectable()
 export class PortfolioSecuritiesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly transactions: TransactionsService,
+    private readonly config: ConfigService,
+    private readonly securities: SecuritiesService,
   ) {}
 
   /**
@@ -37,6 +41,21 @@ export class PortfolioSecuritiesService {
       updatedAt,
     }: CreateUpdatePortfolioSecurityDto,
   ) {
+    const proxy = this.config.get<string>('PR_PROXY') || ''
+
+    // If running in proxy mode and reference to security exists...
+    if (proxy && securityUuid) {
+      // ... check if security exists ...
+      const security = await this.prisma.security.findUnique({
+        where: { uuid: securityUuid },
+      })
+
+      // ... and create if it doesn't exist.
+      if (!security) {
+        await this.securities.createFromProxy(securityUuid, proxy)
+      }
+    }
+
     try {
       return await this.prisma.portfolioSecurity.upsert({
         create: {

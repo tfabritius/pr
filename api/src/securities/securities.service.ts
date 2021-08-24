@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Prisma } from '@prisma/client'
+import axios from 'axios'
 import Fuse from 'fuse.js'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const FuseConstructor = require('fuse.js')
@@ -148,6 +149,44 @@ export class SecuritiesService implements OnModuleInit {
       data: security,
       where: { uuid },
     })
+  }
+
+  /**
+   * Creates or updates security retrieved from proxy
+   */
+  async createFromProxy(uuid: string, proxy: string) {
+    this.logger.log(`Retrieving ${uuid} from proxy ${proxy}`)
+
+    try {
+      const { data: security } = await axios.get(
+        `${proxy}/securities/uuid/${uuid}`,
+      )
+
+      await this.prisma.security.create({
+        data: {
+          uuid: security.uuid,
+          name: security.name,
+          isin: security.isin,
+          wkn: security.wkn,
+          securityType: security.securityType,
+          securityMarkets: {
+            createMany: {
+              data: security.markets.map((e) => ({
+                marketCode: e.marketCode,
+                currencyCode: e.currencyCode,
+                symbol: e.symbol,
+                updatePrices: false,
+              })),
+            },
+          },
+        },
+      })
+    } catch (e) {
+      this.logger.error(`Couldn't create security ${uuid} from proxy`)
+      this.logger.error(e.stack)
+    }
+
+    this.logger.log(`Security ${uuid} created.`)
   }
 
   async delete(uuid: string) {
