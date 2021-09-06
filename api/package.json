@@ -36,7 +36,7 @@
     "@prisma/client": "^2.30.3",
     "adm-zip": "^0.5.5",
     "apollo-server-core": "2.25.2",
-    "apollo-server-express": "2.21.0",
+    "apollo-server-express": "3.3.0",
     "argon2": "^0.28.2",
     "axios": "^0.21.4",
     "class-transformer": "^0.4.0",
