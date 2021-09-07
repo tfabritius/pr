@@ -70,7 +70,7 @@ export default class ProfilePage extends Vue {
     try {
       await this.$store.dispatch('deleteAccount')
     } catch (err) {
-      this.snackbarMessage = err
+      this.snackbarMessage = String(err)
       this.showSnackbar = true
     }
   }

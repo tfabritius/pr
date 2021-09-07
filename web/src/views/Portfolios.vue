@@ -142,7 +142,7 @@ export default class PortfoliosPage extends Mixins(Vue, IconsMixin) {
         await this.$store.dispatch('addPortfolio', this.selectedPortfolio)
       }
     } catch (err) {
-      this.snackbarMessage = err
+      this.snackbarMessage = String(err)
       this.showSnackbar = true
     }
     this.portfolioDialog = false

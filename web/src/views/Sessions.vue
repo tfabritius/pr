@@ -200,7 +200,7 @@ export default class SessionsPage extends Mixins(Vue, IconsMixin) {
         this.tokenDialog = true
       }
     } catch (err) {
-      this.snackbarMessage = err
+      this.snackbarMessage = String(err)
       this.showSnackbar = true
     }
     this.sessionDialog = false

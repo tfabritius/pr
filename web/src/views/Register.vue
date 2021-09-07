@@ -118,7 +118,7 @@ export default class RegisterPage extends Vue {
       if (isAxiosError(err) && err.response?.status === 400) {
         this.snackbarMessage = err.response.data.message
       } else {
-        this.snackbarMessage = err
+        this.snackbarMessage = String(err)
       }
       this.showSnackbar = true
     } finally {

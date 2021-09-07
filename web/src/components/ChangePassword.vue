@@ -97,7 +97,7 @@ export default class ChangePassword extends Vue {
       if (isAxiosError(err) && err.response?.status === 403) {
         this.snackbarMessage = this.$tc('profile.invalid-old-password')
       } else {
-        this.snackbarMessage = err
+        this.snackbarMessage = String(err)
       }
       this.showSnackbar = true
     } finally {

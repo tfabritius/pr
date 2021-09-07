@@ -89,7 +89,7 @@ export default class LoginPage extends Vue {
       if (isAxiosError(err) && err.response?.status === 401) {
         this.snackbarMessage = this.$tc('login.invalid-credentials')
       } else {
-        this.snackbarMessage = err
+        this.snackbarMessage = String(err)
       }
       this.showSnackbar = true
     } finally {
