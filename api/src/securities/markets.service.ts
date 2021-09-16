@@ -37,16 +37,13 @@ export class SecurityMarketsService {
           symbol,
         },
         where: {
-          securities_markets_security_uuid_market_code: {
-            marketCode,
-            securityUuid,
-          },
+          securityUuid_marketCode: { marketCode, securityUuid },
         },
       })
 
       // Create/update the associated prices
       if (prices) {
-        await this.prisma.$executeRaw(
+        await this.prisma.$executeRawUnsafe(
           'INSERT INTO securities_markets_prices (security_market_id, date, close) VALUES' +
             prices
               .map((price) => `(${market.id}, '${price.date}', ${price.close})`)
@@ -75,7 +72,7 @@ export class SecurityMarketsService {
 
     return await this.prisma.securityMarket.delete({
       where: {
-        securities_markets_security_uuid_market_code: {
+        securityUuid_marketCode: {
           marketCode,
           securityUuid: uuid,
         },

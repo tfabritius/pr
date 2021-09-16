@@ -17,9 +17,9 @@ export class SecuritiesKpisService {
    */
   public async getShares(security: PortfolioSecurity): Promise<Prisma.Decimal> {
     const {
-      sum: { shares },
+      _sum: { shares },
     } = await this.prisma.transaction.aggregate({
-      sum: { shares: true },
+      _sum: { shares: true },
       where: {
         portfolioId: security.portfolioId,
         portfolioSecurityUuid: security.uuid,

@@ -22,7 +22,7 @@ export class PortfolioSecurityPricesService {
       value: p.value,
     }))
 
-    await this.prisma.$executeRaw(
+    await this.prisma.$executeRawUnsafe(
       'INSERT INTO portfolios_securities_prices (portfolio_id, portfolio_security_uuid, date, value) ' +
         'VALUES ' +
         prices

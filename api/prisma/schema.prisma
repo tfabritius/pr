@@ -48,13 +48,13 @@ model Account {
   portfolioId          Int           @map("portfolio_id")
   updatedAt            DateTime      @default(now()) @map("updated_at") @db.Timestamptz
   currency             Currency?     @relation("accounts_currency", fields: [currencyCode], references: [code])
-  portfolio            Portfolio     @relation(fields: [portfolioId], references: [id])
-  referenceAccount     Account?      @relation("accounts_reference_accounts", fields: [portfolioId, referenceAccountUuid], references: [portfolioId, uuid])
+  portfolio            Portfolio     @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  referenceAccount     Account?      @relation("accounts_reference_accounts", fields: [portfolioId, referenceAccountUuid], references: [portfolioId, uuid], onDelete: NoAction)
   referencingAccounts  Account[]     @relation("accounts_reference_accounts")
   transactions         Transaction[]
 
   @@id([portfolioId, uuid])
-  @@index([portfolioId])
+  @@index([portfolioId], map: "portfolios_accounts.portfolio_id_index")
   @@map("portfolios_accounts")
 }
 
@@ -65,9 +65,9 @@ model Clientupdate {
   country   String?  @db.Text
   useragent String?  @db.Text
 
-  @@index([country], name: "clientupdates_country")
-  @@index([timestamp], name: "clientupdates_timestamp")
-  @@index([version], name: "clientupdates_version")
+  @@index([country], map: "clientupdates_country")
+  @@index([timestamp], map: "clientupdates_timestamp")
+  @@index([version], map: "clientupdates_version")
   @@map("clientupdates")
 }
 
@@ -96,9 +96,9 @@ model Event {
   currency     Currency? @relation("events_currency_code", fields: [currencyCode], references: [code])
   ratio        String?   @db.VarChar(10)
   securityUuid String    @map("security_uuid") @db.Uuid
-  security     Security  @relation("events_security_uuid", fields: [securityUuid], references: [uuid])
+  security     Security  @relation("events_security_uuid", fields: [securityUuid], references: [uuid], onDelete: Cascade)
 
-  @@index([securityUuid], name: "events_security_uuid")
+  @@index([securityUuid], map: "events_security_uuid")
   @@map("events")
 }
 
@@ -106,11 +106,11 @@ model Exchangerate {
   id                Int                 @id @default(autoincrement())
   baseCurrencyCode  String              @map("base_currency_code") @db.Char(3)
   quoteCurrencyCode String              @map("quote_currency_code") @db.Char(3)
-  baseCurrency      Currency            @relation("exchangerates_base_currency", fields: [baseCurrencyCode], references: [code])
-  quoteCurrency     Currency            @relation("exchangerates_quote_currency", fields: [quoteCurrencyCode], references: [code])
+  baseCurrency      Currency            @relation("exchangerates_base_currency", fields: [baseCurrencyCode], references: [code], onDelete: Cascade)
+  quoteCurrency     Currency            @relation("exchangerates_quote_currency", fields: [quoteCurrencyCode], references: [code], onDelete: Cascade)
   prices            ExchangeratePrice[]
 
-  @@unique([baseCurrencyCode, quoteCurrencyCode])
+  @@unique([baseCurrencyCode, quoteCurrencyCode], map: "exchangerates.base_currency_code_quote_currency_code_unique")
   @@map("exchangerates")
 }
 
@@ -118,10 +118,10 @@ model ExchangeratePrice {
   exchangerateId Int          @map("exchangerate_id")
   date           DateTime     @db.Date
   value          Decimal      @db.Decimal(16, 8)
-  exchangerate   Exchangerate @relation(fields: [exchangerateId], references: [id])
+  exchangerate   Exchangerate @relation(fields: [exchangerateId], references: [id], onDelete: Cascade)
 
   @@id([exchangerateId, date])
-  @@index([exchangerateId])
+  @@index([exchangerateId], map: "exchangerates_prices.exchangerate_id_index")
   @@map("exchangerates_prices")
 }
 
@@ -141,13 +141,13 @@ model Portfolio {
   createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime            @default(now()) @map("updated_at") @db.Timestamptz
   userId              Int                 @map("user_id")
-  baseCurrency        Currency            @relation(fields: [baseCurrencyCode], references: [code])
-  user                User                @relation("portfolios_user", fields: [userId], references: [id])
+  baseCurrency        Currency            @relation(fields: [baseCurrencyCode], references: [code], onDelete: Cascade)
+  user                User                @relation("portfolios_user", fields: [userId], references: [id], onDelete: Cascade)
   accounts            Account[]
   portfolioSecurities PortfolioSecurity[]
   transactions        Transaction[]
 
-  @@index([userId])
+  @@index([userId], map: "portfolios.user_id_index")
   @@map("portfolios")
 }
 
@@ -171,14 +171,14 @@ model PortfolioSecurity {
   attributes    Json?                    @db.JsonB
   events        Json?                    @db.JsonB
   properties    Json?                    @db.JsonB
-  currency      Currency                 @relation(fields: [currencyCode], references: [code])
-  portfolio     Portfolio                @relation(fields: [portfolioId], references: [id])
+  currency      Currency                 @relation(fields: [currencyCode], references: [code], onDelete: Cascade)
+  portfolio     Portfolio                @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   prices        PortfolioSecurityPrice[]
   security      Security?                @relation(fields: [securityUuid], references: [uuid])
   transactions  Transaction[]
 
   @@id([portfolioId, uuid])
-  @@index([portfolioId])
+  @@index([portfolioId], map: "portfolios_securities.portfolio_id_index")
   @@map("portfolios_securities")
 }
 
@@ -187,10 +187,10 @@ model PortfolioSecurityPrice {
   portfolioSecurityUuid String            @map("portfolio_security_uuid") @db.Uuid
   date                  DateTime          @db.Date
   value                 Decimal           @db.Decimal(16, 8)
-  portfolioSecurity     PortfolioSecurity @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid])
+  portfolioSecurity     PortfolioSecurity @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid], onDelete: Cascade)
 
   @@id([portfolioId, portfolioSecurityUuid, date])
-  @@index([portfolioId, portfolioSecurityUuid])
+  @@index([portfolioId, portfolioSecurityUuid], map: "portfolios_securities_prices.portfolio_id_portfolio_security_uu")
   @@map("portfolios_securities_prices")
 }
 
@@ -208,13 +208,13 @@ model Security {
   securityTaxonomies  SecurityTaxonomy[]  @relation("securities_taxonomies_security_uuid")
   portfolioSecurities PortfolioSecurity[] @relation
 
-  @@index([isin], name: "securities_isin")
-  @@index([name], name: "securities_name")
-  @@index([securityType], name: "securities_security_type")
-  @@index([symbolXfra], name: "securities_symbol_xfra")
-  @@index([symbolXnas], name: "securities_symbol_xnas")
-  @@index([symbolXnys], name: "securities_symbol_xnys")
-  @@index([wkn], name: "securities_wkn")
+  @@index([isin], map: "securities_isin")
+  @@index([name], map: "securities_name")
+  @@index([securityType], map: "securities_security_type")
+  @@index([symbolXfra], map: "securities_symbol_xfra")
+  @@index([symbolXnas], map: "securities_symbol_xnas")
+  @@index([symbolXnys], map: "securities_symbol_xnys")
+  @@index([wkn], map: "securities_wkn")
   @@map("securities")
 }
 
@@ -227,24 +227,24 @@ model SecurityMarket {
   lastPriceDate  DateTime?             @map("last_price_date") @db.Date
   symbol         String?               @db.VarChar(10)
   updatePrices   Boolean               @map("update_prices") @db.Boolean
-  security       Security              @relation("securities_markets_security_uuid", fields: [securityUuid], references: [uuid])
-  market         Market                @relation("securities_markets_market_code", fields: [marketCode], references: [code])
-  currency       Currency              @relation("securities_markets_currency_code", fields: [currencyCode], references: [code])
+  security       Security              @relation("securities_markets_security_uuid", fields: [securityUuid], references: [uuid], onDelete: Cascade)
+  market         Market                @relation("securities_markets_market_code", fields: [marketCode], references: [code], onDelete: Cascade)
+  currency       Currency              @relation("securities_markets_currency_code", fields: [currencyCode], references: [code], onDelete: Cascade)
   prices         SecurityMarketPrice[] @relation("securities_markets_prices_security_market_id")
 
-  @@unique([securityUuid, marketCode], name: "securities_markets_security_uuid_market_code")
-  @@index([securityUuid], name: "securities_markets_security_uuid")
+  @@unique([securityUuid, marketCode], map: "securities_markets_security_uuid_market_code")
+  @@index([securityUuid], map: "securities_markets_security_uuid")
   @@map("securities_markets")
 }
 
 model SecurityMarketPrice {
   securityMarketId Int            @map("security_market_id") @db.Integer
-  securityMarket   SecurityMarket @relation("securities_markets_prices_security_market_id", fields: [securityMarketId], references: [id])
+  securityMarket   SecurityMarket @relation("securities_markets_prices_security_market_id", fields: [securityMarketId], references: [id], onDelete: Cascade)
   date             DateTime       @db.Date
   close            Decimal        @db.Decimal(10, 4)
 
   @@id([securityMarketId, date])
-  @@index([securityMarketId])
+  @@index([securityMarketId], map: "securities_markets_prices.security_market_id_index")
   @@map("securities_markets_prices")
 }
 
@@ -252,8 +252,8 @@ model SecurityTaxonomy {
   securityUuid String   @map("security_uuid") @db.Uuid
   taxonomyUuid String   @map("taxonomy_uuid") @db.Uuid
   weight       Decimal  @db.Decimal(5, 2)
-  security     Security @relation("securities_taxonomies_security_uuid", fields: [securityUuid], references: [uuid])
-  taxonomy     Taxonomy @relation("securities_taxonomies_taxonomy_uuid", fields: [taxonomyUuid], references: [uuid])
+  security     Security @relation("securities_taxonomies_security_uuid", fields: [securityUuid], references: [uuid], onDelete: Cascade)
+  taxonomy     Taxonomy @relation("securities_taxonomies_taxonomy_uuid", fields: [taxonomyUuid], references: [uuid], onDelete: Cascade)
 
   @@id([taxonomyUuid, securityUuid])
   @@map("securities_taxonomies")
@@ -265,10 +265,10 @@ model Session {
   lastActivityAt DateTime @default(now()) @map("last_activity_at") @db.Timestamptz
   note           String   @default("") @db.Text
   userId         Int      @map("user_id")
-  user           User     @relation(fields: [userId], references: [id])
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([lastActivityAt])
+  @@index([userId], map: "sessions.user_id_index")
+  @@index([lastActivityAt], map: "sessions.last_activity_at_index")
   @@map("sessions")
 }
 
@@ -284,9 +284,9 @@ model Taxonomy {
   children           Taxonomy[]         @relation("taxonomies_parent_uuid")
   descendants        Taxonomy[]         @relation("taxonomies_root_uuid")
 
-  @@unique([rootUuid, code], name: "taxonomies_root_uuid_code")
-  @@index([parentUuid], name: "taxonomies_parent_uuid")
-  @@index([rootUuid], name: "taxonomies_root_uuid")
+  @@unique([rootUuid, code], map: "taxonomies_root_uuid_code")
+  @@index([parentUuid], map: "taxonomies_parent_uuid")
+  @@index([rootUuid], map: "taxonomies_root_uuid")
   @@map("taxonomies")
 }
 
@@ -301,18 +301,18 @@ model Transaction {
   note                      String             @default("") @db.VarChar
   portfolioId               Int                @map("portfolio_id")
   updatedAt                 DateTime           @default(now()) @map("updated_at") @db.Timestamptz
-  account                   Account            @relation(fields: [portfolioId, accountUuid], references: [portfolioId, uuid])
-  partnerTransaction        Transaction?       @relation("transactions_partner_transaction", fields: [portfolioId, partnerTransactionUuid], references: [portfolioId, uuid])
+  account                   Account            @relation(fields: [portfolioId, accountUuid], references: [portfolioId, uuid], onDelete: NoAction)
+  partnerTransaction        Transaction?       @relation("transactions_partner_transaction", fields: [portfolioId, partnerTransactionUuid], references: [portfolioId, uuid], onDelete: NoAction)
   partnerTransactionReverse Transaction?       @relation("transactions_partner_transaction")
-  portfolio                 Portfolio          @relation(fields: [portfolioId], references: [id])
-  portfolioSecurity         PortfolioSecurity? @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid])
+  portfolio                 Portfolio          @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  portfolioSecurity         PortfolioSecurity? @relation(fields: [portfolioId, portfolioSecurityUuid], references: [portfolioId, uuid], onDelete: NoAction)
   units                     TransactionUnit[]
 
   @@id([portfolioId, uuid])
-  @@unique([portfolioId, partnerTransactionUuid])
-  @@index([portfolioId])
-  @@index([portfolioId, accountUuid])
-  @@index([portfolioId, portfolioSecurityUuid])
+  @@unique([portfolioId, partnerTransactionUuid], map: "portfolios_transactions.portfolio_id_partner_transaction_uuid_u")
+  @@index([portfolioId], map: "portfolios_transactions.portfolio_id_index")
+  @@index([portfolioId, accountUuid], map: "portfolios_transactions.portfolio_id_account_uuid_index")
+  @@index([portfolioId, portfolioSecurityUuid], map: "portfolios_transactions.portfolio_id_portfolio_security_uuid_in")
   @@map("portfolios_transactions")
 }
 
@@ -326,17 +326,17 @@ model TransactionUnit {
   exchangeRate         Decimal?            @map("exchange_rate") @db.Decimal(16, 8)
   transactionUuid      String              @map("transaction_uuid") @db.Uuid
   portfolioId          Int                 @map("portfolio_id")
-  currency             Currency            @relation("transactions_units_currency", fields: [currencyCode], references: [code])
+  currency             Currency            @relation("transactions_units_currency", fields: [currencyCode], references: [code], onDelete: Cascade)
   originalCurrency     Currency?           @relation("transactions_units_original_currency", fields: [originalCurrencyCode], references: [code])
-  transaction          Transaction         @relation(fields: [portfolioId, transactionUuid], references: [portfolioId, uuid])
+  transaction          Transaction         @relation(fields: [portfolioId, transactionUuid], references: [portfolioId, uuid], onDelete: Cascade)
 
-  @@index([portfolioId, transactionUuid])
+  @@index([portfolioId, transactionUuid], map: "portfolios_transactions_units.portfolio_id_transaction_uuid_ind")
   @@map("portfolios_transactions_units")
 }
 
 model User {
   id         Int         @id @default(autoincrement())
-  username   String      @unique @db.VarChar
+  username   String      @unique(map: "users.username_unique") @db.VarChar
   password   String?     @db.VarChar
   createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz
   lastSeenAt DateTime    @default(dbgenerated("CURRENT_DATE")) @map("last_seen_at") @db.Date
