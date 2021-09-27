@@ -8435,10 +8435,10 @@ vuetify@^2.5.8:
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.5.8.tgz#a23e6a7e77b77de0744b53cf1e7c9d40efac0635"
   integrity sha512-paLmNhKTYFD41+14rIHnCo+P1jHbUzwBiMowxs5qXVq8RdRMqRmcy05Sfse1WUu90amPGK2fIFQq5rL2N8zqZg==
 
-vuex-persistedstate@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/vuex-persistedstate/-/vuex-persistedstate-4.0.0.tgz#ed82f266ca98c869a2aad9cb9880c2f608c05f3a"
-  integrity sha512-jDs+awbV9YD2A2F6S5zgtYq1Bjd8v0YldOK6HPv1EJZzGMse0FtZTREfXvA7zlVfq9MpmSZJNmYQVylfpZ5znQ==
+vuex-persistedstate@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/vuex-persistedstate/-/vuex-persistedstate-4.1.0.tgz#127165f85f5b4534fb3170a5d3a8be9811bd2a53"
+  integrity sha512-3SkEj4NqwM69ikJdFVw6gObeB0NHyspRYMYkR/EbhR0hbvAKyR5gksVhtAfY1UYuWUOCCA0QNGwv9pOwdj+XUQ==
   dependencies:
     deepmerge "^4.2.2"
     shvl "^2.0.3"
