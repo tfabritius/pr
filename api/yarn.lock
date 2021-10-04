@@ -1869,10 +1869,10 @@ acorn@^8.2.4, acorn@^8.4.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.4.1.tgz#56c36251fc7cabc7096adc18f05afe814321a28c"
   integrity sha512-asabaBSkEKosYKMITunzX177CXxQ4Q8BSSzMTKD+FefUhipQC70gfW5SiUDhYQ3vk8G+81HqQk7Fv9OXwwn9KA==
 
-adm-zip@^0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.6.tgz#c540f4d62b0f07a716bce4c8a24545b1f0b33027"
-  integrity sha512-nUeYhBHLG08VFOkVwai0pLXge6NNlahH+ccwxXodvl+SLa5l9mXHjg40jRVzofRPz29goiTGze7vIKmCltKtSA==
+adm-zip@^0.5.7:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.7.tgz#86d73d2c9b7766024e47f736b31af71e253b6d8d"
+  integrity sha512-QLEo3eoC2B0i3+g/G5nNzKbGoVOjW2ingZ4TXl7/YeDM+FAl3SiHSNnokTZLFEuVHBn5CbZ42KJcIIsRji1EgQ==
 
 agent-base@6, agent-base@^6.0.0, agent-base@^6.0.2:
   version "6.0.2"
@@ -7556,11 +7556,6 @@ tsconfig-paths@^3.11.0, tsconfig-paths@^3.9.0:
     json5 "^1.0.1"
     minimist "^1.2.0"
     strip-bom "^3.0.0"
-
-tslib@2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.0.tgz#803b8cdab3e12ba581a4ca41c8839bbb0dacb09e"
-  integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
 
 tslib@2.3.1, tslib@^2.0.1, tslib@^2.0.3, tslib@~2.3.0:
   version "2.3.1"
