@@ -49,7 +49,7 @@
     "graphql": "^15.6.0",
     "helmet": "^4.6.0",
     "ip2location-nodejs": "^8.5.0",
-    "nodemailer": "^6.6.5",
+    "nodemailer": "^6.7.0",
     "passport": "^0.4.1",
     "passport-anonymous": "^1.0.1",
     "passport-http-bearer": "^1.0.1",
@@ -58,7 +58,7 @@
     "prisma": "^3.2.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.3.0",
+    "rxjs": "^7.4.0",
     "swagger-ui-express": "^4.1.6",
     "xml-js": "^1.6.11"
   },
