@@ -211,7 +211,7 @@ export class CurrenciesService {
   ): Promise<Pick<ExchangeratePrice, 'date' | 'value'>[]> {
     const url = `https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/${quoteCurrencyCode.toLowerCase()}.xml`
 
-    const response = await axios.get(url)
+    const response = await axios.get<string>(url)
     const parsedXml: xmljs.ElementCompact = xmljs.xml2js(response.data, {
       compact: true,
     })

@@ -51,7 +51,7 @@ export class GeoIpService implements OnModuleInit {
 
     try {
       this.logger.log('Downloading database...')
-      const downloadResponse = await axios.get(url, {
+      const downloadResponse = await axios.get<Buffer>(url, {
         responseType: 'arraybuffer',
       })
 

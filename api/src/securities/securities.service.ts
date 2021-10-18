@@ -158,9 +158,18 @@ export class SecuritiesService implements OnModuleInit {
     this.logger.log(`Retrieving ${uuid} from proxy ${proxy}`)
 
     try {
-      const { data: security } = await axios.get(
-        `${proxy}/securities/uuid/${uuid}`,
-      )
+      const { data: security } = await axios.get<{
+        uuid: string
+        name: string
+        isin: string
+        wkn: string
+        securityType: string
+        markets: Array<{
+          marketCode: string
+          currencyCode: string
+          symbol: string
+        }>
+      }>(`${proxy}/securities/uuid/${uuid}`)
 
       await this.prisma.security.create({
         data: {
