@@ -98,7 +98,7 @@ export default class RegisterPage extends Vue {
     this.loading = true
 
     try {
-      const response = await axios.post('/auth/register', {
+      const response = await axios.post<{ token: string }>('/auth/register', {
         username: this.username,
         password: this.password,
       })
@@ -115,7 +115,10 @@ export default class RegisterPage extends Vue {
       this.$store.dispatch('getPortfolios')
       this.$store.dispatch('getCurrencies')
     } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 400) {
+      if (
+        isAxiosError<{ message: string }>(err) &&
+        err.response?.status === 400
+      ) {
         this.snackbarMessage = err.response.data.message
       } else {
         this.snackbarMessage = String(err)

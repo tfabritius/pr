@@ -73,7 +73,7 @@ export default class LoginPage extends Vue {
     this.loading = true
 
     try {
-      const response = await axios.post('/auth/login', {
+      const response = await axios.post<{ token: string }>('/auth/login', {
         username: this.username,
         password: this.password,
       })

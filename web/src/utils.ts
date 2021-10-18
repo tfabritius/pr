@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 
 import i18n from '@/plugins/i18n'
 
-export function isAxiosError(error: unknown): error is AxiosError {
+export function isAxiosError<T>(error: unknown): error is AxiosError<T> {
   return (error as AxiosError).isAxiosError !== undefined
 }
 
