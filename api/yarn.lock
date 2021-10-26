@@ -4280,10 +4280,10 @@ interpret@^1.0.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
-ip2location-nodejs@^8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-8.5.0.tgz#e311ddfd6422cc5d4f66eefbdb99954afa9ba428"
-  integrity sha512-CKppnihNIO5hrL9/K1N0AWLhUi9CCzDn1u6BiR80iMLjJRClzyZdaoOX7HxrVVasOoi/cde0yGoBrEFwrsKp2g==
+ip2location-nodejs@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-9.0.0.tgz#b496714461e8cd22e1b0eb3c670820a3f803ee90"
+  integrity sha512-sb+pP09XetYK6yX/ctsUFw6gLQSVC/jtGLrBjLOAk8Lig5GzoZi0de+5h30/7Ltj/QbLmYATk7fDwCqkwQeEow==
   dependencies:
     big-integer "^1.6.47"
 
