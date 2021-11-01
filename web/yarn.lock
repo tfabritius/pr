@@ -124,10 +124,10 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
-"@mdi/js@^6.2.95":
-  version "6.2.95"
-  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-6.2.95.tgz#decf0f86035990248f25b0a4e246a7d152211273"
-  integrity sha512-fbD22sEBathqVSQWcxshEtzhhRNFmMnV64z6T7DClRbQ9N5axorykt3Suv2zPzLDyiqH7UhNRu0VPvPCPDNpnQ==
+"@mdi/js@^6.4.95":
+  version "6.4.95"
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-6.4.95.tgz#3ba2c04b702f1f7b71c41d5c86d2849868c866c8"
+  integrity sha512-b1/P//1D2KOzta8YRGyoSLGsAlWyUHfxzVBhV4e/ppnjM4DfBgay/vWz7Eg5Ee80JZ4zsQz8h54X+KOahtBk5Q==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
