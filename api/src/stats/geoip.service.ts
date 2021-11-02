@@ -1,22 +1,34 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common'
+import {
+  Injectable,
+  OnModuleInit,
+  Logger,
+  OnModuleDestroy,
+} from '@nestjs/common'
 import * as AdmZip from 'adm-zip'
 import axios from 'axios'
 import { existsSync } from 'fs'
-import * as ip2loc from 'ip2location-nodejs'
+import { IP2Location } from 'ip2location-nodejs'
 import * as util from 'util'
 
 @Injectable()
-export class GeoIpService implements OnModuleInit {
+export class GeoIpService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(GeoIpService.name)
 
+  private ip2loc
   private initialized = false
 
   private readonly dbDir = 'ip2location/'
   private readonly dbPath = this.dbDir + 'IP2LOCATION-LITE-DB1.IPV6.BIN'
 
   async onModuleInit() {
+    this.ip2loc = new IP2Location()
+
     // load db in background, no await!
     this.loadIp2LocationDb()
+  }
+
+  async onModuleDestroy() {
+    await this.ip2loc.close()
   }
 
   async loadIp2LocationDb() {
@@ -27,7 +39,7 @@ export class GeoIpService implements OnModuleInit {
     if (existsSync(this.dbPath)) {
       try {
         this.logger.log('Loading database...')
-        ip2loc.IP2Location_init(this.dbPath)
+        this.ip2loc.open(this.dbPath)
         this.initialized = true
         this.logger.log('Initialized database.')
       } catch (err) {
@@ -82,6 +94,6 @@ export class GeoIpService implements OnModuleInit {
   }
 
   getCountryFromIp(ip: string): string {
-    return this.initialized ? ip2loc.IP2Location_get_country_short(ip) : ''
+    return this.initialized ? this.ip2loc.getCountryShort(ip) : ''
   }
 }
