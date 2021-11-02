@@ -30,7 +30,6 @@ import { PrismaService } from '../prisma.service'
 import { CreateUpdateSecurityDto } from './dto/create.update.security.dto'
 import { CreateUpdateSecurityMarketDto } from './dto/create.update.security.market.dto'
 import { PublicSecurity } from './dto/public.security.dto'
-import { SearchSecuritiesQueryDto } from './dto/search.securities.query.dto'
 import { SecurityTaxonomyDto } from './dto/security.taxonomy.dto'
 import { SecurityMarketsService } from './markets.service'
 import { SecuritiesService } from './securities.service'
@@ -233,7 +232,7 @@ export class SecuritiesController {
   @Header('Cache-Control', 'max-age=600, public')
   async searchSecurities(
     @Param('query') query: string,
-    @Query() { securityType }: SearchSecuritiesQueryDto,
+    @Query('securityType') securityType: string,
   ): Promise<PublicSecurity[]> {
     return this.securities.searchFtsIndex(query, securityType)
   }
