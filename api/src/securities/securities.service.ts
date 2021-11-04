@@ -248,6 +248,7 @@ export class SecuritiesService implements OnModuleInit {
           select: {
             weight: true,
             taxonomyUuid: true,
+            taxonomy: { select: { rootUuid: true } },
           },
         },
         events: {
@@ -269,7 +270,17 @@ export class SecuritiesService implements OnModuleInit {
       throw new NotFoundException('Security not found')
     }
 
-    return security
+    const securityWithFlatTaxonomies = {
+      ...security,
+      securityTaxonomies: security.securityTaxonomies.map(
+        ({ taxonomy, ...e }) => ({
+          ...e,
+          rootTaxonomyUuid: taxonomy.rootUuid,
+        }),
+      ),
+    }
+
+    return securityWithFlatTaxonomies
   }
 
   async getMany({
