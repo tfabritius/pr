@@ -45,7 +45,7 @@
     "date-fns": "^2.27.0",
     "date-fns-tz": "^1.1.6",
     "express": "^4.17.1",
-    "fuse.js": "^6.4.6",
+    "fuse.js": "^6.5.3",
     "graphql": "^15.7.2",
     "helmet": "^4.6.0",
     "ip2location-nodejs": "^9.1.0",
