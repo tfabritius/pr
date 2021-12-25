@@ -984,10 +984,10 @@
     lodash.set "4.3.2"
     uuid "8.3.2"
 
-"@nestjs/core@^8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.2.3.tgz#26fb3858df586b00362d1bd492ba432698590d67"
-  integrity sha512-CP/Z+uTEdblTZQXRf+xvZHvESZ6v2vxX/YaRcpJDv/ytgxxOafmOJ/RDKSzNOGBkt8kVwYNFpWXzzll4P5AJ0g==
+"@nestjs/core@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.2.4.tgz#d8cb54f7bd5530de1f162a649c2b63852c91c8df"
+  integrity sha512-CWyS5Rj5tUxwtTGKkGei+ii6CvkGNhuo5hbKGBkCK3McfAMwpCq2pYDjSEFAqn6R2ylL4H3U5H9WU6OWJD1cVw==
   dependencies:
     "@nuxtjs/opencollective" "0.3.2"
     fast-safe-stringify "2.1.1"
@@ -3956,10 +3956,10 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-fuse.js@^6.4.6:
-  version "6.4.6"
-  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-6.4.6.tgz#62f216c110e5aa22486aff20be7896d19a059b79"
-  integrity sha512-/gYxR/0VpXmWSfZOIPS3rWwU8SHgsRTwWuXhyb2O6s7aRuVtHtxCkR33bNYu3wyLyNx/Wpv0vU7FZy8Vj53VNw==
+fuse.js@^6.5.3:
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-6.5.3.tgz#7446c0acbc4ab0ab36fa602e97499bdb69452b93"
+  integrity sha512-sA5etGE7yD/pOqivZRBvUBd/NaL2sjAu6QuSaFoe1H2BrJSkH/T/UXAJ8CdXdw7DvY3Hs8CXKYkDWX7RiP5KOg==
 
 gauge@^4.0.0:
   version "4.0.0"
@@ -4426,10 +4426,10 @@ interpret@^1.0.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
-ip2location-nodejs@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-9.0.0.tgz#b496714461e8cd22e1b0eb3c670820a3f803ee90"
-  integrity sha512-sb+pP09XetYK6yX/ctsUFw6gLQSVC/jtGLrBjLOAk8Lig5GzoZi0de+5h30/7Ltj/QbLmYATk7fDwCqkwQeEow==
+ip2location-nodejs@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-9.1.0.tgz#f07df1a958735be945467e1b67b36b70be182133"
+  integrity sha512-fqRVVAVZ/+iCD5rxgU7BmCH9TGOAiBSs9CQoc5A+vLeTO6rorpLCjVzt/msTgmuT++74uKT/TIPN2NDAyJQeVw==
   dependencies:
     big-integer "^1.6.47"
 
