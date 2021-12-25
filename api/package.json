@@ -45,7 +45,7 @@
     "date-fns": "^2.27.0",
     "date-fns-tz": "^1.1.6",
     "express": "^4.17.1",
-    "fuse.js": "^6.4.6",
+    "fuse.js": "^6.5.3",
     "graphql": "^15.7.2",
     "helmet": "^4.6.0",
     "ip2location-nodejs": "^9.1.0",
@@ -59,7 +59,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.4.0",
-    "swagger-ui-express": "^4.2.0",
+    "swagger-ui-express": "^4.3.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
@@ -87,7 +87,7 @@
     "ts-loader": "^9.2.6",
     "ts-node": "10.4.0",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.4"
   },
   "jest": {
     "moduleFileExtensions": [
