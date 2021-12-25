@@ -44,7 +44,7 @@
     "cross-env": "^7.0.3",
     "date-fns": "^2.27.0",
     "date-fns-tz": "^1.1.6",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "fuse.js": "^6.5.3",
     "graphql": "^15.8.0",
     "helmet": "^4.6.0",
