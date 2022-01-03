@@ -972,16 +972,14 @@
     tslib "2.3.1"
     uuid "8.3.2"
 
-"@nestjs/config@^1.1.5":
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-1.1.5.tgz#6242274706e5b0d4849eb3217b47fdabd63182dc"
-  integrity sha512-xSpp/6TIHFhicuuwRu2fFGmClzN+YXtpVSLGX3LT9iAwtNDcccX3qVDOX1BLdFdBbqZTqT3KezsT+iE/czd/xg==
+"@nestjs/config@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-1.1.6.tgz#bbb3578f052d9ef9d13ed5071870ff1bfcfcae7c"
+  integrity sha512-HYizKt6Dr6gcZl8FmZbTfQxP0MG8oXMh+gVFT0XCwYDAq26BOKyhPsIxrKsryicVeKViRgetCUhlJY9EqaekZA==
   dependencies:
     dotenv "10.0.0"
     dotenv-expand "5.1.0"
-    lodash.get "4.4.2"
-    lodash.has "4.5.2"
-    lodash.set "4.3.2"
+    lodash "4.17.21"
     uuid "8.3.2"
 
 "@nestjs/core@^8.2.4":
@@ -5479,16 +5477,6 @@ lodash.foreach@^4.3.0:
   resolved "https://registry.yarnpkg.com/lodash.foreach/-/lodash.foreach-4.5.0.tgz#1a6a35eace401280c7f06dddec35165ab27e3e53"
   integrity sha1-Gmo16s5AEoDH8G3d7DUWWrJ+PlM=
 
-lodash.get@4.4.2:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
-  integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
-
-lodash.has@4.5.2:
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/lodash.has/-/lodash.has-4.5.2.tgz#d19f4dc1095058cccbe2b0cdf4ee0fe4aa37c862"
-  integrity sha1-0Z9NwQlQWMzL4rDN9O4P5Ko3yGI=
-
 lodash.map@^4.4.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.map/-/lodash.map-4.6.0.tgz#771ec7839e3473d9c4cde28b19394c3562f4f6d3"
@@ -5518,11 +5506,6 @@ lodash.reject@^4.4.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.reject/-/lodash.reject-4.6.0.tgz#80d6492dc1470864bbf583533b651f42a9f52415"
   integrity sha1-gNZJLcFHCGS79YNTO2UfQqn1JBU=
-
-lodash.set@4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
-  integrity sha1-2HV7HagH3eJIFrDWqEvqGnYjCyM=
 
 lodash.some@^4.4.0:
   version "4.6.0"
