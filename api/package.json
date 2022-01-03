@@ -43,7 +43,7 @@
     "class-validator": "^0.13.2",
     "cross-env": "^7.0.3",
     "date-fns": "^2.28.0",
-    "date-fns-tz": "^1.1.6",
+    "date-fns-tz": "^1.2.2",
     "express": "^4.17.2",
     "fuse.js": "^6.5.3",
     "graphql": "^15.8.0",
