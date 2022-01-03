@@ -10,7 +10,7 @@ module.exports = {
     'plugin:vue/essential',
     '@vue/typescript/recommended',
     '@vue/prettier',
-    '@vue/prettier/@typescript-eslint',
+    '@vue/eslint-config-prettier',
   ],
   env: {
     node: true,
