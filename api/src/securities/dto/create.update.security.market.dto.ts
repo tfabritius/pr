@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer'
 import {
-  IsBooleanString,
+  IsBoolean,
   IsDefined,
   IsOptional,
   IsString,
@@ -18,7 +18,7 @@ export class CreateUpdateSecurityMarketDto {
   symbol?: string
 
   @IsOptional()
-  @IsBooleanString()
+  @IsBoolean()
   updatePrices: boolean
 
   @IsOptional()
