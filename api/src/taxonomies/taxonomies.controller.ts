@@ -58,9 +58,9 @@ export class TaxonomiesController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async create(
-    @Body('parentUuid', ParseUUIDPipe) parentUuid: string,
     @Body('name') name: string,
     @Body('code') code: string,
+    @Body('parentUuid') parentUuid?: string,
   ) {
     const data: Prisma.TaxonomyCreateInput = {
       uuid: generateUuid(),
