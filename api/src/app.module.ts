@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
-import { MailerModule } from '@nestjs-modules/mailer'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
@@ -23,18 +22,6 @@ import { TaxonomiesModule } from './taxonomies/taxonomies.module'
       autoSchemaFile: true,
       sortSchema: true,
       playground: process.env.NODE_ENV === 'development',
-    }),
-    MailerModule.forRootAsync({
-      imports: undefined,
-      useFactory: () => {
-        if (process.env.MAILER_TRANSPORT) {
-          return {
-            transport: process.env.MAILER_TRANSPORT,
-          }
-        } else {
-          return { transport: { sendmail: true } }
-        }
-      },
     }),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({

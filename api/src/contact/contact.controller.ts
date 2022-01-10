@@ -7,11 +7,11 @@ import {
   Req,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { MailerService } from '@nestjs-modules/mailer'
 import { ApiTags } from '@nestjs/swagger'
 import { Request } from 'express'
 import * as util from 'util'
 
+import { MailerService } from './mailer.service'
 import { SendMailDto } from './send.mail.dto'
 
 @Controller('contact')
