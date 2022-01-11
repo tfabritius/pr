@@ -34,11 +34,9 @@ export class SecuritiesService implements OnModuleInit {
   }
 
   /**
-   * Creates/updates the full text search index
+   * Reads securities from database and formats them for search output
    */
-  async updateFtsIndex() {
-    this.logger.log('Creating/updating full text search index...')
-
+  async getSecuritiesForSearch(where: Prisma.SecurityWhereInput = {}) {
     const securities = await this.prisma.security.findMany({
       select: {
         uuid: true,
@@ -59,9 +57,10 @@ export class SecuritiesService implements OnModuleInit {
           },
         },
       },
+      where,
     })
 
-    const entriesWithDateOnly = securities.map(({ securityMarkets, ...s }) => ({
+    return securities.map(({ securityMarkets, ...s }) => ({
       ...s,
       uuid: s.uuid?.replace(/-/g, ''),
       markets: securityMarkets.map((m) => ({
@@ -70,19 +69,21 @@ export class SecuritiesService implements OnModuleInit {
         lastPriceDate: m.lastPriceDate?.toISOString().substring(0, 10),
       })),
     }))
+  }
+
+  /**
+   * Creates/updates the full text search index
+   */
+  async updateFtsIndex() {
+    this.logger.log('Creating/updating full text search index...')
+
+    const entriesWithDateOnly = await this.getSecuritiesForSearch()
 
     const options: Fuse.IFuseOptions<PublicSecurity> = {
       includeScore: true,
       shouldSort: true,
       minMatchCharLength: 2,
-      keys: [
-        'name',
-        'isin',
-        'wkn',
-        'symbolXnas',
-        'symbolXnys',
-        'markets.symbol',
-      ],
+      keys: ['name', 'symbolXnas', 'symbolXnys', 'markets.symbol'],
     }
     const fts = new FuseConstructor(entriesWithDateOnly, options)
 
@@ -95,7 +96,23 @@ export class SecuritiesService implements OnModuleInit {
    *
    * Throws ServiceUnavailableException if index is not ready (yet)
    */
-  searchFtsIndex(query: string, securityType?: string): Array<PublicSecurity> {
+  async searchFtsIndex(
+    query: string,
+    securityType?: string,
+  ): Promise<Array<PublicSecurity>> {
+    /* Search database if query string looks like a ISIN/WKN */
+    const uppercaseQuery = query.trim().toUpperCase()
+    if (uppercaseQuery.length === 6 || uppercaseQuery.length === 12) {
+      const exactMatches = await this.getSecuritiesForSearch({
+        OR: [{ isin: uppercaseQuery }, { wkn: uppercaseQuery }],
+      })
+
+      if (exactMatches.length > 0) {
+        return exactMatches
+      }
+    }
+
+    /* Use fuzzy search */
     if (!this.ftsIndex) {
       throw new ServiceUnavailableException('Service unavailable')
     }
@@ -110,14 +127,6 @@ export class SecuritiesService implements OnModuleInit {
       this.config.get<number>('SECURITIES_SEARCH_MAX_SCORE') || 0.001
 
     for (const searchResult of rawResults) {
-      // Return this search result immediately if there is an exact match on ISIN or WKN
-      if (
-        searchResult.item.isin?.toLocaleUpperCase() === query.toUpperCase() ||
-        searchResult.item.wkn?.toLocaleUpperCase() === query.toUpperCase()
-      ) {
-        return [searchResult.item]
-      }
-
       // Stop looping through list of results, if...
       if (
         (!searchResult.score || searchResult.score > maxScore) && // no more results below threshold score
