@@ -3,7 +3,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { Test, TestingModule } from '@nestjs/testing'
-import * as helmet from 'helmet'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const helmet = require('helmet')
 
 import { AppModule } from './app.module'
 
