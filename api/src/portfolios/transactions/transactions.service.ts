@@ -259,23 +259,39 @@ export class TransactionsService {
   ) {
     await this.createUpdateDeleteUnits(portfolioId, uuid, units)
 
-    let partnerTransaction: Prisma.TransactionCreateNestedOneWithoutPartnerTransactionReverseInput =
-      undefined
-    if (partnerTransactionUuid) {
-      partnerTransaction = {
-        connect: {
-          portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
+    if (accountUuid) {
+      // Make sure referenced object exists with same portfolioId
+      const result = await this.prisma.account.findUnique({
+        where: {
+          portfolioId_uuid: { portfolioId, uuid: accountUuid },
         },
+      })
+      if (!result) {
+        throw new BadRequestException('accountUuid not found')
       }
     }
 
-    let portfolioSecurity: Prisma.PortfolioSecurityCreateNestedOneWithoutTransactionsInput =
-      undefined
+    if (partnerTransactionUuid) {
+      // Make sure referenced object exists with same portfolioId
+      const result = await this.prisma.transaction.findUnique({
+        where: {
+          portfolioId_uuid: { portfolioId, uuid: partnerTransactionUuid },
+        },
+      })
+      if (!result) {
+        throw new BadRequestException('partnerTransactionUuid not found')
+      }
+    }
+
     if (portfolioSecurityUuid) {
-      portfolioSecurity = {
-        connect: {
+      // Make sure referenced object exists with same portfolioId
+      const result = await this.prisma.portfolioSecurity.findUnique({
+        where: {
           portfolioId_uuid: { portfolioId, uuid: portfolioSecurityUuid },
         },
+      })
+      if (!result) {
+        throw new BadRequestException('portfolioSecurityUuid not found')
       }
     }
 
@@ -286,13 +302,9 @@ export class TransactionsService {
         note,
         shares,
         updatedAt,
-        account: {
-          connect: {
-            portfolioId_uuid: { portfolioId, uuid: accountUuid },
-          },
-        },
-        partnerTransaction,
-        portfolioSecurity,
+        accountUuid,
+        partnerTransactionUuid,
+        portfolioSecurityUuid,
       },
       where: { portfolioId_uuid: { portfolioId, uuid } },
       include: { units: defaultUnitsQuery },
