@@ -458,6 +458,27 @@ describe('Transactions (e2e)', () => {
         expect(updateResponse.status).toBe(400)
         expect(updateResponse.body.message).toMatch('partnerTransaction')
       })
+
+      it("doesn't change unchanged transaction with partner transaction", async () => {
+        const partneredTransaction = {
+          ...testTransactionFull,
+          partnerTransactionUuid: minTransactionUuid,
+        }
+
+        const addResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${fullTransactionUuid}`,
+          partneredTransaction,
+        )
+        expect(addResponse.status).toBe(200)
+        expect(addResponse.body).toMatchObject(partneredTransaction)
+
+        const updateResponse = await api.put(
+          `/portfolios/${portfolioId}/transactions/${fullTransactionUuid}`,
+          partneredTransaction,
+        )
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.body).toMatchObject(partneredTransaction)
+      })
     })
 
     test('DELETE .../transactions/$uuid removes transaction', async () => {
