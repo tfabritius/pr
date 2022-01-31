@@ -13,7 +13,7 @@
   "dependencies": {},
   "devDependencies": {
     "@fontsource/eczar": "^4.5.2",
-    "@fontsource/roboto-condensed": "^4.5.0",
+    "@fontsource/roboto-condensed": "^4.5.1",
     "@mdi/js": "^6.5.95",
     "@types/big.js": "^6.1.2",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
