@@ -30,7 +30,7 @@
     "@nestjs/platform-express": "^8.2.6",
     "@nestjs/schedule": "^1.0.2",
     "@nestjs/serve-static": "^2.2.2",
-    "@nestjs/swagger": "^5.1.5",
+    "@nestjs/swagger": "^5.2.0",
     "@nestjs/testing": "^8.2.6",
     "@prisma/client": "^3.8.1",
     "adm-zip": "^0.5.9",
