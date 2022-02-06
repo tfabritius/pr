@@ -1,8 +1,8 @@
-import { startOfDay } from 'date-fns'
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
-
 export function startOfDayInUtc(date: Date): Date {
-  const timeZoneDate = utcToZonedTime(date, 'local')
-  const timeZoneStartOfDay = startOfDay(timeZoneDate)
-  return zonedTimeToUtc(timeZoneStartOfDay, 'local')
+  const startOfDayInUtc = new Date(date.valueOf())
+  startOfDayInUtc.setUTCHours(0)
+  startOfDayInUtc.setUTCMinutes(0)
+  startOfDayInUtc.setUTCSeconds(0)
+  startOfDayInUtc.setUTCMilliseconds(0)
+  return startOfDayInUtc
 }
