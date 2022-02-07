@@ -64,10 +64,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.5.2.tgz#8e70d12113037af13d631ca46e787811b57a2a07"
   integrity sha512-5YgwChiCnGHLkmtMfEkemJpv6RIUtN5ZWKsEPNjwVe5DKlSnGNbCuroAsnuMmlwT0UsHmrvbbxxJDZbNjgnRYg==
 
-"@fontsource/roboto-condensed@^4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.5.1.tgz#298fe183be35db489763d87afc2c399713511145"
-  integrity sha512-ZhTYO2IWZMfuHWeMjuTkGgsr//Qnvs+Mcn+jny6jmMhniNdMjDWu3gG34lfxA1v5kjbgtfE4fZDHQZTnCDJTtQ==
+"@fontsource/roboto-condensed@^4.5.2":
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.5.2.tgz#0cae8afa8320140070ad3f0c05b811d40c51c637"
+  integrity sha512-E0pNlTmICvhhV3100aNKsgUJBvoEeAADjPEtYX8Uy6FgkbJy0z5HTil67f0I7OUsP18LufWYwq8h6L4x9lyQwA==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
