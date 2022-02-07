@@ -64,10 +64,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.5.2.tgz#8e70d12113037af13d631ca46e787811b57a2a07"
   integrity sha512-5YgwChiCnGHLkmtMfEkemJpv6RIUtN5ZWKsEPNjwVe5DKlSnGNbCuroAsnuMmlwT0UsHmrvbbxxJDZbNjgnRYg==
 
-"@fontsource/roboto-condensed@^4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.5.1.tgz#298fe183be35db489763d87afc2c399713511145"
-  integrity sha512-ZhTYO2IWZMfuHWeMjuTkGgsr//Qnvs+Mcn+jny6jmMhniNdMjDWu3gG34lfxA1v5kjbgtfE4fZDHQZTnCDJTtQ==
+"@fontsource/roboto-condensed@^4.5.2":
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-4.5.2.tgz#0cae8afa8320140070ad3f0c05b811d40c51c637"
+  integrity sha512-E0pNlTmICvhhV3100aNKsgUJBvoEeAADjPEtYX8Uy6FgkbJy0z5HTil67f0I7OUsP18LufWYwq8h6L4x9lyQwA==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -4959,10 +4959,10 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
-lint-staged@^12.3.2:
-  version "12.3.2"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-12.3.2.tgz#c87fe59dca475b7d1cb56863c5faa03c145e1446"
-  integrity sha512-gtw4Cbj01SuVSfAOXC6ivd/7VKHTj51yj5xV8TgktFmYNMsZzXuSd5/brqJEA93v63wL7R6iDlunMANOechC0A==
+lint-staged@^12.3.3:
+  version "12.3.3"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-12.3.3.tgz#0a465962fe53baa2b4b9da50801ead49a910e03b"
+  integrity sha512-OqcLsqcPOqzvsfkxjeBpZylgJ3SRG1RYqc9LxC6tkt6tNsq1bNVkAixBwX09f6CobcHswzqVOCBpFR1Fck0+ag==
   dependencies:
     cli-truncate "^3.1.0"
     colorette "^2.0.16"
@@ -7024,10 +7024,10 @@ sass-loader@^8.0.2:
     schema-utils "^2.6.1"
     semver "^6.3.0"
 
-sass@^1.49.0:
-  version "1.49.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.49.0.tgz#65ec1b1d9a6bc1bae8d2c9d4b392c13f5d32c078"
-  integrity sha512-TVwVdNDj6p6b4QymJtNtRS2YtLJ/CqZriGg0eIAbAKMlN8Xy6kbv33FsEZSF7FufFFM705SQviHjjThfaQ4VNw==
+sass@^1.49.7:
+  version "1.49.7"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.49.7.tgz#22a86a50552b9b11f71404dfad1b9ff44c6b0c49"
+  integrity sha512-13dml55EMIR2rS4d/RDHHP0sXMY3+30e1TKsyXaSz3iLWVoDWEoboY8WzJd5JMnxrRHffKO3wq2mpJ0jxRJiEQ==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
