@@ -4,10 +4,12 @@ updates:
     directory: "/api"
     schedule:
       interval: "weekly"
+      day: "saturday"
   - package-ecosystem: "npm"
     directory: "/web"
     schedule:
       interval: "weekly"
+      day: "saturday"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
