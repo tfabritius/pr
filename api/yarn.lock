@@ -1128,13 +1128,13 @@
     tslib "2.3.1"
     uuid "8.3.2"
 
-"@nestjs/config@^1.1.7":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-1.1.7.tgz#b71d3051181079fc02f9ef12d371901fce90c407"
-  integrity sha512-geSsAfANUpTl0bYesPbdvzjw+7sPdTynz66uyLvq2B+mG8W5CTHsEREsFkH/5+djkJF4BYu1vvB6tnlio/AQQg==
+"@nestjs/config@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-1.2.0.tgz#a4eb58390dd8145b761ee0c8e98e78c8471cabb1"
+  integrity sha512-GGZOj2g6EMZ23orsQqeD2Vs5E2ZrmAiB0qCGvERv+5nQmZjY4nKkisG4awQsym1uotmmzgtsd9lOiKqTIFONhA==
   dependencies:
-    dotenv "10.0.0"
-    dotenv-expand "5.1.0"
+    dotenv "16.0.0"
+    dotenv-expand "8.0.1"
     lodash "4.17.21"
     uuid "8.3.2"
 
@@ -1181,10 +1181,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-1.0.1.tgz#78b62041c7a407db4a90eb140567321602bed18e"
   integrity sha512-NFvofzSinp00j5rzUd4tf+xi9od6383iY0JP7o0Bnu1fuItAUkWBgc4EKuIQ3D+c2QI3i9pG1kDWAeY27EMGtg==
 
-"@nestjs/passport@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/passport/-/passport-8.1.0.tgz#ba3b28803666bf2afc644f82979585a886f353ed"
-  integrity sha512-IJ0AumoIWPzzki8d1TixTLcWJiNhJxzpn9ejAYA0TaKsC2B1zyg58WotTU3U/perCOiiAgjpvTB4vA/7L8K9Mg==
+"@nestjs/passport@^8.2.1":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/passport/-/passport-8.2.1.tgz#a2abff9f51b3857b3423f5380a00f475aa298fe7"
+  integrity sha512-HXEKMLX1x865+lsJB4srwKHBciDNAhWY1Ha+xbxYRbk7J5leGDoHJAmeqe+Wb3NDn5nkboggLV87t0q2mbYc8w==
 
 "@nestjs/platform-express@^8.3.1":
   version "8.3.1"
@@ -1622,10 +1622,10 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.3.tgz#c893b73721db73699943bfc3653b1deb7faa4a3a"
   integrity sha512-Jus9s4CDbqwocc5pOAnh8ShfrnMcPHuJYzVcSUU7lrh8Ni5HuIqX3oilL86p3dlTrk0LzHRCgA/GQ7uNCw6l2Q==
 
-"@types/node@*", "@types/node@^17.0.17":
-  version "17.0.17"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.17.tgz#a8ddf6e0c2341718d74ee3dc413a13a042c45a0c"
-  integrity sha512-e8PUNQy1HgJGV3iU/Bp2+D/DXh3PYeyli8LgIwsQcs1Ar1LoaWHSIT6Rw+H2rNJmiq6SNWiDytfx8+gYj7wDHw==
+"@types/node@*", "@types/node@^17.0.18":
+  version "17.0.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.18.tgz#3b4fed5cfb58010e3a2be4b6e74615e4847f1074"
+  integrity sha512-eKj4f/BsN/qcculZiRSujogjvp5O/k4lOW5m35NopjZM/QwLOR075a8pJW5hD+Rtdm2DaCVPENS6KtSQnUD6BA==
 
 "@types/node@^10.1.0":
   version "10.17.52"
@@ -3097,15 +3097,15 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-dotenv-expand@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
-  integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
+dotenv-expand@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-8.0.1.tgz#332aa17c14b12e28e2e230f8d183eecc1c014fdc"
+  integrity sha512-j/Ih7bIERDR5PzI89Zu8ayd3tXZ6E3dbY0ljQ9Db0K87qBO8zdLsi2dIvDHMWtjC3Yxb8XixOTHAtia0fDHRpg==
 
-dotenv@10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
-  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
+dotenv@16.0.0:
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.0.tgz#c619001253be89ebb638d027b609c75c26e47411"
+  integrity sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -3364,10 +3364,10 @@ escodegen@^2.0.0:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-prettier@^8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
-  integrity sha512-BgZuLUSeKzvlL/VUjx/Yb787VQ26RU3gGjA3iiFvdsp/2bMfVIWUVP7tjxtjS0e+HP409cPlPvNkQloz8C91ew==
+eslint-config-prettier@^8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.4.0.tgz#8e6d17c7436649e98c4c2189868562921ef563de"
+  integrity sha512-CFotdUcMY18nGRo5KGsnNxpznzhkopOcOo0InID+sgQssPrzjvsyKZPvOgymTFeHrFuC3Tzdf2YndhXtULK9Iw==
 
 eslint-import-resolver-node@^0.3.6:
   version "0.3.6"
