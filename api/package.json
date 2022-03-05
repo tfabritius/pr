@@ -61,7 +61,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.2.1",
+    "@nestjs/cli": "^8.2.2",
     "@nestjs/schematics": "^8.0.7",
     "@types/adm-zip": "^0.4.34",
     "@types/express": "^4.17.13",
@@ -83,9 +83,9 @@
     "prettier": "^2.5.1",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.0",
-    "ts-loader": "^9.2.6",
+    "ts-loader": "^9.2.7",
     "ts-node": "10.6.0",
-    "tsconfig-paths": "^3.9.0",
+    "tsconfig-paths": "^3.13.0",
     "typescript": "^4.6.2"
   },
   "jest": {
