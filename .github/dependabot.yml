@@ -1,11 +1,6 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/api"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-  - package-ecosystem: "npm"
     directory: "/web"
     schedule:
       interval: "weekly"
