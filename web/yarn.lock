@@ -1464,10 +1464,10 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
 
-axios@^0.26.0:
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.0.tgz#9a318f1c69ec108f8cd5f3c3d390366635e13928"
-  integrity sha512-lKoGLMYtHvFrPVt3r+RBMp9nh34N0M8zEfCWqdWZx6phynIEhQqAdydpyBAAG211zlhX9Rgu08cOamy6XjE5Og==
+axios@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.1.tgz#1ede41c51fcf51bbbd6fd43669caaa4f0495aaa9"
+  integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
   dependencies:
     follow-redirects "^1.14.8"
 
@@ -6755,10 +6755,10 @@ prettier@^1.18.2:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.19.1.tgz#f7d7f5ff8a9cd872a7be4ca142095956a60797cb"
   integrity sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==
 
-prettier@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.1.tgz#fff75fa9d519c54cf0fce328c1017d94546bc56a"
-  integrity sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==
+prettier@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.6.2.tgz#e26d71a18a74c3d0f0597f55f01fb6c06c206032"
+  integrity sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==
 
 pretty-error@^2.0.2:
   version "2.1.2"
@@ -8682,10 +8682,10 @@ vue-i18n-extract@1.0.2:
     is-valid-glob "^1.0.0"
     yargs "^13.2.2"
 
-vue-i18n@^8.17.0, vue-i18n@^8.27.0:
-  version "8.27.0"
-  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.27.0.tgz#3e3b3ed2c107ccbd7f20dbdd7a96763a9990253e"
-  integrity sha512-SX35iJHL5PJ4Gfh0Mo/q0shyHiI2V6Zkh51c+k8E9O1RKv5BQyYrCxRzpvPrsIOJEnLaeiovet3dsUB0e/kDzw==
+vue-i18n@^8.17.0, vue-i18n@^8.27.1:
+  version "8.27.1"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.27.1.tgz#fe660f6c14793ae404d6a715875d772594a3324f"
+  integrity sha512-lWrGm4F25qReJ7XxSnFVb2h3PfW54ldnM4C+YLBGGJ75+Myt/kj4hHSTKqsyDLamvNYpvINMicSOdW+7yuqgIQ==
 
 "vue-loader-v16@npm:vue-loader@^16.1.0":
   version "16.2.0"
