@@ -32,7 +32,7 @@ function updateAxios(sessionToken: string) {
   if (sessionToken === '') {
     delete axios.defaults.headers.common.authorization
   } else {
-    axios.defaults.headers.common.authorization = 'bearer ' + sessionToken
+    axios.defaults.headers.common.authorization = 'Bearer ' + sessionToken
   }
 }
 
