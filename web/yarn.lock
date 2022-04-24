@@ -47,10 +47,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fontsource/eczar@^4.5.8":
-  version "4.5.8"
-  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.5.8.tgz#908d92763f8ea4bd2936fa74db3339384cd5d733"
-  integrity sha512-jFo04Vu2ORJPFGEXpPF43aZxPNKVoM2ByvMkjLT34fytzncu7M5CbjFTCp3iIJ1/R77omHNh8FukEr7tiRRtKQ==
+"@fontsource/eczar@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/eczar/-/eczar-4.5.9.tgz#cd5bc18c3c48b88f74ae4255c266a19af1e58a84"
+  integrity sha512-sBFmCRXd8vGrDdqYt5h/v8H0pkV/5W7pIR+07RYOHFnSnmAwU4fSJlR8w5VS5BUuvWjBovfVHMe2cohOUv09gQ==
 
 "@fontsource/roboto-condensed@^4.5.6":
   version "4.5.6"
